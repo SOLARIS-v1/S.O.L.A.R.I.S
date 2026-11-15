@@ -19,10 +19,10 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     label: 'Forehead Optical PPG & Fluid Shift',
     deviceBadge: '[ASTROSKIN HEADBAND]',
     getTelemetry: (crew) => ({
-      primary: `SpO2: ${crew?.vitals.spo2?.toFixed(1) || '98.4'}%`,
+      primary: `SpO2: ${crew?.vitals?.spo2?.toFixed(1) || '98.4'}%`,
       secondary: 'Cranial Pulse Transit Time: 142 ms (Cephalic fluid shift proxy)',
     }),
-    isAlert: (crew) => (crew?.vitals.spo2 || 99) < 98.0,
+    isAlert: (crew) => (crew?.vitals?.spo2 || 99) < 98.0,
   },
   {
     id: 'dosimeter',
@@ -32,9 +32,9 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     deviceBadge: '[HERA / CPD DOSIMETER]',
     getTelemetry: (crew) => ({
       primary: `Daily Dose: 0.12 mSv/d`,
-      secondary: `Cumulative: ${crew?.vitals.radiation_mSv?.toFixed(1) || '54.8'} mSv (Safe margin)`,
+      secondary: `Cumulative: ${crew?.vitals?.radiation_mSv?.toFixed(1) || '54.8'} mSv (Safe margin)`,
     }),
-    isAlert: (crew) => (crew?.vitals.radiation_mSv || 0) > 55,
+    isAlert: (crew) => (crew?.vitals?.radiation_mSv || 0) > 55,
   },
   {
     id: 'heart',
@@ -43,7 +43,7 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     label: 'Cardiac 3-Lead ECG',
     deviceBadge: '[ASTROSKIN THORACIC ECG]',
     getTelemetry: (crew) => ({
-      primary: `Live HR: ${crew?.vitals.heartRate || 78} BPM · HRV: ${crew?.vitals.hrv || 42} ms`,
+      primary: `Live HR: ${crew?.vitals?.heartRate || 78} BPM · HRV: ${crew?.vitals?.hrv || 42} ms`,
       secondary:
         crew?.id === 'vance'
           ? 'Intermittent ectopic jumps up to 96 BPM'
@@ -60,10 +60,10 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     label: 'Thoracic RIP Band & Thermal',
     deviceBadge: '[ASTROSKIN DUAL-BAND]',
     getTelemetry: (crew) => ({
-      primary: `Resp Rate: ${crew?.vitals.respRate || 14.2} br/m · Tidal Vol: 520 mL`,
-      secondary: `Skin/Estimated Core Temp: ${crew?.vitals.coreTemp?.toFixed(1) || '37.1'} °C`,
+      primary: `Resp Rate: ${crew?.vitals?.respRate || 14.2} br/m · Tidal Vol: 520 mL`,
+      secondary: `Skin/Estimated Core Temp: ${crew?.vitals?.coreTemp?.toFixed(1) || '37.1'} °C`,
     }),
-    isAlert: (crew) => (crew?.vitals.respRate || 14) > 15,
+    isAlert: (crew) => (crew?.vitals?.respRate || 14) > 15,
   },
   {
     id: 'spine_skin',
@@ -87,13 +87,13 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     label: 'Sleep & Circadian Actigraphy',
     deviceBadge: '[NASA ARCHER WRISTBAND]',
     getTelemetry: (crew) => ({
-      primary: `Sleep Duration: ${crew?.vitals.sleepHours?.toFixed(1) || '6.8'} hrs`,
+      primary: `Sleep Duration: ${crew?.vitals?.sleepHours?.toFixed(1) || '6.8'} hrs`,
       secondary:
         crew?.id === 'chen'
           ? 'Circadian Desynchrony (Acute 4.6h sleep deficit)'
           : 'Circadian Readiness: 94% (High sleep efficiency)',
     }),
-    isAlert: (crew) => (crew?.vitals.sleepHours || 8) < 6.0,
+    isAlert: (crew) => (crew?.vitals?.sleepHours || 8) < 6.0,
   },
 ];
 

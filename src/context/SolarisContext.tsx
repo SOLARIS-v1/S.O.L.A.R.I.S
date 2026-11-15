@@ -14,6 +14,7 @@ import { solarisVoiceService } from '../services/solarisVoiceService';
 import confetti from 'canvas-confetti';
 
 import { BRAND } from '../data/brand';
+import { useAstraStore } from '../api/mockClient';
 import {
   CrewVitals,
   HotspotNarration,
@@ -94,9 +95,9 @@ export interface SolarisContextType {
 export const SolarisContext = createContext<SolarisContextType | undefined>(undefined);
 
 export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeCrew, setActiveCrew] = useState<CrewProfile | null>(() => CREW_PROFILES['vance']);
-  const [astraMode, setAstraModeState] = useState<AstraMode>('LISTENING');
-  const [stage, setStage] = useState<FlowStage>('STAGE_COMMAND');
+  const [activeCrew, setActiveCrew] = useState<CrewProfile | null>(null);
+  const [astraMode, setAstraModeState] = useState<AstraMode>('AUTH_GATE');
+  const [stage, setStage] = useState<FlowStage>('STAGE_AUTH');
   const [voiceState, setVoiceState] = useState<VoiceState>('awake');
   const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null);
   const [backendOnline, setBackendOnline] = useState<boolean>(false);
@@ -106,7 +107,7 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [mockModeActive, setMockModeActive] = useState<boolean>(isMockMode());
 
   const [currentUtterance, setCurrentUtterance] = useState<string>(
-    'SOLARIS Clinical Console ready. Commander Vance profile synchronized.'
+    'SOLARIS Clinical Console ready. Please select or state your astronaut profile to authenticate.'
   );
   const [isMicActive, setIsMicActive] = useState<boolean>(true);
 
@@ -288,6 +289,10 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
         ? 'chen'
         : 'vance';
 
+      // Keep Zustand activeSubjectId strictly synchronized with context activeCrew
+      const storeSubId = crewId === 'chen' ? 'ASTRA-02' : crewId === 'patel' ? 'ASTRA-03' : 'ASTRA-01';
+      useAstraStore.getState().setActiveSubject(storeSubId);
+
       let profile: CrewProfile = { ...(CREW_PROFILES[crewId] || CREW_PROFILES.vance) };
 
       // Fetch authoritative crew telemetry from Python FastAPI backend if not in explicit mock mode
@@ -363,7 +368,7 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
           await selectCrew('patel');
           return;
         }
-        if (lower.includes('chen') || lower.includes('maya') || lower.includes('engineer')) {
+        if (lower.includes('chen') || lower.includes('maya') || lower.includes('sarah') || lower.includes('engineer')) {
           await selectCrew('chen');
           return;
         }

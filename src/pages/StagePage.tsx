@@ -104,14 +104,14 @@ export const StagePage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
-              {activeCrew ? activeCrew.name : 'Commander Marcus Vance'}
+              {activeCrew ? activeCrew.name : 'Awaiting Authentication'}
             </h2>
           </div>
           <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 font-mono">
             <span>EXPEDITION-64</span>
             <span>&middot;</span>
             <span className="font-semibold text-indigo-600">
-              {activeCrew ? activeCrew.role : 'Mission Commander'}
+              {activeCrew ? activeCrew.role : 'Expedition 64'}
             </span>
             <span>&middot;</span>
             <span>Sol 142 / 500</span>
@@ -294,38 +294,54 @@ export const StagePage: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. Blood Pressure Card (Matching screenshot) */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                <span>Blood Pressure</span>
-                <Activity className="w-4 h-4 text-indigo-500" />
-              </div>
+            {/* 3. Blood Pressure Card (Dynamically computed from active astronaut telemetry) */}
+            {(() => {
+              const bpStr = vitals.bloodPressure || '120/80';
+              const parts = bpStr.split('/');
+              const sys = parseInt(parts[0], 10) || 120;
+              const dia = parseInt(parts[1], 10) || 80;
+              const mapVal = ((2 * dia + sys) / 3).toFixed(1);
+              return (
+                <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <span>Blood Pressure</span>
+                    <Activity className="w-4 h-4 text-indigo-500" />
+                  </div>
 
-              <div className="my-2 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-slate-800 font-mono">118</span>
-                  <span className="text-xs text-slate-400 font-mono uppercase">Upper</span>
+                  <div className="my-2 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-slate-800 font-mono">{sys}</span>
+                      <span className="text-xs text-slate-400 font-mono uppercase">Upper</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-slate-800 font-mono">{dia}</span>
+                      <span className="text-xs text-slate-400 font-mono uppercase">Lower</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-400 text-[10px]">MAP</span>
+                    <span className="font-bold text-slate-700">{mapVal} mmHg</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-slate-800 font-mono">76</span>
-                  <span className="text-xs text-slate-400 font-mono uppercase">Lower</span>
-                </div>
-              </div>
+              );
+            })()}
 
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
-                <span className="text-slate-400 text-[10px]">MAP</span>
-                <span className="font-bold text-slate-700">90.0 mmHg</span>
-              </div>
-            </div>
-
-            {/* 4. Respiration & Recovery Status Card (Per-system status, no 0-100 score) */}
+            {/* 4. Respiration & Recovery Status Card (Per-system status, dynamically driven) */}
             <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
                 <span>Respiration & Recovery</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[9px] flex items-center gap-0.5">
-                  <Wind className="w-2.5 h-2.5" />
-                  Nominal
-                </span>
+                {vitals.respRate > 15 || vitals.sleepHours < 5.0 ? (
+                  <span className="px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 font-bold text-[9px] flex items-center gap-0.5">
+                    <Wind className="w-2.5 h-2.5" />
+                    Caution
+                  </span>
+                ) : (
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[9px] flex items-center gap-0.5">
+                    <Wind className="w-2.5 h-2.5" />
+                    Nominal
+                  </span>
+                )}
               </div>
 
               <div className="my-2 space-y-1">

@@ -140,8 +140,8 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
           : rawId.includes('chen')
           ? 'ASTRA-02'
           : rawId.includes('patel')
-          ? 'ASTRA-04'
-          : 'ASTRA-03';
+          ? 'ASTRA-03'
+          : 'ASTRA-01';
         setActiveSubject(storeSubId);
         await selectCrew(rawId);
       },

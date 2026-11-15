@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAstraStore } from '../../api/mockClient';
 import { useSolaris } from '../../context/SolarisContext';
@@ -36,15 +36,35 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
 
   const {
     activeCrew,
+    selectCrew,
+    lockDashboard,
     isMicActive,
     toggleMic,
     astraMode,
   } = useSolaris();
 
+  const [crewDropdownOpen, setCrewDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Click outside listener for crew dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setCrewDropdownOpen(false);
+      }
+    };
+    if (crewDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [crewDropdownOpen]);
+
   const storeCrew = crew.find((c) => c.id === activeSubjectId) || crew[0];
   const activeAstronaut = {
-    name: activeCrew?.name || storeCrew?.name || 'Commander Vance',
-    callsign: activeCrew?.callsign || storeCrew?.callsign || 'VALKYRIE',
+    name: activeCrew?.name || (activeCrew === null ? 'Select Astronaut' : storeCrew?.name || 'Commander Vance'),
+    callsign: activeCrew?.callsign || (activeCrew === null ? 'AUTH REQUIRED' : storeCrew?.callsign || 'EXPEDITION-64'),
     missionDay: storeCrew?.mission_day || 142,
   };
 
@@ -111,29 +131,144 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
             </h1>
           </div>
 
-          {/* Active Astronaut Profile Pill */}
-          <button
-            onClick={onOpenIdentify}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-all text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 shadow-sm"
-            title="Click to switch active astronaut profile"
-          >
-            {/* Astronaut Avatar */}
-            <div className="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200 p-0.5 flex items-center justify-center text-indigo-600 font-bold text-xs shrink-0">
-              <User className="w-3.5 h-3.5 text-indigo-600" />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 truncate transition-colors">
-                  {activeAstronaut.name}
-                </span>
-                <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 shrink-0" />
+          {/* Active Astronaut Profile Pill with Quick-Switcher Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setCrewDropdownOpen((prev) => !prev)}
+              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-xl border transition-all text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 shadow-sm ${
+                activeCrew === null
+                  ? 'bg-amber-50 hover:bg-amber-100 border-amber-300 animate-pulse'
+                  : 'bg-slate-50 hover:bg-slate-100 border-slate-200/80'
+              }`}
+              title="Click to switch active astronaut profile"
+            >
+              {/* Astronaut Avatar */}
+              <div className="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200 p-0.5 flex items-center justify-center text-indigo-600 font-bold text-xs shrink-0">
+                <User className="w-3.5 h-3.5 text-indigo-600" />
               </div>
-              <span className="text-[10px] text-slate-500 font-mono block truncate">
-                {activeAstronaut.callsign} • EXP-64
-              </span>
-            </div>
-          </button>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 truncate transition-colors">
+                    {activeAstronaut.name}
+                  </span>
+                  <ChevronDown className={`w-3 h-3 text-slate-400 group-hover:text-indigo-600 shrink-0 transition-transform ${crewDropdownOpen ? 'rotate-180' : ''}`} />
+                </div>
+                <span className="text-[10px] text-slate-500 font-mono block truncate">
+                  {activeAstronaut.callsign} • EXP-64
+                </span>
+              </div>
+            </button>
+
+            {/* Astronaut Quick-Switcher Dropdown Menu */}
+            {crewDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-white border border-slate-200 shadow-[0_12px_36px_rgba(0,0,0,0.12)] p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between mb-1">
+                  <span>EXPEDITION CREW PROFILES</span>
+                  <span className="text-[9px] text-indigo-600 font-mono">SOLARIS</span>
+                </div>
+
+                <div className="space-y-1">
+                  {/* Vance */}
+                  <button
+                    onClick={() => {
+                      selectCrew('vance');
+                      setCrewDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left transition-all ${
+                      activeCrew?.id === 'vance'
+                        ? 'bg-indigo-50 border border-indigo-200 text-indigo-900 font-bold'
+                        : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      AV
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold truncate">Cmdr. Alex Vance</div>
+                      <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                        <span>Commander</span>
+                        <span>&bull;</span>
+                        <span className="text-amber-600 font-medium">Ectopic HR (96)</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Patel */}
+                  <button
+                    onClick={() => {
+                      selectCrew('patel');
+                      setCrewDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left transition-all ${
+                      activeCrew?.id === 'patel'
+                        ? 'bg-indigo-50 border border-indigo-200 text-indigo-900 font-bold'
+                        : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      RP
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold truncate">Spec. R. Patel</div>
+                      <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                        <span>EVA Specialist</span>
+                        <span>&bull;</span>
+                        <span className="text-emerald-600 font-medium">Nominal (64)</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Chen */}
+                  <button
+                    onClick={() => {
+                      selectCrew('chen');
+                      setCrewDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left transition-all ${
+                      activeCrew?.id === 'chen'
+                        ? 'bg-indigo-50 border border-indigo-200 text-indigo-900 font-bold'
+                        : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      SC
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold truncate">Eng. Sarah Chen</div>
+                      <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                        <span>Flight Engineer</span>
+                        <span>&bull;</span>
+                        <span className="text-rose-600 font-medium">Sleep Deficit (4.5h)</span>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="pt-1.5 mt-1 border-t border-slate-100 space-y-0.5">
+                  <button
+                    onClick={() => {
+                      setCrewDropdownOpen(false);
+                      onOpenIdentify?.();
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium transition-colors flex items-center justify-between"
+                  >
+                    <span>Full Biometric Roster...</span>
+                    <Plus className="w-3 h-3 text-indigo-400" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCrewDropdownOpen(false);
+                      lockDashboard();
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg font-medium transition-colors"
+                  >
+                    Lock Console / Logout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Mission Sol & Live UTC Clock */}
           <div className="hidden 2xl:flex items-center gap-3 pl-3 border-l border-slate-200 text-xs font-mono">

@@ -120,7 +120,7 @@ def get_crew_data(name: str):
             "device": "HERA / CPD DOSIMETER",
             "metric": "Active Environmental Dosimetry",
             "radiation_msv_day": telemetry.get("radiation_msv_day"),
-            "cumulative_msv": round(telemetry["radiation_msv_day"] * 142, 2) if telemetry.get("radiation_msv_day") else None,
+            "cumulative_msv": telemetry.get("cumulative_radiation_msv", None),
             "status": "NOMINAL" if (telemetry.get("radiation_msv_day") or 0) < 0.6 else "CAUTION",
         },
         "archer": {
@@ -131,7 +131,7 @@ def get_crew_data(name: str):
             "status": "CAUTION" if telemetry["sleep_hours"] < 6.0 else "NOMINAL",
         },
         "spine_skin": {
-            "device": "3-AXIS IMU + ASTRA VERBAL",
+            "device": "3-AXIS IMU + SOLARIS VERBAL",
             "metric": "Lumbar Posture & Dermal Interface",
             "spine_pain_score": telemetry["spine_pain_score"],
             "skin_irritation_score": telemetry["skin_irritation_score"],

@@ -44,7 +44,7 @@ export const HolographicBodyCenter: React.FC<HolographicBodyCenterProps> = ({ on
     { id: 'skin', label: 'ZONE: SKIN' },
   ];
 
-  const heartRate = activeCrew?.vitals.heartRate || 78;
+  const heartRate = activeCrew?.vitals?.heartRate || 78;
 
   // Map activeHotspotId to highlighted zones in 3D shader
   const highlightedZones: Array<'heart' | 'spine' | 'head' | 'skin' | 'lungs' | 'abdomen'> = [];
@@ -240,7 +240,7 @@ export const HolographicBodyCenter: React.FC<HolographicBodyCenterProps> = ({ on
                 layers={{ skeleton: true, organs: true }}
                 skinMode={anatomySkinMode}
                 heartRate={heartRate}
-                breathRate={activeCrew?.vitals.respRate || 14}
+                breathRate={activeCrew?.vitals?.respRate || 14}
                 crewName={activeCrew?.name || 'Astronaut'}
                 onSelect={(id) => {
                   setSelectedSystem(id);

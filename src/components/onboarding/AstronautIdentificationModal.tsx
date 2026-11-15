@@ -44,12 +44,18 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
       }));
     } else {
       setActiveSubject(selectedId);
-      if (selectedId === 'ASTRA-001') {
+      const sel = selectedId.toUpperCase();
+      const matchedCrew = crew.find((c) => c.id === selectedId);
+      const name = (matchedCrew?.name || '').toLowerCase();
+
+      if (sel === 'ASTRA-01' || sel === 'ASTRA-001' || name.includes('vance')) {
         selectCrew('vance');
-      } else if (selectedId === 'ASTRA-002') {
-        selectCrew('patel');
-      } else if (selectedId === 'ASTRA-003') {
+      } else if (sel === 'ASTRA-02' || sel === 'ASTRA-002' || name.includes('chen')) {
         selectCrew('chen');
+      } else if (sel === 'ASTRA-03' || sel === 'ASTRA-003' || name.includes('patel') || name.includes('brooks')) {
+        selectCrew('patel');
+      } else {
+        selectCrew('vance');
       }
     }
     onClose();

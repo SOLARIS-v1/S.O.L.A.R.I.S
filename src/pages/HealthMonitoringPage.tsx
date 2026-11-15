@@ -1,7 +1,7 @@
 // SOLARIS Orbital Medical Intelligence — Health Monitoring Page
 // Implements Cardiovascular (ECG & RR), Blood Pressure (MAP), Sleep & Recovery, Radiation Intelligence (Gy vs Sv), and Metabolic Telemetry
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getCrewHealthDataset, FullCrewHealthDataset } from '../data/healthData';
 import { InteractiveECGViewer } from '../components/charts/InteractiveECGViewer';
 import { RRIntervalAnalysisCard } from '../components/charts/RRIntervalAnalysisCard';
@@ -41,6 +41,13 @@ export const HealthMonitoringPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<'all' | 'cardio' | 'bp' | 'sleep' | 'radiation' | 'metabolic'>('all');
   const [isSimulatedScenario, setIsSimulatedScenario] = useState<boolean>(false);
   const [exportedNotice, setExportedNotice] = useState<boolean>(false);
+
+  // Sync state if activeCrew changes globally
+  useEffect(() => {
+    if (activeCrew?.id && (activeCrew.id === 'vance' || activeCrew.id === 'patel' || activeCrew.id === 'chen')) {
+      setSelectedCrewId(activeCrew.id as 'vance' | 'patel' | 'chen');
+    }
+  }, [activeCrew?.id]);
 
   // Load authoritative health dataset for selected astronaut
   const healthData: FullCrewHealthDataset = getCrewHealthDataset(selectedCrewId);

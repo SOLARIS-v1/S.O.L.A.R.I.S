@@ -31,18 +31,18 @@ export const CheckInPage: React.FC = () => {
   const [showHowToMeasure, setShowHowToMeasure] = useState<boolean>(false);
 
   // STEP 1: VITALS STATE
-  const [heartRate, setHeartRate] = useState<number>(activeCrew?.vitals.heartRate || 78);
-  const [coreTemp, setCoreTemp] = useState<number>(activeCrew?.vitals.coreTemp || 37.1);
+  const [heartRate, setHeartRate] = useState<number>(activeCrew?.vitals?.heartRate || 78);
+  const [coreTemp, setCoreTemp] = useState<number>(activeCrew?.vitals?.coreTemp || 37.1);
   const [bpSys, setBpSys] = useState<number>(118);
   const [bpDia, setBpDia] = useState<number>(76);
-  const [spo2, setSpo2] = useState<number>(activeCrew?.vitals.spo2 || 98.4);
-  const [respRate, setRespRate] = useState<number>(activeCrew?.vitals.respRate || 14.2);
-  const [hrv, setHrv] = useState<number>(activeCrew?.vitals.hrv || 42);
+  const [spo2, setSpo2] = useState<number>(activeCrew?.vitals?.spo2 || 98.4);
+  const [respRate, setRespRate] = useState<number>(activeCrew?.vitals?.respRate || 14.2);
+  const [hrv, setHrv] = useState<number>(activeCrew?.vitals?.hrv || 42);
   const [manualOverrides, setManualOverrides] = useState<Record<string, boolean>>({});
 
   // STEP 2: SLEEP & CIRCADIAN STATE
   const [sleepHours, setSleepHours] = useState<number>(
-    verbalSymptoms.sleepIssue ? 4.6 : activeCrew?.vitals.sleepHours || 6.8
+    verbalSymptoms.sleepIssue ? 4.6 : activeCrew?.vitals?.sleepHours || 6.8
   );
   const [sleepQuality, setSleepQuality] = useState<number>(verbalSymptoms.sleepIssue ? 2 : 4);
   const [sleepLatency, setSleepLatency] = useState<string>('< 15 min');
