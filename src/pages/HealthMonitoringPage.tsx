@@ -259,8 +259,8 @@ End of Solaris Clinical Telemetry Record.`;
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-indigo-900">SOLARIS Research ML: Isolation Forest Statistical Deviation</span>
-                  <span className="px-2 py-0.2 rounded bg-white text-indigo-700 font-bold border border-indigo-200 text-[10px]">
-                    SCORE: 0.14 (NOMINAL)
+                  <span className="px-2 py-0.5 rounded bg-white text-indigo-700 font-bold border border-indigo-200 text-[10px]">
+                    EXPERIMENTAL DEVIATION SCORE: 0.14 (NOMINAL)
                   </span>
                 </div>
                 <p className="text-slate-600 text-[11px] leading-relaxed">

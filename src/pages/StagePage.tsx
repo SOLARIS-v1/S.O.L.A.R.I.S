@@ -648,8 +648,20 @@ export const StagePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Full Overall Health Score Circular Gauge */}
-          <SystemStatusDials />
+          {/* System Status Dials with interactive Drawer launch */}
+          <SystemStatusDials
+            onSelectSystem={(sysId) =>
+              setSelectedRegion(
+                sysId === 'cardio'
+                  ? 'heart'
+                  : sysId === 'structural'
+                  ? 'skeleton'
+                  : sysId === 'recovery'
+                  ? 'head'
+                  : 'abdomen'
+              )
+            }
+          />
         </div>
       </div>
 

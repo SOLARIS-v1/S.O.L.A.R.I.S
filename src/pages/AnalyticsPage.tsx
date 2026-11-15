@@ -45,10 +45,10 @@ export const AnalyticsPage: React.FC = () => {
   const researchModels = [
     {
       id: 'cardiovascular_anomaly_detector',
-      name: 'Cardiovascular Anomaly Detector',
+      name: 'Cardiovascular Statistical Deviation',
       type: 'Isolation Forest',
       status: 'experimental' as MLModelStatusType,
-      currentValue: 'Score: 0.14 (Nominal)',
+      currentValue: 'Experimental deviation score: 0.14 (Nominal)',
       basis: '184 epochs from 4 records; unsupervised statistical deviation score only.',
       limitations: 'Prohibited claims: Not diagnostic for arrhythmia, disease probability, or clinical alerts.',
       dataQuality: 'High Quality (250Hz ECG & Brachial Cuff)',

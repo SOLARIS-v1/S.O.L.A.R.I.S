@@ -5,6 +5,7 @@ import { Heart, Moon, Activity, ShieldCheck, AlertCircle, CheckCircle2, HelpCirc
 interface SystemStatusDialsProps {
   compact?: boolean;
   className?: string;
+  onSelectSystem?: (systemId: string) => void;
 }
 
 type StatusLevel = 'nominal' | 'watch' | 'review' | 'no_data';
@@ -21,6 +22,7 @@ interface SystemState {
 export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
   compact = false,
   className = '',
+  onSelectSystem,
 }) => {
   const { activeCrew, verbalSymptoms } = useSolaris();
   const vitals = activeCrew?.vitals;
@@ -145,9 +147,12 @@ export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
           const style = getStyle(sys.level);
           const Icon = sys.icon;
           return (
-            <div
+            <button
               key={sys.id}
-              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${style.bg}`}
+              type="button"
+              onClick={() => onSelectSystem?.(sys.id)}
+              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:scale-[1.02] active:scale-[0.98] ${style.bg}`}
+              title={`Click to view ${sys.name} clinical detail`}
             >
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${style.dot}`} />
@@ -157,7 +162,7 @@ export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
               <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${style.badge}`}>
                 {sys.label}
               </span>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -169,7 +174,7 @@ export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
         <div>
           <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">Autonomous System Status</h3>
-          <p className="text-[11px] text-slate-400">Clinical decision support telemetry triage</p>
+          <p className="text-[11px] text-slate-400">Clinical decision support telemetry triage &middot; Click to inspect</p>
         </div>
         <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-full">
           Grounded Telemetry
@@ -181,9 +186,12 @@ export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
           const style = getStyle(sys.level);
           const Icon = sys.icon;
           return (
-            <div
+            <button
               key={sys.id}
-              className={`p-3 rounded-xl border flex flex-col justify-between transition-all ${style.bg}`}
+              type="button"
+              onClick={() => onSelectSystem?.(sys.id)}
+              className={`p-3 rounded-xl border flex flex-col justify-between transition-all text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${style.bg}`}
+              title={`Open ${sys.name} detail drawer`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="p-1.5 rounded-lg bg-white/80 shadow-sm">
@@ -201,7 +209,7 @@ export const SystemStatusDials: React.FC<SystemStatusDialsProps> = ({
                 <div className="text-[11px] font-medium text-slate-500">{sys.name}</div>
                 <div className="text-xs font-bold text-slate-800 mt-0.5">{sys.metricSummary}</div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
