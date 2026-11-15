@@ -37,6 +37,8 @@ import {
 } from '../voice/narration';
 import { SolarisAudioRecorder } from '../voice/audioRecorder';
 import { matchVoiceCommand } from '../voice/commandRegistry';
+import { processSolarisDialogue } from '../voice/conversationalEngine';
+import { CREW_PROFILES } from '../data/crewProfiles';
 import { getApiBaseUrl } from '../api/httpClient';
 
 export type {
@@ -670,12 +672,38 @@ export class SolarisVoiceService {
       };
     }
 
-    // Fallback response
+    // 12. Conversational Clinical & Website Intelligence (free dialogue resolution)
     const astronaut = this.telemetryAccessor?.getActiveAstronaut();
-    const callsign = astronaut?.callsign || 'Astronaut';
-    const fallback = `Command acknowledged, ${callsign}. You can ask Solaris to read your readings, read manually, check blood pressure or sleep, start check-in, or show your trends.`;
-    await this.speak(fallback);
-    return { handled: false, intent: 'unknown', spokenResponse: fallback };
+    const activeCrew = astronaut
+      ? (CREW_PROFILES[
+          astronaut.id.toLowerCase().includes('chen')
+            ? 'chen'
+            : astronaut.id.toLowerCase().includes('patel')
+            ? 'patel'
+            : 'vance'
+        ] || null)
+      : null;
+
+    const dialogueResult = await processSolarisDialogue(rawText, {
+      telemetryAccessor: this.telemetryAccessor,
+      activeCrew,
+      selectCrew: this.telemetryAccessor?.selectAstronautById,
+    });
+
+    if (dialogueResult.spokenResponse) {
+      await this.speak(dialogueResult.spokenResponse);
+    }
+
+    if (dialogueResult.navigationTarget) {
+      this.onNavigate?.(dialogueResult.navigationTarget);
+    }
+
+    return {
+      handled: true,
+      intent: dialogueResult.intent,
+      spokenResponse: dialogueResult.spokenResponse,
+      navigationTarget: dialogueResult.navigationTarget,
+    };
   }
 
   // --- Step-by-Step Reading ("read manually") ---

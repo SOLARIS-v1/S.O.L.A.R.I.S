@@ -133,7 +133,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_stage',
     category: 'navigation',
-    phrases: ['stage', 'home', 'overview', 'dashboard', 'main screen', 'cockpit'],
+    phrases: ['stage', 'home', 'overview', 'dashboard', 'main screen', 'cockpit', 'go to stage', 'open stage', 'show stage', 'go home', 'open dashboard', 'show overview'],
     helpText: 'Go to main dashboard',
     feedbackText: () => 'Opening Mission Dashboard',
     handler: () => {
@@ -144,7 +144,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_monitoring',
     category: 'navigation',
-    phrases: ['monitoring', 'telemetry', 'vitals screen', 'live vitals', 'sensor telemetry'],
+    phrases: ['monitoring', 'telemetry', 'vitals screen', 'live vitals', 'sensor telemetry', 'go to monitoring', 'open monitoring', 'show monitoring', 'go to telemetry', 'open telemetry', 'show vitals', 'open vitals'],
     helpText: 'Open real-time telemetry monitoring',
     feedbackText: () => 'Opening Telemetry Monitoring',
     handler: () => {
@@ -155,7 +155,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_body',
     category: 'navigation',
-    phrases: ['body', 'anatomy', 'digital twin', '3d explorer', 'anatomical explorer'],
+    phrases: ['body', 'anatomy', 'digital twin', '3d explorer', 'anatomical explorer', 'go to body', 'open body', 'show body', 'go to anatomy', 'open anatomy', 'show anatomy', '3d body', 'open 3d'],
     helpText: 'Open 3D Anatomical Explorer',
     feedbackText: () => 'Opening Body Explorer',
     handler: () => {
@@ -166,7 +166,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_checkin',
     category: 'navigation',
-    phrases: ['check in', 'checkin', 'daily check in', 'assessment', 'symptom check'],
+    phrases: ['check in', 'checkin', 'daily check in', 'assessment', 'symptom check', 'go to check-in', 'open check-in', 'start check-in', 'start checkin', 'daily assessment', 'open assessment'],
     helpText: 'Begin Daily Health Assessment Check-in',
     feedbackText: () => 'Opening Daily Check-in',
     handler: () => {
@@ -177,7 +177,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_measure',
     category: 'navigation',
-    phrases: ['measure', 'diagnostics lab', 'enter vitals', 'log reading', 'measurements'],
+    phrases: ['measure', 'diagnostics lab', 'enter vitals', 'log reading', 'measurements', 'go to measure', 'open measure', 'open diagnostics', 'diagnostics'],
     helpText: 'Open Diagnostics Lab & manual measurement entry',
     feedbackText: () => 'Opening Diagnostics Lab',
     handler: () => {
@@ -188,7 +188,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_eyetest',
     category: 'navigation',
-    phrases: ['eye test', 'vision test', 'visual acuity', 'sans check', 'amsler grid'],
+    phrases: ['eye test', 'vision test', 'visual acuity', 'sans check', 'amsler grid', 'go to eye test', 'open eye test', 'start eye test', 'sans test'],
     helpText: 'Open Spaceflight SANS Vision Test',
     feedbackText: () => 'Opening Eye Test',
     handler: () => {
@@ -199,7 +199,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_exercise',
     category: 'navigation',
-    phrases: ['exercise', 'workout', 'countermeasures', 'ared', 'treadmill workout', 'routine'],
+    phrases: ['exercise', 'workout', 'countermeasures', 'ared', 'treadmill workout', 'routine', 'go to exercise', 'open exercise', 'start workout', 'open workout', 'exercise countermeasures'],
     helpText: 'Open Physical Countermeasures & Biomechanics',
     feedbackText: () => 'Opening Exercise Countermeasures',
     handler: () => {
@@ -210,7 +210,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_analytics',
     category: 'navigation',
-    phrases: ['analytics', 'trends', 'reports', 'charts', 'history analysis'],
+    phrases: ['analytics', 'trends', 'reports', 'charts', 'history analysis', 'go to analytics', 'open analytics', 'show analytics', 'open trends', 'show trends'],
     helpText: 'Open Longitudinal Health Trends & Analytics',
     feedbackText: () => 'Opening Analytics & Trends',
     handler: () => {
@@ -221,7 +221,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_medical',
     category: 'navigation',
-    phrases: ['medical', 'clinical review', 'flight surgeon', 'doctor review', 'consultation'],
+    phrases: ['medical', 'clinical review', 'flight surgeon', 'doctor review', 'consultation', 'go to medical', 'open medical', 'show medical', 'flight surgeon review'],
     helpText: 'Open Flight Surgeon Medical Review',
     feedbackText: () => 'Opening Flight Surgeon Review',
     handler: () => {
@@ -232,7 +232,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_environment',
     category: 'navigation',
-    phrases: ['environment', 'habitat', 'co2 levels', 'radiation environment', 'cabin pressure'],
+    phrases: ['environment', 'habitat', 'co2 levels', 'radiation environment', 'cabin pressure', 'go to environment', 'show environment', 'habitat telemetry', 'show habitat'],
     helpText: 'Open Mission Habitat & Life Support Environment',
     feedbackText: () => 'Opening Habitat Telemetry',
     handler: () => {
@@ -243,7 +243,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     id: 'nav_settings',
     category: 'navigation',
-    phrases: ['settings', 'configuration', 'system config', 'preferences'],
+    phrases: ['settings', 'configuration', 'system config', 'preferences', 'go to settings', 'open settings', 'show settings'],
     helpText: 'Open System Settings',
     feedbackText: () => 'Opening Settings',
     handler: () => {
