@@ -62,6 +62,19 @@ export const StagePage: React.FC = () => {
     sleepHours: 7.0,
   };
 
+  const overallScore = (() => {
+    let score = 96;
+    if (vitals.heartRate > 100 || vitals.heartRate < 55) score -= 10;
+    else if (vitals.heartRate > 85) score -= 4;
+    if (vitals.spo2 < 95) score -= 15;
+    else if (vitals.spo2 < 97) score -= 3;
+    if (vitals.coreTemp > 37.8 || vitals.coreTemp < 36.0) score -= 12;
+    if (vitals.sleepHours < 5.0) score -= 8;
+    else if (vitals.sleepHours < 6.5) score -= 4;
+    if (vitals.hrv < 35) score -= 6;
+    return Math.max(65, Math.min(99, score));
+  })();
+
   const orbState =
     voiceState === 'sleeping'
       ? 'asleep'
@@ -93,11 +106,6 @@ export const StagePage: React.FC = () => {
             <h2 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
               {activeCrew ? activeCrew.name : 'Commander Marcus Vance'}
             </h2>
-            {!backendOnline && (
-              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-mono font-bold border border-amber-200">
-                Offline demo data
-              </span>
-            )}
           </div>
           <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 font-mono">
             <span>EXPEDITION-64</span>
@@ -186,8 +194,8 @@ export const StagePage: React.FC = () => {
       <div className="grid grid-cols-12 gap-5">
         {/* Left 9 Columns */}
         <div className="col-span-12 xl:col-span-8 space-y-5">
-          {/* Top 4 Metric Cards (Matching Screenshot) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Top 5 Metric Cards (Matching Screenshot & Overall Health Score) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
             {/* 1. Featured Royal Indigo Card: Heart Rate (Matching purple card in screenshot) */}
             <div className="bg-[#5046E5] text-white rounded-2xl p-4 shadow-[0_10px_25px_-5px_rgba(80,70,229,0.4)] flex flex-col justify-between relative overflow-hidden">
               {/* Header */}
@@ -339,6 +347,62 @@ export const StagePage: React.FC = () => {
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
                 <span className="text-slate-400 text-[10px]">SpO2 Saturation</span>
                 <span className="font-bold text-emerald-600">{vitals.spo2.toFixed(1)}%</span>
+              </div>
+            </div>
+
+            {/* 5. Overall Health Score Card with Circular Graph (Matching Dr. Bliss Gauge Card) */}
+            <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+                <span className="font-bold text-slate-700">Health Score</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[9px] flex items-center gap-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Nominal
+                </span>
+              </div>
+
+              {/* Circular Gauge Graph */}
+              <div className="my-1.5 flex items-center justify-center">
+                <div className="relative w-[76px] h-[76px] flex items-center justify-center">
+                  <svg viewBox="0 0 80 80" className="w-full h-full -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      fill="none"
+                      stroke="#EEF2F6"
+                      strokeWidth="6.5"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      fill="none"
+                      stroke="url(#healthScoreGrad)"
+                      strokeWidth="6.5"
+                      strokeDasharray={201.06}
+                      strokeDashoffset={201.06 * (1 - overallScore / 100)}
+                      strokeLinecap="round"
+                      className="transition-all duration-1000 ease-out"
+                    />
+                    <defs>
+                      <linearGradient id="healthScoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#4F46E5" />
+                        <stop offset="100%" stopColor="#10B981" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-lg font-extrabold text-slate-800 font-mono tracking-tight">
+                      {overallScore}
+                      <span className="text-xs text-slate-400 font-normal">%</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400 text-[10px]">AI Screening</span>
+                <span className="font-bold text-indigo-600 text-[10.5px]">Flight Ready</span>
               </div>
             </div>
           </div>

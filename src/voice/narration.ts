@@ -144,15 +144,26 @@ export function buildBriefing(
   const candidateKeys = [
     'heart_rate',
     'blood_pressure_sys',
+    'blood_pressure_dia',
     'spo2',
+    'sleep',
     'sleep_duration',
+    'temperature',
     'core_temp',
+    'hrv',
     'hrv_rmssd',
+    'respiratory_rate',
     'resp_rate',
     'glucose',
   ];
 
   for (const k of candidateKeys) {
+    // Avoid double-evaluating aliases
+    if (k === 'sleep_duration' && evaluatedList.some(e => e.key === 'sleep')) continue;
+    if (k === 'core_temp' && evaluatedList.some(e => e.key === 'temperature')) continue;
+    if (k === 'hrv_rmssd' && evaluatedList.some(e => e.key === 'hrv')) continue;
+    if (k === 'resp_rate' && evaluatedList.some(e => e.key === 'respiratory_rate')) continue;
+
     const val = readings[k] ?? readings[k.replace('_duration', '')] ?? readings[k.replace('core_', '')];
     const evaluated = evaluateReading(k, val, baselines?.[k]);
     if (evaluated) {
@@ -170,7 +181,9 @@ export function buildBriefing(
     .slice(0, 3);
 
   let overallSentence = '';
-  if (notableList.length === 0) {
+  if (evaluatedList.length === 0) {
+    overallSentence = "I don't have recent readings recorded for your profile.";
+  } else if (notableList.length === 0) {
     overallSentence = 'All recorded biometric parameters are currently nominal and holding steady within your expected flight envelope.';
   } else if (notableList.some((n) => n.level === 'urgent')) {
     overallSentence = 'Telemetry screening flags high deviation readings requiring immediate review.';

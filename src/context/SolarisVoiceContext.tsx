@@ -21,6 +21,7 @@ import { useAstraStore } from '../api/mockClient';
 import { useSolaris } from './SolarisContext';
 import { httpClient } from '../api/httpClient';
 import { IndicatorType, HealthRecord, Finding } from '../api/types';
+import { INDICATOR_THRESHOLDS } from '../data/thresholds';
 
 export interface SolarisVoiceContextType {
   voiceState: SolarisVoiceState;

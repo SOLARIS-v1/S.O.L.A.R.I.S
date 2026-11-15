@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSolaris } from '../../context/SolarisContext';
 import { useSolarisVoice } from '../../context/SolarisVoiceContext';
-import { Mic, MicOff, Send, ChevronDown, ChevronUp, Sparkles, Volume2 } from 'lucide-react';
+import { Mic, MicOff, Send, ChevronDown, ChevronUp, Sparkles, Volume2, Minus } from 'lucide-react';
 
 export const AstraVoiceHudBar: React.FC = () => {
   const {
@@ -24,7 +24,8 @@ export const AstraVoiceHudBar: React.FC = () => {
   } = useSolarisVoice();
 
   const [inputVal, setInputVal] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false); // Unobtrusive default collapsed
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -85,6 +86,34 @@ export const AstraVoiceHudBar: React.FC = () => {
 
   const badge = getModeBadge();
   const lastMsg = transcript.length > 0 ? transcript[transcript.length - 1] : null;
+
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-3 right-4 z-40 select-none font-mono text-[#0F172A] animate-fade-in">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg">
+          <div className={`w-2 h-2 rounded-full ${badge.dot}`} />
+          <span className="text-[11px] font-bold text-slate-800">SOLARIS</span>
+          <button
+            onClick={() => {
+              if (isListening) sleepSolaris();
+              else wakeSolaris();
+            }}
+            className="p-1 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+            title={isListening ? 'Stop Listening' : 'Wake Solaris'}
+          >
+            {isListening ? <Mic className="w-3.5 h-3.5 text-emerald-600" /> : <MicOff className="w-3.5 h-3.5" />}
+          </button>
+          <button
+            onClick={() => setIsMinimized(false)}
+            className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+            title="Expand Voice Assistant"
+          >
+            <ChevronUp className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -156,10 +185,20 @@ export const AstraVoiceHudBar: React.FC = () => {
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-              title={isExpanded ? 'Minimize' : 'Expand Voice Console'}
-              aria-label={isExpanded ? 'Minimize Voice Console' : 'Expand Voice Console'}
+              title={isExpanded ? 'Collapse Directives' : 'Expand Directives'}
+              aria-label={isExpanded ? 'Collapse Directives' : 'Expand Directives'}
             >
               {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Minimize to Pill Button */}
+            <button
+              onClick={() => setIsMinimized(true)}
+              className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+              title="Minimize to floating pill"
+              aria-label="Minimize to floating pill"
+            >
+              <Minus className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

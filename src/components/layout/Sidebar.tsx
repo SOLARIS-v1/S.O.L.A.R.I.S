@@ -120,13 +120,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortLabel: 'Environment',
       icon: Globe,
     },
-    {
-      to: '/settings',
-      altMatches: ['/config'],
-      label: 'Settings & System',
-      shortLabel: 'Settings',
-      icon: Settings,
-    },
   ];
 
   const isItemActive = (to: string, altMatches?: string[]) => {

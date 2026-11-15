@@ -561,16 +561,19 @@ export function AstroFigure({ anim, label }: { anim: ExerciseDef['anim']; label:
           <Equipment p={pose} under={false} />
         </svg>
 
-        {/* Live Repetition Badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm text-xs font-mono">
-          <span className="text-[10px] text-slate-400 uppercase font-semibold">REPS</span>
-          <span className="font-extrabold text-indigo-600 tabular-nums text-sm">{reps}</span>
-          <span className="text-[10px] text-slate-400">/ 8 TARGET</span>
-        </div>
+        {/* Top HUD Bar with non-colliding layout */}
+        <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-2 pointer-events-none z-10">
+          {/* Live Repetition Badge */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm text-xs font-mono pointer-events-auto">
+            <span className="text-[10px] text-slate-500 uppercase font-semibold">REPS</span>
+            <span className="font-extrabold text-indigo-600 tabular-nums text-sm">{reps}</span>
+            <span className="text-[10px] text-slate-500">/ 8</span>
+          </div>
 
-        {/* Phase Pill */}
-        <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200 shadow-sm text-[10.5px] font-mono">
-          <span className="text-indigo-600 font-bold">{getPhaseName()}</span>
+          {/* Phase Pill with auto-truncation */}
+          <div className="px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm text-[10.5px] font-mono pointer-events-auto max-w-[55%] truncate">
+            <span className="text-indigo-600 font-bold truncate block">{getPhaseName()}</span>
+          </div>
         </div>
 
         {/* Loop Timeline Indicator */}

@@ -27,7 +27,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [envDrawerOpen, setEnvDrawerOpen] = useState(false);
   const [tasksDrawerOpen, setTasksDrawerOpen] = useState(false);
   const [hazardsDrawerOpen, setHazardsDrawerOpen] = useState(false);
-  const [activeHazardId, setActiveHazardId] = useState<string | null>('gravity');
+  const [activeHazardId, setActiveHazardId] = useState<string | null>(null);
   const [simDrawerOpen, setSimDrawerOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 

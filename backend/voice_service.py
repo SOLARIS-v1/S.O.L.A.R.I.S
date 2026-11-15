@@ -8,9 +8,12 @@ Complies strictly with SOLARIS Phase 2 requirements:
 - If model folder is missing or model not loaded, GET /api/voice/status returns available: False, and POST /api/voice/stt returns 503.
 """
 
+import io
 import os
 import tempfile
+import wave
 from fastapi import APIRouter, UploadFile, File, HTTPException
+import numpy as np
 
 router = APIRouter(prefix="/api/voice", tags=["voice"])
 
@@ -67,6 +70,35 @@ async def transcribe_audio(file: UploadFile = File(...)):
     audio_bytes = await file.read()
     if not audio_bytes:
         return {"text": ""}
+
+    audio_input = None
+    try:
+        with wave.open(io.BytesIO(audio_bytes), "rb") as wf:
+            channels = wf.getnchannels()
+            sample_width = wf.getsampwidth()
+            n_frames = wf.getnframes()
+            if n_frames == 0:
+                return {"text": ""}
+            frames = wf.readframes(n_frames)
+            if sample_width == 2:
+                arr = np.frombuffer(frames, dtype=np.int16).astype(np.float32) / 32768.0
+                if channels > 1:
+                    arr = arr.reshape(-1, channels).mean(axis=1)
+                audio_input = arr
+    except Exception:
+        audio_input = None
+
+    if audio_input is not None:
+        if len(audio_input) < 160:  # less than 10ms
+            return {"text": ""}
+        segments, _ = model.transcribe(
+            audio_input,
+            beam_size=1,
+            vad_filter=True,
+            initial_prompt=INITIAL_PROMPT,
+        )
+        text = " ".join([segment.text for segment in segments]).strip()
+        return {"text": text}
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
         tmp.write(audio_bytes)

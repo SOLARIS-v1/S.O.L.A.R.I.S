@@ -266,7 +266,7 @@ export const CheckInPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-120px)] max-w-5xl mx-auto flex flex-col justify-between p-3 lg:p-6 pb-20 select-none font-sans text-slate-900">
+    <div className="w-full min-h-[calc(100vh-120px)] max-w-5xl mx-auto flex flex-col justify-between p-3 lg:p-6 pb-36 select-none font-sans text-slate-900">
       {/* Subheader */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-2 gap-3">
@@ -278,7 +278,7 @@ export const CheckInPage: React.FC = () => {
               <h1 className="text-base font-bold tracking-tight text-slate-900 uppercase font-mono">
                 Daily Health Assessment & Protocol Check-In
               </h1>
-              <p className="text-xs text-slate-500 font-mono">
+              <p className="text-xs text-slate-600 font-medium font-mono">
                 Sol 142 Telemetry Verification & Operational Readiness
               </p>
             </div>
@@ -299,19 +299,19 @@ export const CheckInPage: React.FC = () => {
         </div>
 
         {/* Step Counter & Info Header */}
-        <div className="flex items-center justify-between text-xs text-slate-600 mb-2 font-mono">
+        <div className="flex items-center justify-between text-xs text-slate-700 mb-2 font-mono">
           <button
             onClick={() => setShowHowToMeasure(!showHowToMeasure)}
-            className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+            className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
           >
             <Info className="w-4 h-4" />
             <span>How to Measure</span>
           </button>
-          <span className="font-bold text-slate-700">Step {step} of 5</span>
+          <span className="font-extrabold text-slate-800">Step {step} of 5</span>
         </div>
 
         {/* 5-Step Progress Bar (Neumorphic) */}
-        <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden mb-5 shadow-inner">
+        <div className="w-full h-2.5 bg-slate-200/90 rounded-full overflow-hidden mb-5 shadow-inner">
           <div
             className="h-full bg-gradient-to-r from-indigo-500 to-[#5850EC] transition-all duration-300 rounded-full shadow-sm"
             style={{ width: `${(step / 5) * 100}%` }}
@@ -967,12 +967,12 @@ export const CheckInPage: React.FC = () => {
         )}
       </div>
 
-      {/* Bottom Button Row */}
-      <div className="flex items-center justify-between pt-5 border-t border-slate-200 font-mono">
+      {/* Bottom Button Row with Voice HUD clearance */}
+      <div className="flex items-center justify-between pt-6 pb-12 mb-6 border-t border-slate-200 font-mono">
         {step > 1 && !submitted ? (
           <button
             onClick={() => setStep((s) => s - 1)}
-            className="px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+            className="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
           >
             ← Back
           </button>
@@ -983,10 +983,10 @@ export const CheckInPage: React.FC = () => {
         <button
           onClick={handleNext}
           disabled={submitted}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-md active:scale-95 ${
+          className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-md active:scale-95 ${
             submitted
               ? 'bg-emerald-600 text-white cursor-default'
-              : 'bg-gradient-to-r from-indigo-600 to-[#5850EC] hover:from-indigo-700 hover:to-indigo-800 text-white shadow-indigo-200'
+              : 'bg-gradient-to-r from-indigo-600 to-[#5850EC] hover:from-indigo-700 hover:to-indigo-800 text-white shadow-indigo-200 hover:shadow-lg'
           }`}
         >
           <span>{step === 5 ? (submitted ? 'Telemetry Ingested ✓' : 'Submit Telemetry') : 'Continue'}</span>

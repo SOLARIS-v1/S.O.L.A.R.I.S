@@ -210,18 +210,6 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
           >
             Medical
           </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                isActive
-                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-              }`
-            }
-          >
-            Settings
-          </NavLink>
         </nav>
 
         {/* Right Section matching screenshot: Search Box + Add Record Button + Voice Pill + Bell */}
