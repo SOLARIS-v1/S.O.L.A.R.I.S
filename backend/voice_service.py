@@ -18,7 +18,7 @@ import numpy as np
 router = APIRouter(prefix="/api/voice", tags=["voice"])
 
 WHISPER_MODEL_DIR = os.path.join(os.path.dirname(__file__), "models", "whisper")
-INITIAL_PROMPT = "Solaris, heart rate, blood pressure, glucose, sleep, spine, skin, read manually, sleep solaris"
+INITIAL_PROMPT = "Solaris, heart rate, blood pressure, glucose, sleep, spine, skin, read manually, sleep solaris, stage, monitoring, telemetry, body, anatomy, check-in, assessment, measure, eye test, routine, exercise, analytics, medical, environment, settings, rotate, zoom, sol, tasks, simulator, submit, click"
 
 _whisper_model = None
 

@@ -36,6 +36,8 @@ import {
   ComputedBriefing,
 } from '../voice/narration';
 import { SolarisAudioRecorder } from '../voice/audioRecorder';
+import { matchVoiceCommand } from '../voice/commandRegistry';
+import { getApiBaseUrl } from '../api/httpClient';
 
 export type {
   SolarisVoiceState,
@@ -229,7 +231,7 @@ export class SolarisVoiceService {
   public async checkLocalSTTStatus(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/voice/status');
+      const res = await fetch(`${getApiBaseUrl()}/api/voice/status`);
       if (res.ok) {
         const data = await res.json();
         this.isLocalSTTAvailable = !!data.available;
@@ -277,7 +279,7 @@ export class SolarisVoiceService {
       const formData = new FormData();
       formData.append('file', wavBlob, 'audio.wav');
 
-      const res = await fetch('http://127.0.0.1:8000/api/voice/stt', {
+      const res = await fetch(`${getApiBaseUrl()}/api/voice/stt`, {
         method: 'POST',
         body: formData,
       });
@@ -663,6 +665,25 @@ export class SolarisVoiceService {
       this.onNavigate?.('/analytics');
       await this.speak(response);
       return { handled: true, intent: 'show_trends', spokenResponse: response, navigationTarget: '/analytics' };
+    }
+
+    // 11. Command Registry & UI Bus Dispatch (whole-website voice control)
+    const match = matchVoiceCommand(rawText);
+    if (match) {
+      const { command, params } = match;
+      const result = await command.handler(params, {
+        telemetryAccessor: this.telemetryAccessor,
+        voiceService: this,
+      });
+      const spoken = typeof result === 'string' ? result : command.feedbackText(params);
+      if (spoken) {
+        await this.speak(spoken);
+      }
+      return {
+        handled: true,
+        intent: command.id,
+        spokenResponse: spoken || '',
+      };
     }
 
     // Fallback response

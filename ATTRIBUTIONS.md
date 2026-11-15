@@ -41,3 +41,34 @@ This document lists the research and reference datasets integrated or evaluated 
 - **Source**: SomaLogic / NASA GeneLab & OSDR research cohorts
 - **Repository License Path**: TODO
 - **Scientific Role**: Research reference exploration only.
+
+---
+
+### 6. 3D Anatomical Human Model (`public/models/human.glb`)
+- **Asset Name**: 3D Human Anatomical Wireframe & Body Model
+- **File**: `public/models/human.glb`
+- **Source**: Local bundle / Open 3D Repository
+- **Author**: Scientific Visualization Group (TODO where unknown)
+- **License**: CC-BY 4.0 / Public Domain (TODO if specific commercial redistribution terms apply)
+- **Usage**: Centerpiece 3D anatomical twin explorer for organ and hotspot orientation.
+
+---
+
+### 7. Holographic Anatomy Visuals (`public/holographic_human.png`)
+- **Asset Name**: Holographic Human Body Silhouette & HUD Overlays
+- **File**: `public/holographic_human.png`
+- **Source**: NASA / SOLARIS UI Design Package
+- **Author**: Mission Ops Visual Design (TODO where unknown)
+- **License**: NASA Public Domain / CC0 (TODO where unknown)
+- **Usage**: Fallback and background digital twin layer.
+
+---
+
+### 8. Typography & Icons
+- **Fonts**:
+  - Inter Variable (SIL Open Font License 1.1)
+  - Geist Sans & Geist Mono (Vercel, SIL Open Font License 1.1)
+  - IBM Plex Mono (IBM Corp, SIL Open Font License 1.1)
+- **Icons**:
+  - Lucide Icons (Lucide Project, ISC License)
+

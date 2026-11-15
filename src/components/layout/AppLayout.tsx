@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { GlobalHeader } from './GlobalHeader';
 import { EnvironmentDrawer } from '../stage/EnvironmentDrawer';
@@ -12,6 +12,7 @@ import { useAstraStore } from '../../api/mockClient';
 import { useSolaris } from '../../context/SolarisContext';
 import { AuthGateModal } from '../hud/AuthGateModal';
 import { AstraVoiceHudBar } from '../hud/AstraVoiceHudBar';
+import { useVoiceUi } from '../../voice/uiBus';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { records, activeSubjectId } = useAstraStore();
   const { isMicActive } = useSolaris();
 
@@ -30,6 +32,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [activeHazardId, setActiveHazardId] = useState<string | null>(null);
   const [simDrawerOpen, setSimDrawerOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  // Subscribe to Voice UI bus for whole-website voice control
+  useVoiceUi<{ path: string }>('NAVIGATE', ({ path }) => {
+    navigate(path);
+  });
+
+  useVoiceUi<{ drawer?: string; action: string }>('DRAWER_ACTION', ({ drawer, action }) => {
+    if (action === 'close') {
+      setEnvDrawerOpen(false);
+      setTasksDrawerOpen(false);
+      setSimDrawerOpen(false);
+      setSettingsModalOpen(false);
+      setHazardsDrawerOpen(false);
+      setActiveHazardId(null);
+      return;
+    }
+    if (drawer === 'tasks') setTasksDrawerOpen(true);
+    else if (drawer === 'environment') setEnvDrawerOpen(true);
+    else if (drawer === 'simulator') setSimDrawerOpen(true);
+    else if (drawer === 'settings') setSettingsModalOpen(true);
+  });
 
   const subjectRecords = records.filter((r) => r.subject_id === activeSubjectId);
 
