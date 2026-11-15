@@ -1,0 +1,103 @@
+{
+  "registry_version": "2.0.0",
+  "policy": "Only validated input handling and descriptive/research analytics are exposed. No endpoint is clinically validated.",
+  "models": [
+    {
+      "id": "cardiovascular_anomaly_detector",
+      "status": "experimental_research_only",
+      "inference": "enabled_as_unsupervised_score_only",
+      "artifact": "models/cardiovascular/cardiovascular_anomaly_detector.joblib",
+      "basis": "184 epochs from 4 records; no verified anomaly labels; no independent validation",
+      "permitted_output": "unsupervised deviation score only",
+      "input_units": {
+        "mean_hr_bpm": "beats/min",
+        "mean_rr_ms": "ms",
+        "sdnn_ms": "ms",
+        "rmssd_ms": "ms",
+        "pnn50_pct": "%",
+        "sbp_mean": "mmHg",
+        "dbp_mean": "mmHg",
+        "map_mean": "mmHg",
+        "pp_mean": "mmHg"
+      },
+      "prohibited_claims": [
+        "arrhythmia",
+        "disease probability",
+        "clinical alert"
+      ]
+    },
+    {
+      "id": "immune_trajectory_pca",
+      "status": "exploratory",
+      "inference": "enabled_as_projection_only",
+      "artifact": "models/immune/immune_trajectory_pca.joblib",
+      "basis": "PCA projection; no validated general clinical interpretation",
+      "permitted_output": "PCA coordinates only",
+      "input_units": {
+        "all feature_genes": "log2_fold_change"
+      },
+      "prohibited_claims": [
+        "recovery state",
+        "diagnosis",
+        "risk"
+      ]
+    },
+    {
+      "id": "plasma_proteomics_model",
+      "status": "quarantined_experimental",
+      "inference": "disabled",
+      "artifact": "models/quarantined/plasma_proteomics_model.joblib",
+      "basis": "15 samples from 4 astronauts; reported 100% accuracy does not establish generalization",
+      "prohibited_claims": [
+        "health state",
+        "stress diagnosis",
+        "clinical prediction"
+      ]
+    },
+    {
+      "id": "sleep_recovery_model",
+      "status": "quarantined_target_leakage",
+      "inference": "disabled",
+      "artifact": "models/quarantined/sleep_recovery_model.joblib",
+      "basis": "Inputs include TST/time-in-bed and related sleep measures defining Efficiency target",
+      "replacement": "Use recorded sleep measurements and descriptive longitudinal analytics"
+    },
+    {
+      "id": "stress_circadian_model",
+      "status": "quarantined_poor_predictive_performance",
+      "inference": "disabled",
+      "artifact": "models/quarantined/stress_circadian_model.joblib",
+      "basis": "Reported negative R2; inference previously emitted anxiety score with missing inputs zero-filled",
+      "replacement": "Keep measured biomarkers and questionnaire values separate"
+    },
+    {
+      "id": "physical_performance_model",
+      "status": "quarantined_constructed_target",
+      "inference": "disabled",
+      "artifact": "models/quarantined/physical_performance_model.joblib",
+      "basis": "Target formula reuses predictor features",
+      "replacement": "Direct activity summaries; acquire independent labels before regression"
+    },
+    {
+      "id": "radiation_dosimetry_engine",
+      "status": "deterministic_observational_only",
+      "inference": "enabled_absorbed_dose_summary",
+      "basis": "Requires explicit nonnegative daily absorbed dose in mGy",
+      "prohibited_claims": [
+        "effective dose without dosimetric context",
+        "regulatory compliance",
+        "safety status"
+      ]
+    },
+    {
+      "id": "ocular_bone_observations",
+      "status": "observations_only",
+      "inference": "enabled_passthrough",
+      "basis": "No risk tiers, diagnoses, projections, or treatment recommendations"
+    }
+  ],
+  "artifact_compatibility": {
+    "scikit_learn": "1.9.1",
+    "enforcement": "Exact version checked before joblib deserialization; incompatible artifacts fail closed."
+  }
+}

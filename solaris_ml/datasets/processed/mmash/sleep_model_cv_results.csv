@@ -1,0 +1,4 @@
+,MAE,RMSE,R2
+RandomForest,2.576,3.127,0.775
+RidgeRegression,1.629,2.199,0.889
+GradientBoosting,3.082,3.698,0.685

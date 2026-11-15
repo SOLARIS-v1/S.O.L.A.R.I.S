@@ -27,27 +27,27 @@ export const AssistantTranscriptPanel: React.FC = () => {
   };
 
   return (
-    <aside className="w-full h-full flex flex-col justify-between p-3 select-none font-mono">
+    <aside className="w-full h-full flex flex-col justify-between p-3 select-none font-mono bg-[#111827]">
       {/* Top Header: Mode + Crew */}
       <div className="flex items-center justify-between pb-2 mb-1.5 hairline-b">
         <div className="flex items-center gap-1.5">
           {/* Mode Indicator */}
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/20 bg-white/[0.04] text-[#ECE8E1]">
+          <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/20 bg-white/[0.04] text-[#F9FAFB]">
             <div
               className={`w-1.5 h-1.5 rounded-full ${
                 astraMode === 'NARRATING'
-                  ? 'bg-[#B8CCE6] animate-ping'
+                  ? 'bg-orange-400 animate-ping'
                   : astraMode === 'LISTENING'
-                  ? 'bg-[#6FBF9B] animate-pulse'
+                  ? 'bg-emerald-400 animate-pulse'
                   : astraMode === 'MANUAL_MODE'
-                  ? 'bg-[#E0BE6A]'
-                  : 'bg-[#5B6573]'
+                  ? 'bg-amber-400'
+                  : 'bg-slate-500'
               }`}
             />
             <span>{astraMode}</span>
           </div>
 
-          <div className="px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/10 bg-white/[0.02] text-[#8D97A6]">
+          <div className="px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/10 bg-white/[0.02] text-[#94A3B8]">
             {activeCrew ? activeCrew.name : 'UNAUTHENTICATED'}
           </div>
         </div>
@@ -57,12 +57,12 @@ export const AssistantTranscriptPanel: React.FC = () => {
           onClick={() => {
             if (astraMode === 'MANUAL_MODE') {
               setAstraMode('LISTENING');
-              sendInput('Wake ASTRA');
+              sendInput('Wake SOLARIS');
             } else {
               sendInput('Read manually');
             }
           }}
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/15 bg-white/[0.04] text-[#ECE8E1] hover:bg-white/10 transition-colors"
+          className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-instrument border border-white/15 bg-white/[0.04] text-[#F9FAFB] hover:bg-white/10 transition-colors"
         >
           {astraMode === 'MANUAL_MODE' ? (
             <>
@@ -79,23 +79,25 @@ export const AssistantTranscriptPanel: React.FC = () => {
       </div>
 
       {/* Live Transcript Message Feed */}
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 my-1 min-h-[140px] max-h-[36vh]">
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 my-1 min-h-[140px] max-h-[36vh] scrollbar-thin">
         {transcript.map((item) => (
           <div
             key={item.id}
             className={`p-2.5 rounded-lg text-xs leading-relaxed border transition-all ${
               item.sender === 'astra'
-                ? 'bg-white/[0.02] border-white/[0.08] text-[#ECE8E1]'
-                : 'bg-white/[0.06] border-[#B8CCE6]/30 text-[#ECE8E1] ml-3'
+                ? 'bg-[#172030]/60 border-white/[0.08] text-[#F9FAFB]'
+                : 'bg-orange-500/10 border-orange-500/30 text-[#F9FAFB] ml-3'
             }`}
           >
-            <div className="flex items-center justify-between text-[9px] font-mono text-[#5B6573] mb-1">
-              <span className="uppercase font-semibold tracking-wider text-[#8D97A6]">
-                {item.sender === 'astra' ? 'ASTRA // AI' : 'CREW // VOICE'}
+            <div className="flex items-center justify-between text-[9px] font-mono text-[#64748B] mb-1">
+              <span className={`uppercase font-semibold tracking-wider ${
+                item.sender === 'astra' ? 'text-orange-400' : 'text-[#94A3B8]'
+              }`}>
+                {item.sender === 'astra' ? 'SOLARIS // AI' : 'CREW // VOICE'}
               </span>
               <span>{item.timestamp}</span>
             </div>
-            <p className="text-[11px] leading-relaxed text-[#ECE8E1]">{item.text}</p>
+            <p className="text-[11px] leading-relaxed text-[#F9FAFB]">{item.text}</p>
           </div>
         ))}
 
@@ -146,10 +148,10 @@ export const AssistantTranscriptPanel: React.FC = () => {
         {/* Quick Command Chips */}
         <div className="flex items-center gap-1.5 mb-2 overflow-x-auto pb-0.5 scrollbar-none">
           <button
-            onClick={() => sendInput('Sleep ASTRA')}
+            onClick={() => sendInput('Sleep SOLARIS')}
             className="px-2 py-0.5 rounded text-[8.5px] font-mono border border-white/10 hover:border-white/20 bg-white/[0.02] text-[#8D97A6] hover:text-[#ECE8E1] transition-colors whitespace-nowrap"
           >
-            "Sleep ASTRA"
+            "Sleep SOLARIS"
           </button>
           <button
             onClick={() => sendInput('Read manually')}

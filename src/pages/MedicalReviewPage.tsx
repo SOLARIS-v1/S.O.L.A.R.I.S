@@ -1,84 +1,106 @@
 import React, { useState } from 'react';
 import { useAstraStore } from '../api/mockClient';
-import { Stethoscope, Check, FileText } from 'lucide-react';
+import {
+  Stethoscope,
+  Check,
+  FileText,
+  AlertCircle,
+  ShieldAlert,
+  User,
+  CheckCircle2,
+  Info,
+  ShieldCheck,
+  Lock
+} from 'lucide-react';
+import { ModelStatusBadge, type MLModelStatusType } from '../components/common/ModelStatusBadge';
 
 export const MedicalReviewPage: React.FC = () => {
   const { crew, activeSubjectId, setActiveSubject } = useAstraStore();
-  const [selectedCrewId, setSelectedCrewId] = useState<string>(activeSubjectId || 'ASTRA-02');
+  const [selectedCrewId, setSelectedCrewId] = useState<string>(activeSubjectId || 'ASTRA-002');
   const [reviewNote, setReviewNote] = useState<string>('');
   const [resolvedIds, setResolvedIds] = useState<string[]>([]);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const selectedAstronaut = crew.find((c) => c.id === selectedCrewId) || crew[1]; // Maya Chen
+  const selectedAstronaut = crew.find((c) => c.id === selectedCrewId) || crew[1];
 
   const findings = [
     {
       id: 'f-1',
       level: 'Review',
-      badgeColor: '#E58F55',
-      rule: 'RULE: Named Combination: Fever with tachycardia',
-      subtext: 'Febrile hyperdynamic response detected.',
+      levelClass: 'bg-amber-50 text-amber-800 border-amber-300',
+      rule: 'Named Cluster: Febrile Hyperdynamic Response',
+      subtext: 'Core body temperature elevation with concurrent resting tachycardia.',
       telemetry: '38.1 °C / 86 bpm',
       baseline: '36.8 °C / 73 bpm',
+      mlStatus: 'experimental' as MLModelStatusType,
+      mlModelName: 'cardiovascular_anomaly_detector (Isolation Forest)',
+      provenance: '250Hz Lead-II ECG & Inflatable Cuff Telemetry',
+      limitations: 'Unsupervised statistical score only. Never claims arrhythmia, disease probability, or automatic alerts.',
+      dataQuality: 'High Quality Physical Telemetry',
     },
     {
       id: 'f-2',
-      level: 'Watch',
-      badgeColor: '#E0BE6A',
-      rule: 'RULE: Named Combination: Sleep-Fatigue Syndrome',
-      subtext: 'Cumulative sleep deficit & fatigue cluster.',
+      level: 'Observation',
+      levelClass: 'bg-yellow-50 text-yellow-800 border-yellow-300',
+      rule: 'Circadian Disruption: Sleep-Fatigue Syndrome',
+      subtext: 'Cumulative 48-hour sleep deficit with elevated paraspinal ache.',
       telemetry: '5.3 h sleep / 3.8 fatigue',
-      baseline: '5.3 h / 3.8 fatigue',
+      baseline: '7.2 h / 1.5 fatigue',
+      mlStatus: 'quarantined' as MLModelStatusType,
+      mlModelName: 'sleep_recovery_model (Target Leakage Quarantine)',
+      provenance: 'NASA Archer actigraphy wristband + PVT 10-minute reaction test',
+      limitations: 'ML predictive regression is quarantined. Finding is based strictly on physical actigraphy logs and self-reported NRS fatigue.',
+      dataQuality: 'Direct Actigraphy & Survey',
     },
   ];
 
   const handleResolve = (id: string) => {
     setResolvedIds((prev) => [...prev, id]);
-    setSuccessMsg('Finding resolved and signed off.');
-    setTimeout(() => setSuccessMsg(null), 3000);
+    setSuccessMsg('Clinical finding resolved and signed off into mission medical log.');
+    setTimeout(() => setSuccessMsg(null), 3500);
   };
 
   const handleLogEntry = () => {
     if (!reviewNote.trim()) return;
     setReviewNote('');
-    setSuccessMsg('Clinical review entry logged successfully to mission archive.');
-    setTimeout(() => setSuccessMsg(null), 3000);
+    setSuccessMsg('Flight surgeon clinical review entry logged and committed to ground telemetry.');
+    setTimeout(() => setSuccessMsg(null), 3500);
   };
 
   const handleOrderQuestionnaire = (type: string) => {
-    setSuccessMsg(`Ordered supplementary questionnaire: ${type}`);
-    setTimeout(() => setSuccessMsg(null), 3000);
+    setSuccessMsg(`Ordered supplementary clinical questionnaire: ${type}`);
+    setTimeout(() => setSuccessMsg(null), 3500);
   };
 
   return (
-    <div className="w-full h-full max-w-7xl mx-auto flex flex-col justify-between p-2 lg:p-4 select-none font-mono text-[#ECE8E1]">
+    <div className="w-full h-full max-w-7xl mx-auto flex flex-col justify-between p-3 lg:p-6 select-none font-sans text-slate-900">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 mb-3 hairline-b">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200/80 gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg border border-white/10 bg-white/[0.03] flex items-center justify-center">
-            <Stethoscope className="w-4 h-4 text-[#ECE8E1]" strokeWidth={1.25} />
+          <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-[#5850EC] shadow-sm">
+            <Stethoscope className="w-5 h-5" strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-xs lg:text-sm font-medium tracking-wide text-[#ECE8E1] uppercase">
-              AUTHORISED CLINICAL FLIGHT SURGEON REVIEW CONSOLE
+            <h1 className="text-base font-bold tracking-tight text-slate-900 uppercase font-mono">
+              Clinical Flight Surgeon Review Console
             </h1>
-            <p className="text-[10px] text-[#8D97A6]">
-              Human Medical Decision Support · Ground / Orbital Clinical Authority
+            <p className="text-xs text-slate-500 font-mono">
+              Human Medical Decision Support · Ground / Orbital Clinical Authority · solaris_ml Governance
             </p>
           </div>
         </div>
 
-        <div className="text-[10px] text-[#8D97A6]">
-          <span>AUTHORISED REVIEWER: </span>
-          <span className="text-[#ECE8E1] font-medium">Dr. D. Brooks, Lead Flight Surgeon</span>
+        <div className="text-xs font-mono bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
+          <span className="text-slate-500 font-medium">AUTHORISED REVIEWER:</span>
+          <span className="text-slate-900 font-bold">Dr. D. Brooks, Lead Flight Surgeon</span>
         </div>
       </div>
 
       {/* 4 Crew Selector Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         {crew.map((c) => {
           const isSelected = selectedCrewId === c.id;
-          const alertsCount = c.id === 'ASTRA-02' ? 2 : c.id === 'ASTRA-04' ? 0 : 1;
+          const alertsCount = c.id === 'ASTRA-002' || c.id === 'ASTRA-02' ? 2 : c.id === 'ASTRA-001' ? 1 : 0;
 
           return (
             <button
@@ -87,28 +109,40 @@ export const MedicalReviewPage: React.FC = () => {
                 setSelectedCrewId(c.id);
                 setActiveSubject(c.id);
               }}
-              className={`p-3 rounded-xl text-left border transition-all ${
+              className={`p-3.5 rounded-2xl text-left border transition-all ${
                 isSelected
-                  ? 'border-white bg-white/[0.06] shadow-sm'
-                  : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20'
+                  ? 'border-indigo-400 bg-indigo-50/70 shadow-sm ring-2 ring-indigo-200/60'
+                  : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50 shadow-[0_2px_8px_rgba(0,0,0,0.02)]'
               }`}
             >
-              <div className="text-xs text-[#ECE8E1] font-medium truncate">{c.name}</div>
-              <div className="text-[9px] text-[#8D97A6] truncate mt-0.5">{c.role} ({c.callsign})</div>
-              <div className="text-[9px] text-[#5B6573] mt-1">Unreviewed Alerts: {alertsCount}</div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-bold text-slate-900 truncate font-mono">{c.name}</span>
+                {alertsCount > 0 && (
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold font-mono">
+                    {alertsCount}
+                  </span>
+                )}
+              </div>
+              <div className="text-[11px] text-slate-500 truncate font-mono">{c.role} ({c.callsign})</div>
+              <div className="text-[10px] text-slate-400 mt-1 font-mono">
+                {alertsCount > 0 ? `${alertsCount} Unreviewed Alerts` : 'Nominal Status'}
+              </div>
             </button>
           );
         })}
       </div>
 
       {/* Main 2-Column Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-[300px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-[340px]">
         {/* Left Column: Active Telemetry Findings (cols 1-7) */}
-        <div className="lg:col-span-7 flex flex-col justify-between p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02]">
+        <div className="lg:col-span-7 flex flex-col justify-between p-5 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
           <div>
-            <span className="text-xs text-[#ECE8E1] font-medium block mb-3">
-              ACTIVE TELEMETRY FINDINGS (2)
-            </span>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider font-mono">
+                Active Telemetry Findings ({findings.length})
+              </span>
+              <span className="text-xs text-slate-500 font-mono">Crew Subject: {selectedAstronaut.name}</span>
+            </div>
 
             <div className="space-y-3">
               {findings.map((f) => {
@@ -117,40 +151,63 @@ export const MedicalReviewPage: React.FC = () => {
                 return (
                   <div
                     key={f.id}
-                    className={`p-3 rounded-lg border transition-all ${
+                    className={`p-4 rounded-xl border transition-all space-y-2 ${
                       isResolved
-                        ? 'border-white/5 opacity-50 bg-transparent'
-                        : 'border-white/10 bg-white/[0.02]'
+                        ? 'border-slate-200 bg-slate-50/60 opacity-60'
+                        : 'border-slate-200/80 bg-slate-50/80 shadow-sm'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-1.5 py-0.2 rounded text-[8px] font-mono border border-white/20 text-[#ECE8E1] bg-white/[0.04]">
-                        {f.level}
-                      </span>
-                      <span className="text-[11px] font-medium text-[#ECE8E1]">{f.rule}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${f.levelClass}`}>
+                          {f.level}
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 font-mono">{f.rule}</span>
+                      </div>
+                      <ModelStatusBadge status={f.mlStatus} />
                     </div>
 
-                    <p className="text-[10px] text-[#8D97A6] mb-2">{f.subtext}</p>
+                    <p className="text-xs text-slate-600 font-medium">{f.subtext}</p>
 
-                    <div className="flex items-center justify-between text-[10px] text-[#8D97A6] hairline-t pt-2 mt-1">
+                    <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-200/80 pt-2 font-mono">
                       <div>
                         <span>Telemetry: </span>
-                        <span className="text-[#ECE8E1]">{f.telemetry}</span>
+                        <span className="text-slate-900 font-bold">{f.telemetry}</span>
                       </div>
                       <div>
                         <span>Personal Baseline: </span>
-                        <span className="text-[#ECE8E1]">{f.baseline}</span>
+                        <span className="text-slate-700 font-semibold">{f.baseline}</span>
                       </div>
                     </div>
 
-                    <div className="flex justify-end mt-2.5">
+                    {/* Scientific Limitations & Provenance Disclosure */}
+                    <div className="p-2.5 rounded-lg bg-white border border-slate-200/70 text-[10.5px] font-mono text-slate-600 space-y-0.5">
+                      <div>
+                        <strong className="text-slate-800">Model: </strong>
+                        <span className="text-indigo-700 font-semibold">{f.mlModelName}</span>
+                      </div>
+                      <div>
+                        <strong className="text-slate-800">Provenance: </strong>
+                        <span>{f.provenance} ({f.dataQuality})</span>
+                      </div>
+                      <div>
+                        <strong className="text-slate-800">Limitations: </strong>
+                        <span className="text-slate-500">{f.limitations}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-1">
                       <button
                         onClick={() => handleResolve(f.id)}
                         disabled={isResolved}
-                        className="flex items-center gap-1 px-3 py-1 rounded text-[10px] font-mono border border-white/15 bg-white/[0.04] hover:bg-white/10 text-[#ECE8E1] disabled:opacity-40 transition-colors"
+                        className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                          isResolved
+                            ? 'bg-slate-200 text-slate-500 cursor-default'
+                            : 'bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 shadow-sm hover:shadow'
+                        }`}
                       >
-                        <Check className="w-3 h-3" strokeWidth={1.5} />
-                        <span>{isResolved ? 'RESOLVED' : 'RESOLVE & SIGN OFF'}</span>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>{isResolved ? 'RESOLVED & SIGNED' : 'RESOLVE & SIGN OFF'}</span>
                       </button>
                     </div>
                   </div>
@@ -160,20 +217,21 @@ export const MedicalReviewPage: React.FC = () => {
           </div>
 
           {successMsg && (
-            <div className="text-[10px] text-[#6FBF9B] font-mono mt-2 animate-in fade-in">
-              ✓ {successMsg}
+            <div className="text-xs text-emerald-700 font-mono font-semibold mt-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 animate-in fade-in flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>{successMsg}</span>
             </div>
           )}
         </div>
 
         {/* Right Column: Review Entry & Questionnaires (cols 8-12) */}
-        <div className="lg:col-span-5 flex flex-col justify-between space-y-3">
+        <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
           {/* Medical Officer Review Entry */}
-          <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex flex-col justify-between flex-1">
+          <div className="p-5 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] flex flex-col justify-between flex-1">
             <div>
-              <div className="flex items-center justify-between text-xs mb-2">
-                <span className="text-[#ECE8E1] font-medium">MEDICAL OFFICER REVIEW ENTRY</span>
-                <span className="text-[10px] text-[#8D97A6]">Subject: {selectedAstronaut.name}</span>
+              <div className="flex items-center justify-between text-xs mb-2.5">
+                <span className="text-slate-900 font-bold uppercase font-mono">Flight Surgeon Clinical Log</span>
+                <span className="text-[11px] text-slate-500 font-mono">{selectedAstronaut.callsign}</span>
               </div>
 
               <textarea
@@ -181,47 +239,47 @@ export const MedicalReviewPage: React.FC = () => {
                 value={reviewNote}
                 onChange={(e) => setReviewNote(e.target.value)}
                 placeholder="Enter flight surgeon evaluation notes, clinical countermeasure prescription, or clearance remarks..."
-                className="w-full p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-[11px] font-mono text-[#ECE8E1] placeholder:text-[#5B6573] focus:outline-none focus:border-white/30 resize-none"
+                className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white resize-none shadow-inner"
               />
             </div>
 
             <button
               onClick={handleLogEntry}
-              className="w-full mt-2 py-2 rounded-lg text-xs font-mono font-medium border border-white/15 bg-white/[0.04] hover:bg-white/10 text-[#ECE8E1] transition-colors"
+              className="w-full mt-3 py-2.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase bg-gradient-to-r from-indigo-600 to-[#5850EC] hover:from-indigo-700 hover:to-indigo-800 text-white shadow-md shadow-indigo-100 transition-all active:scale-95"
             >
               LOG CLINICAL REVIEW ENTRY
             </button>
           </div>
 
           {/* Order Supplementary Questionnaire */}
-          <div className="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02]">
-            <div className="flex items-center gap-1.5 text-xs text-[#ECE8E1] font-medium mb-2.5">
-              <FileText className="w-3.5 h-3.5 text-[#8D97A6]" strokeWidth={1.25} />
-              <span>ORDER SUPPLEMENTARY QUESTIONNAIRE</span>
+          <div className="p-5 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-2 text-xs text-slate-900 font-bold uppercase font-mono mb-3">
+              <FileText className="w-4 h-4 text-indigo-600" />
+              <span>Order Supplementary Questionnaire</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               <button
                 onClick={() => handleOrderQuestionnaire('Fluid Shift / SANS')}
-                className="p-2 rounded-lg border border-white/10 hover:border-white/20 bg-white/[0.02] text-[10px] text-[#ECE8E1] hover:bg-white/[0.06] text-left transition-colors"
+                className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 bg-white text-xs text-slate-700 hover:text-indigo-700 font-mono font-medium text-left transition-all shadow-sm"
               >
                 + Fluid Shift / SANS
               </button>
               <button
                 onClick={() => handleOrderQuestionnaire('Behavioral Health')}
-                className="p-2 rounded-lg border border-white/10 hover:border-white/20 bg-white/[0.02] text-[10px] text-[#ECE8E1] hover:bg-white/[0.06] text-left transition-colors"
+                className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 bg-white text-xs text-slate-700 hover:text-indigo-700 font-mono font-medium text-left transition-all shadow-sm"
               >
                 + Behavioral Health
               </button>
               <button
                 onClick={() => handleOrderQuestionnaire('Acoustic Fatigue')}
-                className="p-2 rounded-lg border border-white/10 hover:border-white/20 bg-white/[0.02] text-[10px] text-[#ECE8E1] hover:bg-white/[0.06] text-left transition-colors"
+                className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 bg-white text-xs text-slate-700 hover:text-indigo-700 font-mono font-medium text-left transition-all shadow-sm"
               >
                 + Acoustic Fatigue
               </button>
               <button
                 onClick={() => handleOrderQuestionnaire('Cognitive Workload')}
-                className="p-2 rounded-lg border border-white/10 hover:border-white/20 bg-white/[0.02] text-[10px] text-[#ECE8E1] hover:bg-white/[0.06] text-left transition-colors"
+                className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 bg-white text-xs text-slate-700 hover:text-indigo-700 font-mono font-medium text-left transition-all shadow-sm"
               >
                 + Cognitive Workload
               </button>
@@ -232,3 +290,5 @@ export const MedicalReviewPage: React.FC = () => {
     </div>
   );
 };
+
+export default MedicalReviewPage;

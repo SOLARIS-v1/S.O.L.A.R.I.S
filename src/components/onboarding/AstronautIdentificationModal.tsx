@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAstraStore } from '../../api/mockClient';
+import { useAstra } from '../../context/AstraContext';
 import { CrewMember } from '../../api/types';
 import { StatusBadge } from '../common/StatusBadge';
-import { User, ShieldCheck, ArrowRight, Sparkles, Activity, Check } from 'lucide-react';
+import { ShieldCheck, ArrowRight, User, X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface ModalProps {
 
 export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { crew, activeSubjectId, setActiveSubject } = useAstraStore();
+  const { selectCrew } = useAstra();
   const [selectedId, setSelectedId] = useState<string>(activeSubjectId);
 
   // Custom Astronaut input
@@ -36,94 +38,123 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
         scenario: 'Active telemetry stream',
         baseline_established: true,
       };
-      useAstraStore.setState(state => ({
+      useAstraStore.setState((state) => ({
         crew: [...state.crew, newCrew],
         activeSubjectId: newId,
       }));
     } else {
       setActiveSubject(selectedId);
+      if (selectedId === 'ASTRA-001') {
+        selectCrew('vance');
+      } else if (selectedId === 'ASTRA-002') {
+        selectCrew('patel');
+      } else if (selectedId === 'ASTRA-003') {
+        selectCrew('chen');
+      }
     }
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 font-mono">
-      <div className="w-full max-w-xl rounded-2xl bg-[#FFFFFF] border border-[#CBD5E1] shadow-2xl p-6 space-y-6">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-200 font-sans text-slate-800 select-none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="identify-modal-title"
+    >
+      <div className="w-full max-w-xl rounded-3xl bg-white border border-slate-200/90 shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-6 sm:p-7 space-y-5 relative overflow-hidden">
+        {/* Top accent */}
+        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-indigo-500 via-[#5850EC] to-indigo-400" />
+
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0EA5E9]/10 border border-[#0EA5E9]/30 text-xs text-[#0284C7] font-bold">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>ASTRA // BIOMETRIC IDENTIFICATION</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-xs text-indigo-700 font-bold">
+            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+            <span>SOLARIS BIOMETRIC IDENTIFICATION</span>
           </div>
-          <h2 className="text-xl font-bold tracking-wider text-[#0F172A] uppercase">
+          <h2
+            id="identify-modal-title"
+            className="text-xl font-bold tracking-tight text-slate-900"
+          >
             Identify Crew Member
           </h2>
-          <p className="text-xs text-[#64748B] max-w-md mx-auto">
-            Select your astronaut profile to initialize your personalized 3D anatomical twin, wearable biosensors, and private telemetry records.
+          <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+            Select your astronaut profile to initialize your personalized 3D anatomical twin and real-time clinical telemetry.
           </p>
         </div>
 
         {/* Mode Toggle */}
-        <div className="flex rounded-xl bg-[#F1F5F9] p-1 border border-[#E2E8F0] text-xs">
+        <div className="flex rounded-xl bg-slate-100 p-1 text-xs">
           <button
             onClick={() => setIsCustom(false)}
-            className={`flex-1 py-1.5 rounded-lg transition-all ${
+            className={`flex-1 py-1.5 rounded-lg transition-all font-semibold ${
               !isCustom
-                ? 'bg-[#FFFFFF] text-[#0284C7] font-bold border border-[#CBD5E1] shadow-sm'
-                : 'text-[#64748B] hover:text-[#0F172A]'
+                ? 'bg-white text-indigo-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            Expedition Roster (4 Astronauts)
+            Expedition Roster ({crew.length} Crew)
           </button>
           <button
             onClick={() => setIsCustom(true)}
-            className={`flex-1 py-1.5 rounded-lg transition-all ${
+            className={`flex-1 py-1.5 rounded-lg transition-all font-semibold ${
               isCustom
-                ? 'bg-[#FFFFFF] text-[#0284C7] font-bold border border-[#CBD5E1] shadow-sm'
-                : 'text-[#64748B] hover:text-[#0F172A]'
+                ? 'bg-white text-indigo-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            + New Astronaut Profile
+            + New Crew Profile
           </button>
         </div>
 
         {/* Option 1: Existing Roster */}
         {!isCustom ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {crew.map(c => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
+            {crew.map((c) => {
               const isSelected = selectedId === c.id;
               return (
                 <div
                   key={c.id}
                   onClick={() => setSelectedId(c.id)}
-                  className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-start gap-3 ${
+                  role="button"
+                  tabIndex={0}
+                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
                     isSelected
-                      ? 'bg-[#F0F9FF] border-[#0EA5E9] ring-2 ring-[#0EA5E9]/20 shadow-sm'
-                      : 'bg-[#F8FAFC] border-[#E2E8F0] hover:border-[#CBD5E1] hover:bg-[#FFFFFF]'
+                      ? 'bg-indigo-50/70 border-indigo-400 ring-2 ring-indigo-200 shadow-sm'
+                      : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border ${
                       isSelected
-                        ? 'bg-[#0284C7] text-white border-[#0284C7]'
-                        : 'bg-[#E2E8F0] text-[#475569] border-[#CBD5E1]'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        : 'bg-white text-indigo-600 border-slate-200'
                     }`}
                   >
-                    {c.callsign.substring(0, 2)}
+                    <User className="w-5 h-5" />
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#0F172A] truncate">
+                      <span className="text-xs font-bold text-slate-900 truncate">
                         {c.name}
                       </span>
                       <StatusBadge level={c.status} showLabel={false} size="sm" />
                     </div>
-                    <span className="text-[10px] text-[#64748B] block truncate mt-0.5">
-                      {c.role} ({c.gender})
+                    <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                      {c.role} &middot; {c.callsign}
                     </span>
-                    <span className="text-[9px] text-[#0284C7] block truncate mt-1 font-bold">
-                      Twin: {c.gender === 'female' ? 'Female Anatomical Model' : 'Male Anatomical Model'}
+                    <span className="text-[9px] text-indigo-600 block truncate mt-1 font-semibold">
+                      {c.gender === 'female' ? 'Female Anatomy Model' : 'Male Anatomy Model'}
                     </span>
                   </div>
                 </div>
@@ -132,57 +163,57 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
           </div>
         ) : (
           /* Option 2: Custom Astronaut Input */
-          <div className="space-y-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs">
+          <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
             <div className="space-y-1">
-              <label className="text-[10px] text-[#64748B] uppercase font-bold">Astronaut Full Name</label>
+              <label className="text-[10px] text-slate-500 uppercase font-bold">Astronaut Full Name</label>
               <input
                 type="text"
                 value={customName}
-                onChange={e => setCustomName(e.target.value)}
-                placeholder="e.g. Alex Rivera"
-                className="w-full bg-[#FFFFFF] border border-[#CBD5E1] rounded-lg p-2.5 text-[#0F172A] focus:outline-none focus:border-[#0EA5E9]"
+                onChange={(e) => setCustomName(e.target.value)}
+                placeholder="e.g. Commander Sarah Vance"
+                className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:outline-none focus:border-indigo-400"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] text-[#64748B] uppercase font-bold">Callsign</label>
+                <label className="text-[10px] text-slate-500 uppercase font-bold">Callsign</label>
                 <input
                   type="text"
                   value={customCallsign}
-                  onChange={e => setCustomCallsign(e.target.value)}
-                  placeholder="e.g. Apex"
-                  className="w-full bg-[#FFFFFF] border border-[#CBD5E1] rounded-lg p-2.5 text-[#0F172A] focus:outline-none focus:border-[#0EA5E9]"
+                  onChange={(e) => setCustomCallsign(e.target.value)}
+                  placeholder="e.g. VALKYRIE"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:outline-none focus:border-indigo-400"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] text-[#64748B] uppercase font-bold">Mission Role</label>
+                <label className="text-[10px] text-slate-500 uppercase font-bold">Mission Role</label>
                 <select
                   value={customRole}
-                  onChange={e => setCustomRole(e.target.value)}
-                  className="w-full bg-[#FFFFFF] border border-[#CBD5E1] rounded-lg p-2.5 text-[#0F172A] focus:outline-none focus:border-[#0EA5E9]"
+                  onChange={(e) => setCustomRole(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:outline-none focus:border-indigo-400"
                 >
-                  <option value="Flight Engineer">Flight Engineer</option>
                   <option value="Mission Commander">Mission Commander</option>
                   <option value="Medical Specialist">Medical Specialist</option>
+                  <option value="Flight Engineer">Flight Engineer</option>
                   <option value="Payload Scientist">Payload Scientist</option>
                 </select>
               </div>
             </div>
 
             <div className="space-y-1.5 pt-1">
-              <label className="text-[10px] text-[#64748B] uppercase font-bold block">
+              <label className="text-[10px] text-slate-500 uppercase font-bold block">
                 3D Anatomical Twin Gender
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setCustomGender('female')}
-                  className={`p-2.5 rounded-lg border text-center transition-all ${
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
                     customGender === 'female'
-                      ? 'bg-[#0284C7] border-[#0284C7] text-white font-bold'
-                      : 'bg-[#FFFFFF] border-[#CBD5E1] text-[#64748B]'
+                      ? 'bg-indigo-50 border-indigo-400 text-indigo-700 font-bold'
+                      : 'bg-white border-slate-200 text-slate-600'
                   }`}
                 >
                   Female Anatomy Model
@@ -190,10 +221,10 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
                 <button
                   type="button"
                   onClick={() => setCustomGender('male')}
-                  className={`p-2.5 rounded-lg border text-center transition-all ${
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
                     customGender === 'male'
-                      ? 'bg-[#0284C7] border-[#0284C7] text-white font-bold'
-                      : 'bg-[#FFFFFF] border-[#CBD5E1] text-[#64748B]'
+                      ? 'bg-indigo-50 border-indigo-400 text-indigo-700 font-bold'
+                      : 'bg-white border-slate-200 text-slate-600'
                   }`}
                 >
                   Male Anatomy Model
@@ -206,7 +237,7 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
         {/* Action Button */}
         <button
           onClick={handleConfirm}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] hover:from-[#0EA5E9] hover:to-[#38BDF8] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-[#5850EC] hover:bg-[#4F46E5] text-white font-semibold text-xs tracking-wide transition-all shadow-[0_4px_12px_rgba(88,80,236,0.25)]"
         >
           <span>Synchronize Personal Telemetry Twin</span>
           <ArrowRight className="w-4 h-4" />
@@ -215,3 +246,5 @@ export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onC
     </div>
   );
 };
+
+export default AstronautIdentificationModal;

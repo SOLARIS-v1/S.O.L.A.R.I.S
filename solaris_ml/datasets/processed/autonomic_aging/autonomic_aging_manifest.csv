@@ -1,0 +1,5 @@
+record,original_samples,downsampled_samples,fs_orig,fs_downsampled,duration_s,output_file
+0001,900401,180081,1000.0,200.0,900.4,solaris_ml\datasets\processed\autonomic_aging\0001_filtered_200hz.npz
+0002,1938301,387661,1000.0,200.0,1938.3,solaris_ml\datasets\processed\autonomic_aging\0002_filtered_200hz.npz
+0003,1801101,360221,1000.0,200.0,1801.1,solaris_ml\datasets\processed\autonomic_aging\0003_filtered_200hz.npz
+0004,903401,180681,1000.0,200.0,903.4,solaris_ml\datasets\processed\autonomic_aging\0004_filtered_200hz.npz

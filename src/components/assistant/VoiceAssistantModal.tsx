@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAstraStore } from '../../api/mockClient';
-import { localVoiceEngine, VERBAL_ASSESSMENT_STEPS } from '../../services/voiceAssistant';
+import { useSolarisVoice } from '../../context/SolarisVoiceContext';
+import {
+  solarisVoiceService,
+  CLINICAL_ASSESSMENT_QUESTIONS,
+} from '../../services/solarisVoiceService';
 import { useNavigate } from 'react-router-dom';
 import {
   Mic,
+  MicOff,
   Volume2,
   VolumeX,
   X,
@@ -12,11 +17,13 @@ import {
   BrainCircuit,
   CornerDownLeft,
   CheckCircle2,
-  ChevronRight,
-  Shield,
   Activity,
+  Heart,
+  Moon,
   Radio,
   FileCheck,
+  Eye,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 interface VoiceAssistantModalProps {
@@ -27,27 +34,26 @@ interface VoiceAssistantModalProps {
 export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const {
-    activeSubjectId,
-    crew,
-    records,
-    findings,
-    voiceMessages,
-    addVoiceMessage,
-  } = useAstraStore();
+    voiceState,
+    isListening,
+    isSpeaking,
+    isManualMode,
+    currentUtterance,
+    interimTranscript,
+    transcript,
+    assessmentFlow,
+    activeAstronaut,
+    wakeSolaris,
+    sleepSolaris,
+    toggleManualMode,
+    sendInput,
+    stopSpeaking,
+    startHealthAssessment,
+    cancelHealthAssessment,
+    confirmHealthAssessment,
+  } = useSolarisVoice();
 
-  const activeAstronaut = crew.find(c => c.id === activeSubjectId) || crew[1];
-
-  const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [inputText, setInputText] = useState('');
-
-  // Verbal Assessment Mode State
-  const [verbalModeActive, setVerbalModeActive] = useState(false);
-  const [assessmentStep, setAssessmentStep] = useState(0);
-  const [assessmentAnswers, setAssessmentAnswers] = useState<Record<string, string>>({});
-  const [assessmentFinished, setAssessmentFinished] = useState(false);
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -67,11 +73,11 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen
       const height = canvas.height;
       const mid = height / 2;
 
-      const multiplier = isSpeaking ? 0.75 : isListening ? 0.5 : isProcessing ? 0.35 : 0.2;
+      const multiplier = isSpeaking ? 0.75 : isListening ? 0.5 : voiceState === 'processing' ? 0.35 : 0.2;
       const barCount = 48;
       const barWidth = width / barCount - 1.5;
 
-      ctx.fillStyle = isSpeaking ? '#0284C7' : isListening ? '#10B981' : isProcessing ? '#F59E0B' : '#0EA5E9';
+      ctx.fillStyle = isSpeaking ? '#4F46E5' : isListening ? '#10B981' : voiceState === 'processing' ? '#F59E0B' : '#6366F1';
 
       for (let i = 0; i < barCount; i++) {
         const x = i * (barWidth + 1.5);
@@ -86,143 +92,87 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen
 
     renderWave();
     return () => cancelAnimationFrame(animId);
-  }, [isOpen, isSpeaking, isListening, isProcessing]);
+  }, [isOpen, isSpeaking, isListening, voiceState]);
 
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
-  }, [voiceMessages, isProcessing]);
+  }, [transcript, interimTranscript]);
 
   if (!isOpen) return null;
 
   const handleSendMessage = (textToSend?: string) => {
     const query = textToSend || inputText;
     if (!query.trim()) return;
-
-    addVoiceMessage({ sender: 'astronaut', text: query });
+    sendInput(query.trim());
     setInputText('');
-    setIsProcessing(true);
-    setIsListening(false);
+  };
 
-    if (verbalModeActive && !assessmentFinished) {
-      setTimeout(() => {
-        const currentQ = VERBAL_ASSESSMENT_STEPS[assessmentStep];
-        const newAnswers = { ...assessmentAnswers, [currentQ.field]: query };
-        setAssessmentAnswers(newAnswers);
-
-        if (assessmentStep + 1 < VERBAL_ASSESSMENT_STEPS.length) {
-          const nextStep = assessmentStep + 1;
-          setAssessmentStep(nextStep);
-          const nextQ = VERBAL_ASSESSMENT_STEPS[nextStep];
-          const responseText = `Recorded: "${query}". Next question: ${nextQ.prompt}`;
-          addVoiceMessage({ sender: 'astra', text: responseText });
-          setIsProcessing(false);
-          setIsSpeaking(true);
-          localVoiceEngine.speak(responseText, () => setIsSpeaking(false));
-        } else {
-          setAssessmentFinished(true);
-          const finishText = `All 5 verbal telemetry indicators recorded for ${activeAstronaut.name}. Ready to commit to autonomous health log.`;
-          addVoiceMessage({ sender: 'astra', text: finishText });
-          setIsProcessing(false);
-          setIsSpeaking(true);
-          localVoiceEngine.speak(finishText, () => setIsSpeaking(false));
-        }
-      }, 700);
-      return;
+  const getStatusBadge = () => {
+    switch (voiceState) {
+      case 'speaking':
+        return { label: 'SPEAKING', bg: 'bg-indigo-50 border-indigo-200 text-indigo-700' };
+      case 'listening':
+        return { label: 'LISTENING', bg: 'bg-emerald-50 border-emerald-200 text-emerald-700' };
+      case 'processing':
+        return { label: 'PROCESSING', bg: 'bg-amber-50 border-amber-200 text-amber-700' };
+      case 'manual_mode':
+        return { label: 'MANUAL MODE', bg: 'bg-slate-100 border-slate-200 text-slate-700' };
+      case 'sleeping':
+        return { label: 'SLEEPING', bg: 'bg-slate-50 border-slate-200 text-slate-600' };
+      case 'unavailable':
+      case 'error':
+        return { label: 'OFFLINE / FALLBACK', bg: 'bg-rose-50 border-rose-200 text-rose-700' };
+      default:
+        return { label: 'ONLINE', bg: 'bg-indigo-50/70 border-indigo-200 text-indigo-700' };
     }
-
-    setTimeout(() => {
-      const response = localVoiceEngine.processCommand(query, activeAstronaut, records, findings);
-      addVoiceMessage({ sender: 'astra', text: response.spokenText });
-      setIsProcessing(false);
-      setIsSpeaking(true);
-
-      if (response.action === 'navigate_body') {
-        navigate('/body');
-        onClose();
-      } else if (response.action === 'navigate_monitoring') {
-        navigate('/monitoring');
-        onClose();
-      } else if (response.action === 'navigate_assessment') {
-        setVerbalModeActive(true);
-        setAssessmentStep(0);
-        setAssessmentAnswers({});
-        setAssessmentFinished(false);
-      } else if (response.action === 'navigate_findings') {
-        navigate('/intelligence');
-        onClose();
-      } else if (response.action === 'sleep') {
-        setTimeout(onClose, 1500);
-      }
-
-      localVoiceEngine.speak(response.spokenText, () => {
-        setIsSpeaking(false);
-      });
-    }, 600);
   };
 
-  const handleStartVerbalAssessment = () => {
-    setVerbalModeActive(true);
-    setAssessmentStep(0);
-    setAssessmentAnswers({});
-    setAssessmentFinished(false);
-    const firstQ = VERBAL_ASSESSMENT_STEPS[0];
-    const initialPrompt = `Starting verbal assessment for ${activeAstronaut.callsign}. ${firstQ.prompt}`;
-    addVoiceMessage({ sender: 'astra', text: initialPrompt });
-    setIsSpeaking(true);
-    localVoiceEngine.speak(initialPrompt, () => setIsSpeaking(false));
-  };
-
-  const handleCommitVerbalAssessment = () => {
-    setVerbalModeActive(false);
-    setAssessmentFinished(false);
-    const confirmText = `Verbal assessment successfully committed to your telemetry timeline. Baseline updated.`;
-    addVoiceMessage({ sender: 'astra', text: confirmText });
-    localVoiceEngine.speak(confirmText);
-  };
+  const badge = getStatusBadge();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl rounded-2xl bg-[#FFFFFF] border border-[#CBD5E1] shadow-2xl flex flex-col max-h-[88vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl rounded-2xl bg-white border border-slate-200/90 shadow-2xl flex flex-col max-h-[88vh] overflow-hidden text-[#0F172A]">
         {/* Header Strip */}
-        <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between">
+        <div className="p-4 border-b border-slate-200/70 bg-slate-50/90 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0284C7] to-[#0EA5E9] flex items-center justify-center text-white shadow-glowCyan">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shadow-xs">
               <BrainCircuit className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm tracking-wide text-[#0F172A] font-mono">
-                  ASTRA NEURAL CORE
+                <span className="font-bold text-sm tracking-wide font-mono text-[#0F172A]">
+                  SOLARIS VOICE INTELLIGENCE
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#0EA5E9]/10 text-[#0284C7] border border-[#0EA5E9]/30 font-bold">
-                  OFFLINE LOCAL VAD / QWEN 2.5
+                <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border font-bold ${badge.bg}`}>
+                  {badge.label}
                 </span>
               </div>
-              <p className="text-[11px] font-mono text-[#64748B]">
-                Active Profile: <strong className="text-[#0F172A]">{activeAstronaut.name}</strong> ({activeAstronaut.callsign})
+              <p className="text-[11px] font-mono text-slate-500">
+                Astronaut: <strong className="text-[#0F172A]">{activeAstronaut?.name || 'Astronaut'}</strong> ({activeAstronaut?.callsign || 'CREW'})
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => {
-                localVoiceEngine.stopSpeaking();
-                setIsSpeaking(false);
-              }}
-              className="p-2 rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5F9] text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0] text-xs font-mono transition-colors"
-              title="Stop speech output"
+              onClick={() => toggleManualMode()}
+              className={`p-2 rounded-lg border text-xs font-mono transition-colors ${
+                isManualMode
+                  ? 'bg-amber-50 text-amber-800 border-amber-300'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border-slate-200'
+              }`}
+              title={isManualMode ? 'Resume Voice Mode' : 'Switch to Manual Mode'}
             >
-              {isSpeaking ? <VolumeX className="w-4 h-4 text-[#EF4444]" /> : <Volume2 className="w-4 h-4" />}
+              {isManualMode ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
             <button
               onClick={() => {
-                localVoiceEngine.stopSpeaking();
+                stopSpeaking();
                 onClose();
               }}
-              className="p-2 rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5F9] text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0] transition-colors"
+              className="p-2 rounded-lg bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -230,15 +180,15 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen
         </div>
 
         {/* Center: Real-time Audio Waveform */}
-        <div className="px-6 py-3.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex flex-col items-center justify-center gap-2">
+        <div className="px-6 py-3.5 bg-slate-50/60 border-b border-slate-200/70 flex flex-col items-center justify-center gap-2">
           <div className="w-full flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-[#0284C7] animate-ping' : isListening ? 'bg-[#10B981] animate-pulse' : 'bg-[#0EA5E9]'}`} />
-              <span className="text-[#334155] font-semibold text-[11px]">
-                {isSpeaking ? 'ASTRA Speaking (Neural TTS)' : isListening ? 'Listening (Silero VAD / Whisper)' : isProcessing ? 'Processing Telemetry (Qwen 2.5)' : 'Continuous Telemetry Monitoring Active'}
+              <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-indigo-600 animate-ping' : isListening ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+              <span className="text-[#0F172A] font-semibold text-[11px]">
+                {isSpeaking ? 'SOLARIS Speaking (Neural Voice Synthesis)' : isListening ? 'SOLARIS Listening (Speech Recognition)' : voiceState === 'manual_mode' ? 'Manual Mode (Silent Inspection)' : 'SOLARIS Standby — Grounded Mission Telemetry'}
               </span>
             </div>
-            <span className="text-[10px] text-[#94A3B8]">16 kHz MONO</span>
+            <span className="text-[10px] text-slate-500 font-medium">16 kHz AEROSPACE AUDIO</span>
           </div>
 
           {/* Dynamic Waveform Visualizer Canvas */}
@@ -246,36 +196,36 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen
             ref={canvasRef}
             width={640}
             height={44}
-            className="w-full h-11 rounded-lg bg-[#FFFFFF] border border-[#E2E8F0] shadow-inner"
+            className="w-full h-11 rounded-xl bg-white border border-slate-200 shadow-inner"
           />
         </div>
 
         {/* Conversation Stream */}
-        <div ref={chatScrollRef} className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[360px] font-mono text-xs">
-          {voiceMessages.map(msg => (
+        <div ref={chatScrollRef} className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[360px] font-mono text-xs bg-slate-50/30">
+          {transcript.map((msg) => (
             <div
               key={msg.id}
               className={`flex gap-2.5 ${msg.sender === 'astronaut' ? 'justify-end' : 'justify-start'}`}
             >
-              {msg.sender === 'astra' && (
-                <div className="w-7 h-7 rounded-lg bg-[#0EA5E9]/10 border border-[#0EA5E9]/30 flex items-center justify-center text-[#0284C7] shrink-0">
+              {msg.sender === 'solaris' && (
+                <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shrink-0">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
 
               <div
-                className={`max-w-[80%] rounded-xl p-3 text-xs leading-relaxed ${
+                className={`max-w-[80%] rounded-2xl p-3 text-xs leading-relaxed ${
                   msg.sender === 'astronaut'
-                    ? 'bg-[#0284C7] text-white shadow-sm'
-                    : 'bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0]'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-white text-[#0F172A] border border-slate-200/80 shadow-xs'
                 }`}
               >
-                <div className="flex items-center justify-between gap-4 mb-1 text-[10px] text-[#94A3B8]">
-                  <span className={msg.sender === 'astronaut' ? 'text-white/80' : 'text-[#64748B]'}>
-                    {msg.sender === 'astronaut' ? `${activeAstronaut.callsign}` : 'ASTRA Core'}
+                <div className="flex items-center justify-between gap-4 mb-1 text-[10px]">
+                  <span className={msg.sender === 'astronaut' ? 'text-indigo-100 font-semibold' : 'text-indigo-600 font-semibold'}>
+                    {msg.sender === 'astronaut' ? `${activeAstronaut?.callsign || 'ASTRONAUT'}` : 'SOLARIS // AI'}
                   </span>
-                  <span className={msg.sender === 'astronaut' ? 'text-white/70' : 'text-[#94A3B8]'}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <span className={msg.sender === 'astronaut' ? 'text-indigo-200' : 'text-slate-400'}>
+                    {msg.timestamp}
                   </span>
                 </div>
                 <p className="whitespace-pre-wrap">{msg.text}</p>
@@ -283,140 +233,161 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({ isOpen
             </div>
           ))}
 
-          {isProcessing && (
-            <div className="flex gap-2 items-center text-xs font-mono text-[#0284C7] animate-pulse">
-              <Bot className="w-4 h-4" />
-              <span>Querying local telemetry tensors...</span>
+          {/* Interim Real-time Speech Transcription */}
+          {interimTranscript && (
+            <div className="flex justify-end">
+              <div className="max-w-[80%] rounded-2xl p-3 text-xs leading-relaxed bg-indigo-50 border border-indigo-200 text-indigo-800 italic">
+                <span>Listening: "{interimTranscript}..."</span>
+              </div>
             </div>
           )}
 
-          {/* Verbal Assessment Wizard */}
-          {verbalModeActive && !assessmentFinished && (
-            <div className="p-4 rounded-xl bg-[#F0F9FF] border border-[#0EA5E9]/40 space-y-2.5">
+          {/* Conversational Assessment Interactive Box */}
+          {assessmentFlow.isActive && (
+            <div className="p-4 rounded-xl bg-white border border-indigo-200 shadow-sm space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#0284C7] font-bold">
-                  STEP {assessmentStep + 1} OF {VERBAL_ASSESSMENT_STEPS.length}: {VERBAL_ASSESSMENT_STEPS[assessmentStep].title}
+                <span className="text-indigo-700 font-bold">
+                  CONVERSATIONAL HEALTH ASSESSMENT — STEP {assessmentFlow.currentStepIndex + 1} OF {CLINICAL_ASSESSMENT_QUESTIONS.length}
                 </span>
-                <span className="text-[#64748B]">Verbal Protocol</span>
+                <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase font-bold tracking-wider">
+                  {assessmentFlow.stage}
+                </span>
               </div>
-              <p className="text-xs font-bold text-[#0F172A]">
-                "{VERBAL_ASSESSMENT_STEPS[assessmentStep].prompt}"
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                {VERBAL_ASSESSMENT_STEPS[assessmentStep].options.map(opt => (
-                  <button
-                    key={opt}
-                    onClick={() => handleSendMessage(opt)}
-                    className="p-2 text-left rounded-lg bg-[#FFFFFF] hover:bg-[#E0F2FE] border border-[#CBD5E1] text-xs text-[#334155] hover:text-[#0284C7] transition-all"
-                  >
-                    • {opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* Verbal Assessment Finished Review */}
-          {verbalModeActive && assessmentFinished && (
-            <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#10B981]/40 space-y-2.5">
-              <div className="flex items-center gap-1.5 text-xs text-[#059669] font-bold">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>VERBAL HEALTH ASSESSMENT READY TO COMMIT</span>
-              </div>
-              <div className="space-y-1 text-xs">
-                {VERBAL_ASSESSMENT_STEPS.map(step => (
-                  <div key={step.field} className="flex justify-between p-2 rounded bg-white border border-[#E2E8F0]">
-                    <span className="text-[#64748B]">{step.title}:</span>
-                    <strong className="text-[#0F172A]">{assessmentAnswers[step.field] || 'Nominal'}</strong>
+              {assessmentFlow.currentQuestion && (
+                <p className="text-xs font-semibold text-[#0F172A]">
+                  "{assessmentFlow.currentQuestion.question}"
+                </p>
+              )}
+
+              {assessmentFlow.stage === 'awaiting_confirmation' && (
+                <div className="p-3 rounded-lg bg-emerald-50/80 border border-emerald-200 text-xs text-[#0F172A] space-y-2">
+                  <div className="flex items-center gap-2 text-emerald-800 font-bold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Summary Prepared: Ready to Save to Medical Record</span>
                   </div>
-                ))}
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <button
-                  onClick={() => setVerbalModeActive(false)}
-                  className="px-3 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs text-[#64748B]"
-                >
-                  Discard
-                </button>
-                <button
-                  onClick={handleCommitVerbalAssessment}
-                  className="px-4 py-1.5 rounded bg-[#10B981] text-white font-bold text-xs hover:bg-[#059669] transition-colors"
-                >
-                  Commit to Health Timeline
-                </button>
-              </div>
+                  <p className="text-[11px] text-slate-600">{assessmentFlow.summaryText}</p>
+                  <div className="flex justify-end gap-2 pt-1">
+                    <button
+                      onClick={cancelHealthAssessment}
+                      className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmHealthAssessment}
+                      className="px-4 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-colors shadow-xs"
+                    >
+                      Confirm & Save
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         {/* Quick Voice Command Pills */}
-        <div className="px-4 py-2 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center gap-2 overflow-x-auto scrollbar-none text-[11px] font-mono">
-          <span className="text-[#94A3B8] shrink-0 uppercase">Commands:</span>
+        <div className="px-4 py-2.5 bg-slate-50/80 border-t border-slate-200 flex items-center gap-2 overflow-x-auto scrollbar-none text-[11px] font-mono">
+          <span className="text-slate-500 shrink-0 uppercase text-[10px] font-bold">Directives:</span>
+          <button
+            onClick={() => handleSendMessage('Wake up, SOLARIS')}
+            className="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium whitespace-nowrap transition-colors"
+          >
+            "Wake up, SOLARIS"
+          </button>
           <button
             onClick={() => handleSendMessage('Read my health')}
-            className="px-2.5 py-1 rounded-full bg-[#FFFFFF] hover:bg-[#E0F2FE] text-[#334155] hover:text-[#0284C7] border border-[#CBD5E1] whitespace-nowrap transition-colors"
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
           >
             "Read my health"
           </button>
           <button
-            onClick={() => handleSendMessage('Check my heart')}
-            className="px-2.5 py-1 rounded-full bg-[#FFFFFF] hover:bg-[#E0F2FE] text-[#334155] hover:text-[#0284C7] border border-[#CBD5E1] whitespace-nowrap transition-colors"
+            onClick={() => handleSendMessage('Read my heart rate')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
           >
-            "Check my heart"
+            "Read my heart rate"
           </button>
           <button
-            onClick={() => handleSendMessage('Show my body')}
-            className="px-2.5 py-1 rounded-full bg-[#FFFFFF] hover:bg-[#E0F2FE] text-[#334155] hover:text-[#0284C7] border border-[#CBD5E1] whitespace-nowrap transition-colors"
+            onClick={() => handleSendMessage('Read my blood pressure')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
           >
-            "Show my body"
+            "Read my blood pressure"
           </button>
           <button
-            onClick={handleStartVerbalAssessment}
-            className="px-2.5 py-1 rounded-full bg-[#0EA5E9]/15 text-[#0284C7] border border-[#0EA5E9]/40 whitespace-nowrap transition-colors flex items-center gap-1 font-bold"
+            onClick={() => handleSendMessage('Read my sleep report')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
           >
-            <Sparkles className="w-3 h-3" />
-            <span>"Start assessment"</span>
+            "Read my sleep report"
+          </button>
+          <button
+            onClick={() => handleSendMessage('Show radiation exposure')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
+          >
+            "Show radiation exposure"
+          </button>
+          <button
+            onClick={() => handleSendMessage('Explain this finding')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium whitespace-nowrap transition-colors"
+          >
+            "Explain this finding"
+          </button>
+          <button
+            onClick={() => handleSendMessage('Start eye test')}
+            className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-medium whitespace-nowrap transition-colors flex items-center gap-1"
+          >
+            <Eye className="w-3 h-3" />
+            <span>"Start eye test"</span>
+          </button>
+          <button
+            onClick={startHealthAssessment}
+            className="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold whitespace-nowrap transition-colors flex items-center gap-1"
+          >
+            <Sparkles className="w-3 h-3 text-indigo-600" />
+            <span>"Start health assessment"</span>
+          </button>
+          <button
+            onClick={() => handleSendMessage('Sleep SOLARIS')}
+            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-medium whitespace-nowrap transition-colors"
+          >
+            "Sleep SOLARIS"
           </button>
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 border-t border-[#E2E8F0] bg-[#FFFFFF] flex items-center gap-2">
+        <div className="p-3 border-t border-slate-200 bg-white flex items-center gap-2">
           <button
             onClick={() => {
               if (isListening) {
-                setIsListening(false);
+                solarisVoiceService.stopListening();
               } else {
-                setIsListening(true);
-                setTimeout(() => {
-                  handleSendMessage('Read my health');
-                  setIsListening(false);
-                }, 2200);
+                solarisVoiceService.startListening();
               }
             }}
             className={`p-2.5 rounded-full border transition-all ${
               isListening
-                ? 'bg-[#10B981] text-white border-[#10B981] animate-pulse font-bold'
-                : 'bg-[#F8FAFC] hover:bg-[#E0F2FE] text-[#0284C7] border-[#0EA5E9]/30'
+                ? 'bg-emerald-600 text-white border-emerald-600 animate-pulse font-bold'
+                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
             }`}
-            title="Toggle Push-to-Talk"
+            title="Toggle Continuous Microphone"
           >
-            <Mic className="w-4 h-4" />
+            {isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
           </button>
 
           <input
             type="text"
             value={inputText}
-            onChange={e => setInputText(e.target.value)}
-            onKeyDown={e => {
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
               if (e.key === 'Enter') handleSendMessage();
             }}
-            placeholder="Type or speak command (e.g. 'Read my health', 'Check my heart')..."
-            className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#0EA5E9] font-mono"
+            placeholder="Speak or type command (e.g. 'Read my health', 'Wake up, SOLARIS')..."
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white font-mono transition-colors"
           />
 
           <button
             onClick={() => handleSendMessage()}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] hover:from-[#0EA5E9] hover:to-[#38BDF8] text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1 transition-all shadow-sm"
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1 transition-all shadow-xs"
           >
             <span>Transmit</span>
             <CornerDownLeft className="w-3.5 h-3.5" />

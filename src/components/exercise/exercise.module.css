@@ -1,0 +1,920 @@
+/* Exercise plan: week strip, today's session as illustrated cards, and why it was adjusted. */
+
+/* ---------- figure ---------- */
+.figureBox {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-md);
+  background:
+    radial-gradient(90% 80% at 50% 100%, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 70%),
+    var(--surface-2);
+  overflow: hidden;
+}
+.figure {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Character palette - Professional Aerospace Flight Trainer */
+  --shirt: #1E293B;
+  --shorts: #0F172A;
+  --skin: #D4A373;
+  --skin-shade: #BA8454;
+  --hair: #2C221E;
+  --accent: #F97316;
+  --sock: #E2E8F0;
+  --shoe: #1E293B;
+}
+:global([data-theme='light']) .figure {
+  --shorts: #263049;
+}
+.figure line,
+.figure path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.shirt {
+  fill: var(--shirt);
+}
+.figure .shirtFill {
+  fill: var(--shirt);
+  stroke: var(--shirt);
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+.collar {
+  fill: var(--shirt);
+  stroke: color-mix(in srgb, var(--shirt) 70%, #000);
+  stroke-width: 1.2;
+}
+.shorts,
+.shortsFill {
+  fill: var(--shorts);
+}
+.skin,
+.skinFill {
+  fill: var(--skin);
+}
+.sock {
+  fill: var(--sock);
+}
+.shoe {
+  fill: var(--shoe);
+}
+.accent,
+.accentFill {
+  fill: var(--accent);
+}
+.hair {
+  fill: var(--hair);
+}
+.eye {
+  fill: #1d1d1f;
+}
+.brow {
+  stroke: var(--hair);
+  stroke-width: 1.4;
+}
+.figure .band {
+  stroke: #2b3140;
+  stroke-width: 2.2;
+}
+.cup {
+  fill: #2b3140;
+}
+.mic {
+  stroke: #2b3140;
+  stroke-width: 1.4;
+}
+/* Far-side limbs: same clothes, a tone darker, so the body reads in depth. */
+.farTone {
+  filter: brightness(0.7) saturate(0.85);
+}
+.shadow {
+  fill: #000;
+  opacity: 0.28;
+}
+.floor {
+  stroke: var(--border-3);
+  stroke-width: 2;
+}
+.machine {
+  fill: var(--surface-3);
+  stroke: var(--border-3);
+  stroke-width: 1.5;
+}
+.machineLine {
+  stroke: var(--border-3);
+  stroke-width: 4;
+}
+.beltMark {
+  stroke: var(--text-3);
+  stroke-width: 2;
+}
+.bungee {
+  stroke: var(--watch);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.8;
+}
+.plate {
+  fill: var(--surface-3);
+  stroke: var(--text-3);
+  stroke-width: 3;
+}
+.plateRing {
+  fill: none;
+  stroke: var(--border-3);
+  stroke-width: 1.5;
+}
+.barEnd {
+  fill: var(--text-2);
+}
+.cable {
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+}
+.flywheel {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 2;
+}
+.crankArm {
+  stroke: var(--text-2);
+  stroke-width: 3;
+}
+.playBtn {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text-2);
+  cursor: pointer;
+}
+/* The circle stays small; the tap area around it is 44 px (30 px inside the border plus 7 px a side). */
+.playBtn::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+}
+.playBtn:hover {
+  color: var(--text);
+}
+
+/* ---------- head ---------- */
+.whose {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 99px;
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.whose b {
+  color: var(--text);
+}
+
+/* Page width, not viewport width, drives the layout: the docked specialist panel narrows the page. */
+.wrap {
+  container-type: inline-size;
+}
+
+/* ---------- week ---------- */
+.weekCard {
+  margin-bottom: 24px;
+}
+.week {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.weekDay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  min-width: 0;
+}
+.weekToday {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+/* Past days: only the bar dims, the text keeps full contrast. */
+.weekPast .weekBar {
+  opacity: 0.7;
+}
+.weekName {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.weekName small {
+  font-weight: 500;
+  font-size: var(--fs-micro);
+  color: var(--text-3);
+}
+.weekKind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.weekKind svg {
+  flex: none;
+}
+.k_resistance {
+  color: var(--accent);
+}
+.k_intervals {
+  color: var(--watch);
+}
+.k_continuous {
+  color: var(--ok);
+}
+.k_rest,
+.k_light {
+  color: var(--text-3);
+}
+.adjDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--act);
+  flex: none;
+}
+.weekBar {
+  position: relative;
+  display: block;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.weekPlan {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+}
+.weekDone {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--watch);
+}
+.weekDone.weekMet {
+  background: var(--ok);
+}
+.weekMin {
+  font-size: 0.75rem;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.weekMin b {
+  color: var(--text);
+}
+
+/* ---------- layout ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+.main {
+  min-width: 0;
+}
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: calc(var(--topbar, 56px) + 16px);
+}
+
+/* ---------- today ---------- */
+.todayHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.todayHead > div {
+  flex: 1;
+  min-width: 0;
+}
+.todayIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.todayTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.todayMeta {
+  margin: 2px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
+.session {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.exCard {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.warmRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--border-2);
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+.warmRow b {
+  color: var(--text);
+}
+.exBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.exTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.exStep {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+.exName {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.exRole {
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.exMin {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.exDose {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.exDevice {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+.cues {
+  margin: 2px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+.cues li::marker {
+  color: var(--text-3);
+  font-weight: 600;
+}
+.exWhy {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+.exFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.targets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.targets li {
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.videoBtn {
+  gap: 6px;
+}
+.source {
+  margin: 16px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+
+/* ---------- side ---------- */
+.adjList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* A plain row: tinted icon for where the change came from, then what and why. Rows split by a hairline. */
+.adj {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+}
+.adj + .adj {
+  border-top: 1px solid var(--border);
+}
+.adj:first-child {
+  padding-top: 2px;
+}
+.adj:last-child {
+  padding-bottom: 0;
+}
+.adjIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--st);
+  background: var(--st-soft);
+}
+/* History notes that are fine today stay quiet: neutral icon instead of green. */
+.adj:global(.st-ok) .adjIcon {
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.adj b {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.adj p {
+  margin: 3px 0 6px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.adjSource {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.adjSource a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.adjSource a:hover {
+  text-decoration: underline;
+}
+@media (pointer: coarse), (max-width: 1023px) {
+  .adjSource a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+.devices {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.devices dt {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.devices dd {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+/* ---------- video dialog ---------- */
+.dialog {
+  /* Third term: on short screens (a phone on its side) the width follows the height, so the whole 16:9 player
+     fits under the header (up to 140 px with a two-line subtitle and the dialog's margins). */
+  width: min(860px, calc(100vw - 32px), calc((100dvh - 140px) * 16 / 9 + 24px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid var(--border-2);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-2);
+  overflow: auto;
+}
+.dialog::backdrop {
+  background: rgba(3, 6, 12, 0.78);
+  backdrop-filter: blur(3px);
+}
+.dialogPanel {
+  display: flex;
+  flex-direction: column;
+}
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 14px 12px 20px;
+}
+.dialogTitle {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.dialogSub {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+.closeBtn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.closeBtn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+/* The picture sits inset with rounded corners, not edge to edge. */
+.player {
+  margin: 0 12px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+.player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* NASA clip player: picture plus a translucent control bar scoped to the clip. */
+.clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+.clip video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.clipLoading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+.clipBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+.clipBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 18px 4px 2px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+}
+.clipBtn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.clipBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.clipBtn:focus-visible,
+.clipSeek:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+.clipTime {
+  flex: none;
+  min-width: 78px;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+/* Seek bar over only the clip's seconds: filled part in the accent colour. The input is 24 px tall to tap; the
+   track drawn inside it stays 4 px. */
+.clipSeek {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  margin: 0 6px;
+  appearance: none;
+  background: none;
+  cursor: pointer;
+}
+.clipSeek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(to right, var(--accent) var(--pct, 0%), rgba(255, 255, 255, 0.3) var(--pct, 0%));
+}
+.clipSeek::-moz-range-track {
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(to right, var(--accent) var(--pct, 0%), rgba(255, 255, 255, 0.3) var(--pct, 0%));
+}
+.clipSeek::-webkit-slider-thumb {
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.clipSeek::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+}
+.clip:fullscreen .clipBar {
+  padding: 24px 20px 14px;
+}
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 20px 18px;
+}
+.clipNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.clipNote svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--text-3);
+}
+/* Citation as labelled rows: Source, Published, Clip, Licence. */
+.citation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+  margin: 0;
+}
+.citation > div {
+  min-width: 0;
+}
+.citation dt {
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.citation dd {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.citation a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.citation a:hover {
+  text-decoration: underline;
+}
+.citation a svg {
+  display: inline;
+  vertical-align: -1px;
+}
+.nowrap {
+  white-space: nowrap;
+}
+/* A second Close after the citation: Escape and Tab can stay inside a YouTube player, so Tab out of it lands here. */
+.dialogFoot {
+  display: flex;
+  justify-content: flex-end;
+}
+@media (max-width: 560px) {
+  .citation {
+    grid-template-columns: 1fr;
+  }
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+.clipLen {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* ---------- responsive ----------
+   Container widths of .wrap (the page's content box): 1010 px is a 1100 px window, 810 px a 900 px one and 640 px
+   a 680 px one, so the steps match the old window breakpoints when the specialist panel is closed. */
+@container (max-width: 1010px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  /* Narrow: today's session first, then why it changed and the hardware. */
+  .side {
+    position: static;
+  }
+}
+/* Mid widths: the week scrolls sideways. WeekList opens it on today and fades the edge that has more days. */
+@container (max-width: 810px) {
+  .week {
+    grid-template-columns: repeat(7, 132px);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-3) transparent;
+    scroll-snap-type: x proximity;
+    /* A snapped day starts past the faded edge; the day before it shows in the fade as the cue. */
+    scroll-padding-inline: 32px;
+    padding: 2px 2px 8px;
+  }
+  .weekDay {
+    scroll-snap-align: start;
+  }
+  .week[data-fade='end'] {
+    mask-image: linear-gradient(to left, transparent, #000 32px);
+  }
+  .week[data-fade='start'] {
+    mask-image: linear-gradient(to right, transparent, #000 32px);
+  }
+  .week[data-fade='both'] {
+    mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+  }
+}
+/* Phones: the week is a list, one day per row. */
+@container (max-width: 640px) {
+  .week {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    overflow-x: visible;
+    padding: 0;
+  }
+  /* Day | session over bar and minutes. */
+  .weekDay {
+    display: grid;
+    /* The minutes column has a floor so the bars line up from day to day. */
+    grid-template-columns: 64px minmax(0, 1fr) minmax(96px, auto);
+    align-items: center;
+    gap: 4px 10px;
+    padding: 8px 12px;
+  }
+  .weekName {
+    grid-row: span 2;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .weekKind {
+    grid-column: 2 / -1;
+  }
+  .weekBar {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  .weekMin {
+    grid-row: 2;
+    grid-column: 3;
+    text-align: right;
+  }
+  .exCard {
+    grid-template-columns: 1fr;
+  }
+  .todayHead {
+    flex-wrap: wrap;
+  }
+  .todayHead > div {
+    flex: 1 1 calc(100% - 60px);
+  }
+  .todayHead > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .playBtn {
+    border-color: var(--accent);
+  }
+}

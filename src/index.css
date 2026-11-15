@@ -3,19 +3,32 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --bg-dark: #06080C;
-  --bg-radial-center: #0B1017;
-  --text-primary: #ECE8E1;
-  --text-secondary: #8D97A6;
-  --text-muted: #5B6573;
-  --accent: #B8CCE6;
-  --signal-normal: #6FBF9B;
-  --signal-watch: #E0BE6A;
-  --signal-review: #E58F55;
-  --signal-urgent: #DE6A64;
-  --signal-simulated: #8E8AB8;
-  --hairline: rgba(255, 255, 255, 0.08);
+  color-scheme: light;
+  /* SOLARIS Clean Neumorphic Light Palette */
+  --bg-dark: #F4F7FC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-secondary: #F8FAFC;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --accent-primary: #4F46E5;
+  --accent-light: #EEF2FF;
+  --hairline: #E2E8F0;
+  --hairline-soft: #F1F5F9;
+
+  /* Clinical Status Tokens */
+  --status-normal: #10B981;
+  --status-observation: #F59E0B;
+  --status-review: #EA580C;
+  --status-urgent: #EF4444;
+  --status-simulated: #8B5CF6;
+
+  /* Signal token aliases */
+  --signal-normal: #10B981;
+  --signal-watch: #F59E0B;
+  --signal-review: #EA580C;
+  --signal-urgent: #EF4444;
+  --signal-simulated: #8B5CF6;
 }
 
 html, body {
@@ -23,36 +36,20 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #06080C;
-  color: #ECE8E1;
+  background-color: #F4F7FC;
+  color: #0F172A;
   font-family: 'Geist Sans', 'Inter Variable', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Nocturne Radial Gradient & Vignette Background */
-.nocturne-stage {
-  background: radial-gradient(ellipse 90% 80% at 50% 40%, #0B1017 0%, #06080C 100%);
+/* SOLARIS Neumorphic Light Canvas & Stage */
+.nocturne-stage, .solaris-stage {
+  background-color: #F4F7FC;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(238, 242, 255, 0.8) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(241, 245, 249, 0.9) 0%, transparent 25%);
   position: relative;
-}
-
-/* 2% Film Grain & Vignette Overlay */
-.nocturne-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
-  z-index: 1;
-}
-
-.nocturne-stage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.7);
-  z-index: 1;
 }
 
 /* Technical Monospace & Tabular Numerals */
@@ -62,63 +59,97 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Neumorphic Soft Extrusions & Surfaces */
+.neu-flat {
+  background: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 6px 6px 14px rgba(163, 177, 198, 0.25), -6px -6px 14px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.neu-card {
+  background: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -2px rgba(50, 50, 93, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s ease-in-out;
+}
+
+.neu-card:hover {
+  box-shadow: 0 10px 25px -3px rgba(50, 50, 93, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  border-color: #CBD5E1;
+}
+
+.neu-pressed {
+  background: #EEF2F6;
+  border-radius: 0.75rem;
+  box-shadow: inset 3px 3px 6px rgba(163, 177, 198, 0.25), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+}
+
+.neu-indigo {
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.35), 0 4px 10px -2px rgba(79, 70, 229, 0.2);
+}
+
 /* Hairline borders */
 .hairline-border {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #E2E8F0;
 }
 
 .hairline-b {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .hairline-t {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #E2E8F0;
 }
 
 .hairline-l {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid #E2E8F0;
 }
 
 .hairline-r {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid #E2E8F0;
 }
 
-/* Minimalist dark scrollbars */
+/* Minimalist light scrollbars */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
+  background: #CBD5E1;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.24);
+  background: #94A3B8;
 }
 
-/* Astra Orb Animations */
+/* Solaris Glow and Breathing Animations */
 @keyframes orbBreathe {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 24px rgba(184, 204, 230, 0.25), 0 0 60px rgba(138, 160, 215, 0.12), inset 0 0 16px rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 24px rgba(124, 212, 253, 0.25), 0 0 60px rgba(78, 205, 196, 0.15), inset 0 0 16px rgba(255, 255, 255, 0.7);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 32px rgba(184, 204, 230, 0.38), 0 0 80px rgba(138, 160, 215, 0.22), inset 0 0 20px rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 34px rgba(124, 212, 253, 0.4), 0 0 80px rgba(78, 205, 196, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.9);
   }
 }
 
 @keyframes orbPulseListening {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 28px rgba(184, 204, 230, 0.35), 0 0 65px rgba(142, 138, 184, 0.25);
+    box-shadow: 0 0 28px rgba(124, 212, 253, 0.4), 0 0 65px rgba(78, 205, 196, 0.3);
   }
   50% {
-    transform: scale(1.12);
-    box-shadow: 0 0 45px rgba(184, 204, 230, 0.6), 0 0 100px rgba(142, 138, 184, 0.4);
+    transform: scale(1.1);
+    box-shadow: 0 0 45px rgba(124, 212, 253, 0.65), 0 0 100px rgba(78, 205, 196, 0.45);
   }
 }
 
@@ -168,6 +199,12 @@ html, body {
 .animate-leader-draw {
   stroke-dasharray: 200;
   animation: leaderDraw 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Keyboard focus accessibility outline */
+:focus-visible {
+  outline: 2px solid #7CD4FD;
+  outline-offset: 2px;
 }
 
 /* Prefers-reduced-motion */

@@ -1,0 +1,367 @@
+/* Anatomical body figure ------------------------------------------------------------------- */
+.wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 12px 8px 4px;
+}
+/* Fills the stage (between the top buttons and the toolbar) and keeps its proportions. */
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  overflow: visible;
+}
+.tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.tip b {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.tip span {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.tip[data-status='ok'] span {
+  color: var(--ok);
+}
+.tip[data-status='watch'] span {
+  color: var(--watch);
+}
+.tip[data-status='act'] span {
+  color: var(--act);
+}
+
+/* ---------- skin (two looks) ---------- */
+.anatomy .skin {
+  --s1: #f6d6bd;
+  --s2: #e2ad8e;
+  --s3: #bd8466;
+  --s-line: #7d4b39;
+  --s-op: 0.95;
+}
+.status .skin {
+  --s1: color-mix(in srgb, var(--accent) 30%, transparent);
+  --s2: color-mix(in srgb, var(--accent) 17%, transparent);
+  --s3: color-mix(in srgb, var(--accent-2) 15%, transparent);
+  --s-line: var(--accent);
+  --s-op: 1;
+}
+.body {
+  fill: url(#ana-skin);
+  fill-opacity: var(--s-op);
+  stroke: var(--s-line);
+  stroke-width: 1.5;
+  stroke-opacity: 0.75;
+  stroke-linejoin: round;
+}
+.status .body {
+  stroke-opacity: 0.5;
+}
+.contour {
+  fill: none;
+  stroke: var(--s-line);
+  stroke-width: 1.15;
+  stroke-opacity: 0.38;
+  stroke-linecap: round;
+}
+.face {
+  fill: none;
+  stroke: var(--s-line);
+  stroke-width: 1.4;
+  stroke-opacity: 0.6;
+  stroke-linecap: round;
+}
+.brow {
+  fill: none;
+  stroke: #4e3226;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.status .brow {
+  stroke: var(--accent);
+  stroke-opacity: 0.6;
+}
+.blush {
+  fill: #ff8f98;
+  opacity: 0.32;
+}
+.sheen {
+  fill: #fff;
+  opacity: 0.22;
+}
+.status .blush,
+.status .sheen {
+  display: none;
+}
+.dots {
+  fill: url(#ana-dots);
+  pointer-events: none;
+}
+.scan {
+  fill: url(#ana-scan);
+  pointer-events: none;
+  transform-box: view-box;
+  animation: scan 6s linear infinite;
+}
+@keyframes scan {
+  from {
+    transform: translateY(-120px);
+  }
+  to {
+    transform: translateY(880px);
+  }
+}
+.anatomy .dots,
+.anatomy .scan {
+  display: none;
+}
+
+/* ---------- natural tissue palettes (anatomy view) ---------- */
+.anatomy .p_brain { --o1: #ffe1e5; --o2: #f2a6b2; --o3: #a2566a; }
+.anatomy .p_eye { --o1: #9cc7f2; --o2: #3f86c8; --o3: #1f3f66; }
+.anatomy .p_heart { --o1: #ffa29b; --o2: #d63f3d; --o3: #6c191e; }
+.anatomy .p_artery { --o1: #ff958f; --o2: #cf393b; --o3: #6a181c; }
+.anatomy .p_vein { --o1: #a7bfff; --o2: #5374d4; --o3: #24346e; }
+.anatomy .p_lung { --o1: #ffd8de; --o2: #efa1ae; --o3: #a2566a; }
+.anatomy .p_airway { --o1: #fff8f3; --o2: #ecd5cb; --o3: #957468; }
+.anatomy .p_liver { --o1: #e99a7f; --o2: #b3503a; --o3: #5e2418; }
+.anatomy .p_stomach { --o1: #ffcdbd; --o2: #ee927d; --o3: #9a4d42; }
+.anatomy .p_pancreas { --o1: #ffe4ad; --o2: #eebc68; --o3: #977030; }
+.anatomy .p_gall { --o1: #bdf1b6; --o2: #5ebf72; --o3: #2b6a3f; }
+.anatomy .p_small { --o1: #ffd4c7; --o2: #f2a291; --o3: #a35c51; }
+.anatomy .p_colon { --o1: #f8c7ac; --o2: #d98b6d; --o3: #874836; }
+.anatomy .p_kidney { --o1: #f0a292; --o2: #b9463e; --o3: #641e1c; }
+.anatomy .p_bladder { --o1: #fff2c6; --o2: #f0cf78; --o3: #9c8138; }
+.anatomy .p_ureter { --o1: #ffeab7; --o2: #e2b65e; --o3: #8f6a26; }
+.anatomy .p_node { --o1: #d8ffe5; --o2: #7bd9a4; --o3: #2b845a; }
+.anatomy .p_thymus { --o1: #ffe8d0; --o2: #f2c090; --o3: #9e6f47; }
+.anatomy .p_spleen { --o1: #eaa8d4; --o2: #a64f8b; --o3: #521f47; }
+.anatomy .p_bone { --o1: #fffbf2; --o2: #eadfc5; --o3: #96866a; }
+
+/* ---------- status view: every system tinted by its health status ---------- */
+.status .part {
+  --o1: color-mix(in srgb, var(--st) 42%, #fff);
+  --o2: var(--st);
+  --o3: color-mix(in srgb, var(--st) 48%, #000);
+}
+
+/* ---------- drawing primitives ---------- */
+.shape {
+  stroke: var(--o3);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.status .shape {
+  fill-opacity: 0.5;
+  stroke: var(--st);
+  stroke-width: 1.3;
+}
+.detail {
+  fill: none;
+  stroke: var(--o3);
+  stroke-width: 0.95;
+  stroke-linecap: round;
+  stroke-opacity: 0.7;
+  pointer-events: none;
+}
+.gloss {
+  fill: #fff;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.status .gloss {
+  opacity: 0.2;
+}
+.hole {
+  fill: var(--o3);
+  opacity: 0.55;
+}
+.hit {
+  fill: transparent;
+}
+.tube path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tubeLine {
+  stroke: var(--o3);
+}
+.tubeBody {
+  stroke: var(--o2);
+}
+.tubeShine {
+  stroke: var(--o1);
+  opacity: 0.8;
+  pointer-events: none;
+}
+.status .tubeBody {
+  stroke-opacity: 0.6;
+}
+.status .tubeLine {
+  stroke: var(--st);
+  stroke-opacity: 0.8;
+}
+.haustra {
+  fill: none;
+  stroke: var(--o3);
+  stroke-dasharray: 1.4 8;
+  stroke-opacity: 0.45;
+  pointer-events: none;
+}
+.sclera {
+  fill: #f6f8fc;
+  stroke: none;
+}
+.status .sclera {
+  fill: color-mix(in srgb, var(--st) 18%, #fff);
+}
+.iris {
+  fill: var(--o2);
+}
+.pupil {
+  fill: #0c0f17;
+}
+.catch {
+  fill: #fff;
+  pointer-events: none;
+}
+.lid {
+  fill: none;
+  stroke: #22191f;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+.status .lid {
+  stroke: var(--st);
+}
+.overlay {
+  pointer-events: none;
+  opacity: 0.72;
+}
+.status .overlay {
+  opacity: 0.7;
+}
+
+/* No recent reading, nothing flagged: neutral grey. */
+.st_none {
+  --st: var(--text-3);
+}
+
+/* ---------- interaction & status glow ---------- */
+.organ {
+  cursor: pointer;
+  outline: none;
+  transition: filter 0.25s var(--ease), opacity 0.25s var(--ease);
+}
+.anatomy .organ.st_watch,
+.anatomy .organ.st_act,
+.anatomy .overlay.st_watch,
+.anatomy .overlay.st_act {
+  filter: drop-shadow(0 0 1.6px var(--st));
+}
+.anatomy .organ.st_act {
+  animation: alarm 1.6s ease-in-out infinite;
+}
+@keyframes alarm {
+  50% {
+    filter: drop-shadow(0 0 7px var(--st)) drop-shadow(0 0 2px var(--st));
+  }
+}
+.organ.hover,
+.organ:focus-visible {
+  filter: brightness(1.12) drop-shadow(0 0 4px var(--st));
+}
+.organ.selected,
+.overlay.selected {
+  filter: brightness(1.06) drop-shadow(0 0 6px var(--st)) drop-shadow(0 0 2px var(--st));
+  animation: none;
+}
+/* Focus: the chosen system stays solid, the rest steps back (as in the 3D view). */
+.focused .organ:not(.selected),
+.focused .overlay:not(.selected),
+.focused .callout:not(.selected) {
+  opacity: 0.22;
+}
+.focused .organ:not(.selected).hover,
+.focused .callout:not(.selected).hover {
+  opacity: 0.6;
+}
+
+/* ---------- callouts ---------- */
+.callout {
+  cursor: pointer;
+}
+.callout line {
+  stroke: var(--st);
+  stroke-opacity: 0.5;
+  stroke-width: 1.2;
+  stroke-dasharray: 3 4;
+}
+.callout circle {
+  fill: var(--st);
+  stroke: var(--surface-2);
+  stroke-width: 1.5;
+}
+.callout .pulse {
+  fill: none;
+  stroke: var(--st);
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.st_watch .pulse,
+.st_act .pulse {
+  animation: ping 2.2s ease-out infinite;
+}
+@keyframes ping {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+.callout text {
+  fill: var(--text-2);
+  font-size: 20px;
+  font-weight: 600;
+  transition: fill 0.2s var(--ease);
+}
+.callout.hover text,
+.callout.selected text {
+  fill: var(--st);
+}
+.callout.hover line,
+.callout.selected line {
+  stroke-opacity: 1;
+  stroke-dasharray: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan,
+  .pulse {
+    display: none;
+  }
+  .anatomy .organ.st_act {
+    animation: none;
+    filter: drop-shadow(0 0 4px var(--st));
+  }
+}

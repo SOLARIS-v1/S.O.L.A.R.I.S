@@ -12,7 +12,7 @@ interface AstraOrbProps {
 
 export const AstraOrb: React.FC<AstraOrbProps> = ({
   state = 'idle',
-  caption = 'ASTRA READY // CREW TWIN SYNCHRONIZED',
+  caption = 'SOLARIS READY // CREW TWIN SYNCHRONIZED',
   subcaption = 'Tap orb or press Space to converse',
   onActivate,
 }) => {
@@ -58,7 +58,7 @@ export const AstraOrb: React.FC<AstraOrbProps> = ({
       <button
         onClick={onActivate}
         className="relative flex items-center justify-center w-16 h-16 rounded-full cursor-pointer group focus:outline-none focus:ring-1 focus:ring-[#B8CCE6]/40 transition-transform active:scale-95"
-        aria-label="Astra Voice Orb"
+        aria-label="SOLARIS Voice Orb"
       >
         {/* State: Asleep -> Dim Hollow Ring */}
         {isAsleep && (

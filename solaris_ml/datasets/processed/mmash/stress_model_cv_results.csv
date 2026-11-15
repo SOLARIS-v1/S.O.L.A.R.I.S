@@ -1,0 +1,4 @@
+,MAE,RMSE,R2
+Ridge,8.479,11.028,-0.836
+ElasticNet,7.673,9.777,-0.443
+RandomForest,7.733,9.671,-0.412

@@ -70,7 +70,7 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
     x: 50,
     y: 43,
     label: 'Lumbar Spine & Dermal Status',
-    deviceBadge: '[3-AXIS IMU + ASTRA VERBAL]',
+    deviceBadge: '[3-AXIS IMU + SOLARIS VERBAL]',
     getTelemetry: (_crew, symptoms) => ({
       primary: `Trunk Posture: +3.4 cm elongation unloading`,
       secondary:

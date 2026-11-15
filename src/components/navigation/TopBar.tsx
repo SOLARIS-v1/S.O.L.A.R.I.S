@@ -73,7 +73,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenSimulator, simulatorOpen, 
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold tracking-widest text-sm text-[#E8ECF2]">ASTRA</span>
+                <span className="font-bold tracking-widest text-sm text-[#E8ECF2]">SOLARIS</span>
                 <span className="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-white/[0.05] text-[#9AA4B2] border border-white/[0.06]">
                   EXP-64
                 </span>

@@ -1,0 +1,541 @@
+.explorer {
+  display: grid;
+  grid-template-columns: minmax(320px, 480px) minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+}
+
+/* ---------- stage ---------- */
+.stage {
+  position: relative;
+  min-width: 0;
+  height: clamp(500px, calc(100dvh - var(--topbar) - 48px), 660px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg, 14px);
+  overflow: hidden;
+  background: radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, var(--surface-2) 70%, transparent), transparent 75%);
+}
+/* The canvas stops above the hint/legend line, so neither ever covers the figure's feet. */
+.canvasBox {
+  position: absolute;
+  inset: 0 0 68px;
+}
+/* View mode, top left over the stage. */
+.modes {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+}
+.toolbar {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+}
+/* Compact floating pills over the stage: translucent, so the figure stays the focus. */
+.group {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid color-mix(in srgb, var(--border-2) 70%, transparent);
+  box-shadow: none;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  color: var(--text-3);
+  transition:
+    background 0.15s var(--ease),
+    color 0.15s var(--ease);
+}
+.tool:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface-3) 60%, transparent);
+}
+/* One-of choices (view, colour): the active option is a solid pill. */
+.tool.on {
+  background: var(--text);
+  color: var(--bg);
+}
+/* On/off layers: a quiet label with an accent dot when on, so they read differently from the choices. */
+.group[aria-label='Layers'] .tool.on {
+  background: transparent;
+  color: var(--text);
+}
+.group[aria-label='Layers'] .tool::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--text-3);
+}
+.group[aria-label='Layers'] .tool.on::before {
+  background: var(--accent);
+  box-shadow: none;
+}
+.tool:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+/* Skin views don't apply (Status colours, focus): shown, but inactive. */
+.disabled .tool {
+  cursor: default;
+  opacity: 0.5;
+}
+.disabled .tool:hover {
+  color: var(--text-3);
+}
+.disabled .tool.on {
+  color: var(--text-2);
+}
+.hint {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 46px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+/* Status colours legend, in place of the hint. */
+.legend {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 44px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--text-2);
+  pointer-events: none;
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--st);
+}
+/* Focus mode: which system is on show, and the way back. */
+.focusBar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 44px;
+  z-index: 2;
+  width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: calc(100% - 24px);
+  padding: 2px 2px 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.focusName {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding-right: 6px;
+}
+.focusName i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--st);
+}
+.focusText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+.focusName b {
+  flex: none;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--st);
+}
+.focusBack {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--text-2);
+  background: var(--surface-3);
+  font-weight: 500;
+}
+.focusBack:hover {
+  color: var(--text);
+}
+/* No recent reading, nothing flagged. */
+.none {
+  --st: var(--text-3);
+  --st-soft: transparent;
+  --st-line: var(--border);
+}
+.credit {
+  margin-top: 16px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.credit + .credit {
+  margin-top: 4px;
+}
+.credit a {
+  color: var(--text-2);
+  text-decoration: underline;
+  text-decoration-color: var(--border-3);
+  text-underline-offset: 2px;
+}
+
+/* ---------- panel ---------- */
+.panel {
+  min-width: 0;
+  padding: 4px 0 0 28px;
+}
+/* All systems at a glance: two columns when there is room. */
+.systems {
+  columns: 2 250px;
+  column-gap: 32px;
+}
+.systems .system {
+  break-inside: avoid;
+}
+.panelTitle {
+  font-size: var(--t-section);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.system {
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+.system:last-child {
+  border-bottom: 0;
+}
+.systemBtn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-3);
+  text-align: start;
+}
+.systemBtn:hover,
+.hot .systemBtn {
+  color: var(--text);
+}
+.statusWord {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--st);
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px 96px 8px;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: var(--r-md);
+}
+.row:hover {
+  background: var(--surface);
+}
+/* Names and values wrap rather than clip: the columns are narrow beside the 3D body. */
+.rowName {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+.rowName small {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spark {
+  display: flex;
+  justify-content: flex-end;
+}
+.rowValue {
+  min-width: 0;
+  text-align: right;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+.rowValue small,
+.rValue small {
+  margin-left: 3px;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--st);
+}
+
+/* focused system */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 14px -4px;
+  padding: 4px;
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+.back:hover {
+  color: var(--text);
+}
+.systemHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.systemHead h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.lead {
+  margin: 6px 0 16px;
+  color: var(--text-2);
+}
+.readings {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+.readings li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.reading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(64px, auto);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.rName {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rName small {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+.rValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* Words rather than a number (symptom names): smaller, and allowed to wrap. */
+.rValue.rText {
+  max-width: 22ch;
+  font-size: 0.875rem;
+  white-space: normal;
+  text-align: right;
+}
+.rStatus {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--st);
+  text-align: right;
+  white-space: nowrap;
+}
+.measure {
+  font-size: 0.8125rem;
+  color: var(--accent);
+  padding: 4px 6px;
+  border-radius: var(--r-sm);
+}
+.measure:hover {
+  background: var(--accent-soft);
+}
+.sub {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-3);
+  margin: 18px 0 6px;
+}
+.text {
+  color: var(--text-2);
+  max-width: 60ch;
+}
+.actions {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+/* What the flagged readings call for, before the system's general advice. */
+.guides {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.guides li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+.guides b {
+  font-size: 0.8125rem;
+  color: var(--st);
+}
+.escalate {
+  font-weight: 600;
+}
+.symptoms {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--st);
+}
+.hazards {
+  margin-top: 18px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+.i4Link {
+  margin-top: 14px;
+  padding: 11px 13px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.i4Link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+.i4Link a:hover {
+  text-decoration: underline;
+}
+.i4Link small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.organSources {
+  margin-top: 14px;
+}
+
+/* Breakpoints read the Today page's width (the `today` container in app/overview.module.css), not the viewport's,
+   so the docked specialist panel narrows the layout too. Side by side the list needs about 300px beside the
+   480px stage; 442px and 382px are the page's width at 480px and 420px viewports. */
+@container today (min-width: 860px) {
+  .stage {
+    position: sticky;
+    top: calc(var(--topbar) + 16px);
+  }
+}
+@container today (max-width: 859px) {
+  .explorer {
+    grid-template-columns: 1fr;
+  }
+  .stage {
+    height: 480px;
+  }
+  .panel {
+    padding: 20px 0 0;
+  }
+}
+@container today (max-width: 442px) {
+  .stage {
+    height: 460px;
+  }
+  .toolbar {
+    left: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+  .tool {
+    padding: 0 9px;
+  }
+}
+@container today (max-width: 382px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) 90px 8px;
+  }
+  .spark {
+    display: none;
+  }
+}
+
+/* Touch targets: 44px for primary controls on touch / narrow screens (docs/ux roadmap Phase 2). */
+@media (pointer: coarse), (max-width: 1023px) {
+  .tool,
+  .systemBtn,
+  .row {
+    min-height: 44px;
+  }
+}

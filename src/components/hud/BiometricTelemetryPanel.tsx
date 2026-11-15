@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAstra } from '../../context/AstraContext';
 import { Heart, Activity, Wind, Thermometer, Radio } from 'lucide-react';
+import { OverallHealthScoreGauge } from './OverallHealthScoreGauge';
 
 export const BiometricTelemetryPanel: React.FC = () => {
   const { activeCrew, activeHotspotId } = useAstra();
@@ -93,17 +94,20 @@ export const BiometricTelemetryPanel: React.FC = () => {
   ];
 
   return (
-    <aside className="w-full h-full flex flex-col justify-between p-2.5 lg:p-3 select-none overflow-hidden font-mono">
+    <aside className="w-full h-full flex flex-col justify-between p-2.5 lg:p-3 select-none overflow-hidden font-mono bg-[#111827]">
       {/* Header */}
-      <div className="flex items-center justify-between pb-1.5 hairline-b flex-shrink-0">
-        <span className="text-[10px] font-mono tracking-instrument text-[#ECE8E1] uppercase font-medium">
+      <div className="flex items-center justify-between pb-1.5 hairline-b flex-shrink-0 mb-2">
+        <span className="text-[10px] font-mono tracking-instrument text-[#F9FAFB] uppercase font-bold">
           BIOMETRIC TELEMETRY
         </span>
-        <span className="text-[9px] font-mono text-[#8D97A6] uppercase">REAL-TIME HUD</span>
+        <span className="text-[9px] font-mono text-[#94A3B8] uppercase">LIVE STREAM</span>
       </div>
 
+      {/* Holistic Overall Health Score Radial Graph */}
+      <OverallHealthScoreGauge compact className="mb-2 shrink-0" />
+
       {/* 5 Hardware Cards Stacked */}
-      <div className="space-y-1.5 flex-1 flex flex-col justify-between overflow-y-auto py-1">
+      <div className="space-y-1.5 flex-1 flex flex-col justify-between overflow-y-auto py-1 scrollbar-thin">
         {cards.map((card) => {
           const isHighlighted = activeHotspotId === card.key;
           const IconComp = card.icon;
@@ -111,10 +115,10 @@ export const BiometricTelemetryPanel: React.FC = () => {
           return (
             <div
               key={card.key}
-              className={`p-2 rounded-lg border transition-all duration-300 relative overflow-hidden flex-1 flex flex-col justify-between ${
+              className={`p-2 rounded-lg border transition-all duration-200 relative overflow-hidden flex-1 flex flex-col justify-between ${
                 isHighlighted
-                  ? 'border-[#B8CCE6] bg-white/10 shadow-[0_0_18px_rgba(184,204,230,0.3)] scale-[1.01]'
-                  : 'border-white/[0.08] hover:border-white/20 bg-white/[0.02]'
+                  ? 'border-orange-500/60 bg-orange-500/10 shadow-sm'
+                  : 'border-white/[0.08] hover:border-white/20 bg-[#172030]/60'
               }`}
             >
               {/* Top row: Icon + Label + Badge */}
@@ -134,10 +138,10 @@ export const BiometricTelemetryPanel: React.FC = () => {
               {/* Value and Sparkline Row */}
               <div className="flex items-center justify-between my-0.5">
                 <div className="flex items-baseline gap-1 font-mono">
-                  <span className="text-xl lg:text-2xl font-light tracking-tight text-[#ECE8E1]">
+                  <span className="text-xl lg:text-2xl font-bold tracking-tight text-[#F9FAFB]">
                     {card.value}
                   </span>
-                  <span className="text-[10px] text-[#8D97A6]">{card.unit}</span>
+                  <span className="text-[10px] text-[#94A3B8]">{card.unit}</span>
                 </div>
 
                 {/* Sparkline curve */}
@@ -145,8 +149,8 @@ export const BiometricTelemetryPanel: React.FC = () => {
                   <svg viewBox="0 0 80 18" className="w-full h-full overflow-visible">
                     <polyline
                       fill="none"
-                      stroke={isHighlighted ? '#B8CCE6' : '#ECE8E1'}
-                      strokeWidth="1.25"
+                      stroke={isHighlighted ? '#F97316' : '#94A3B8'}
+                      strokeWidth="1.5"
                       points={card.sparkline
                         .map((val, idx) => {
                           const min = Math.min(...card.sparkline);
@@ -164,7 +168,7 @@ export const BiometricTelemetryPanel: React.FC = () => {
               </div>
 
               {/* Trend / Hardware Device Note */}
-              <div className="text-[8.5px] font-mono text-[#5B6573]">
+              <div className="text-[8.5px] font-mono text-[#64748B]">
                 {card.delta}
               </div>
             </div>

@@ -7,10 +7,31 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies and Builds
 node_modules
 dist
 dist-ssr
 *.local
+tsconfig.app.tsbuildinfo
+
+# Python & ML Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.pytest_cache/
+
+# Local SQLite databases
+*.db
+*.sqlite3
+
+# Large archives (e.g. 170MB zip)
+*.zip
+*.tar.gz
 
 # Editor directories and files
 .vscode/*

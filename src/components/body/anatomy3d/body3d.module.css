@@ -1,0 +1,159 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  outline: none;
+}
+.canvas {
+  width: 100% !important;
+  height: 100% !important;
+  /* Vertical swipes scroll the page; sideways drags turn the body and pinches zoom. */
+  touch-action: pan-y;
+  cursor: grab;
+}
+.wrap[data-hot] .canvas {
+  cursor: pointer;
+}
+.canvas:active,
+.wrap[data-hot] .canvas:active {
+  cursor: grabbing;
+}
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  pointer-events: none;
+}
+.loaderBar {
+  width: 160px;
+  height: 2px;
+  background: var(--surface-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loaderBar i {
+  display: block;
+  height: 100%;
+  background: var(--text-2);
+  transition: width 0.2s linear;
+}
+.tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.tip b {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.tip span {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+.tip[data-status='watch'] span {
+  color: var(--watch);
+}
+.tip[data-status='act'] span {
+  color: var(--act);
+}
+.tip[data-status='ok'] span {
+  color: var(--ok);
+}
+.tip[data-status='none'] span {
+  color: var(--text-3);
+}
+/* Keyboard handle for the 3D body: covers the canvas without catching the pointer; its ring outlines the stage. */
+.keys {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+}
+.keys:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+  border-radius: var(--r-lg, 14px);
+}
+.fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+}
+
+/* Camera buttons, top right over the stage. */
+.zoom {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid color-mix(in srgb, var(--border-2) 70%, transparent);
+  box-shadow: none;
+}
+.zoom button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--text-2);
+  transition:
+    background 0.15s var(--ease),
+    color 0.15s var(--ease);
+}
+.zoom button:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+.zoom button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+/* At the zoom limit: still focusable, visibly inactive. */
+.zoom button[aria-disabled='true'] {
+  color: var(--text-3);
+  opacity: 0.45;
+  cursor: default;
+}
+.zoom button[aria-disabled='true']:hover {
+  background: none;
+  color: var(--text-3);
+}
+
+/* Touch targets: 44px for primary controls on touch / narrow screens (docs/ux roadmap Phase 2). */
+@media (pointer: coarse), (max-width: 1023px) {
+  .zoom button {
+    width: 44px;
+    height: 44px;
+  }
+}

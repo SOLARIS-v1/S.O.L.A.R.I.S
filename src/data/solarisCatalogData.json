@@ -1,0 +1,1518 @@
+{
+  "metrics": [
+    {
+      "id": "hr",
+      "label": "Heart rate",
+      "short": "HR",
+      "unit": "bpm",
+      "decimals": 0,
+      "category": "Heart & circulation",
+      "organ": "heart",
+      "hazards": [
+        "G",
+        "I",
+        "D"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 25,
+        "max": 220,
+        "step": 1,
+        "placeholder": "64"
+      },
+      "ok": [
+        50,
+        100
+      ],
+      "watch": [
+        40,
+        120
+      ],
+      "axis": [
+        35,
+        140
+      ],
+      "min_sd": 4.0,
+      "red": {
+        "below": 40,
+        "above": 140
+      },
+      "context_sensitive": true,
+      "active": {
+        "ok": [
+          50,
+          130
+        ],
+        "watch": [
+          40,
+          150
+        ],
+        "red": {
+          "below": 40,
+          "above": 180
+        }
+      },
+      "device": "Finger pulse oximeter or chest strap",
+      "duration": "2 min",
+      "how": [
+        "Rest, seated or restrained, for 5 minutes. No exercise in the last 30 minutes.",
+        "Clip the pulse oximeter on a warm fingertip, or wear the chest strap.",
+        "Keep still for 30 seconds and read the beats per minute."
+      ],
+      "why": "Resting heart rate is a quick window into the cardiovascular system. Fever, dehydration, stress, poor sleep and heart deconditioning all push it up.",
+      "space": "In weightlessness the heart works less and can decondition. Fluid shift and stress change its rhythm, and returning to gravity can make it race.",
+      "guide": {
+        "ok": "Within your normal range. Keep your exercise routine going.",
+        "watch": "Slightly out of range. Rest for 10 minutes, drink water and measure again. If it stays out of range, log how you feel and re-check in 4 hours.",
+        "act": "Out of the safe range. Stop strenuous activity and measure again now. If confirmed, call the Crew Medical Officer. With chest pain, fainting or breathlessness, open EMERGENCY."
+      },
+      "escalate": "Call the Crew Medical Officer if resting heart rate stays below 40 or above 120, or with palpitations, chest pain or fainting.",
+      "prevent": [
+        "Daily aerobic exercise",
+        "2+ litres of fluids",
+        "Protected sleep window"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_cardio"
+      ]
+    },
+    {
+      "id": "bp",
+      "label": "Blood pressure",
+      "short": "BP",
+      "unit": "mmHg",
+      "decimals": 0,
+      "category": "Heart & circulation",
+      "organ": "heart",
+      "hazards": [
+        "G",
+        "D"
+      ],
+      "input": {
+        "kind": "bp",
+        "min": 50,
+        "max": 260,
+        "step": 1,
+        "placeholder": "116/76"
+      },
+      "ok": [
+        90,
+        129
+      ],
+      "watch": [
+        85,
+        139
+      ],
+      "ok2": [
+        60,
+        84
+      ],
+      "watch2": [
+        50,
+        89
+      ],
+      "axis": [
+        45,
+        170
+      ],
+      "min_sd": 3.5,
+      "red": {
+        "above": 180,
+        "below": 80,
+        "above2": 110
+      },
+      "context_sensitive": true,
+      "active": {
+        "ok": [
+          90,
+          159
+        ],
+        "watch": [
+          85,
+          179
+        ],
+        "ok2": [
+          60,
+          89
+        ],
+        "watch2": [
+          50,
+          99
+        ],
+        "red": {
+          "above": 200,
+          "below": 80,
+          "above2": 115
+        }
+      },
+      "device": "Automatic upper-arm cuff",
+      "duration": "3 min",
+      "how": [
+        "Sit or strap in with your feet supported and rest for 5 minutes.",
+        "Wrap the cuff on your bare upper arm, 2 cm above the elbow, at heart level.",
+        "Stay silent and still while it inflates. Record systolic / diastolic."
+      ],
+      "why": "Blood pressure shows how hard the heart and vessels are working. It reveals cardiovascular strain early and helps prepare the body for gravity on landing.",
+      "space": "Without gravity, about 2 litres of fluid shift toward the head. The body re-tunes blood pressure control, which can lead to dizziness or fainting when gravity returns.",
+      "guide": {
+        "ok": "Normal. No action needed.",
+        "watch": "Borderline. Rest quietly for 15 minutes and measure again. Go easy on salt and caffeine today and re-check tonight.",
+        "act": "Out of range. Measure again on the other arm. If it is still 140/90 or higher, or the top number is below 85, notify the Crew Medical Officer. With headache, vision change or chest pain, open EMERGENCY."
+      },
+      "escalate": "Call the Crew Medical Officer for repeated readings of 140/90 or higher, systolic below 85, or symptoms such as headache, dizziness or vision change.",
+      "prevent": [
+        "Aerobic exercise",
+        "Moderate salt",
+        "Hydration",
+        "Stress management"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_cardio"
+      ]
+    },
+    {
+      "id": "spo2",
+      "label": "Blood oxygen",
+      "short": "SpO\u2082",
+      "unit": "%",
+      "decimals": 0,
+      "category": "Lungs & breathing",
+      "organ": "lungs",
+      "hazards": [
+        "E",
+        "D"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 50,
+        "max": 100,
+        "step": 1,
+        "placeholder": "98"
+      },
+      "ok": [
+        95,
+        100
+      ],
+      "watch": [
+        92,
+        100
+      ],
+      "axis": [
+        84,
+        100
+      ],
+      "min_sd": 0.8,
+      "red": {
+        "below": 90
+      },
+      "device": "Finger pulse oximeter",
+      "duration": "1 min",
+      "how": [
+        "Warm your hand and remove anything covering the fingertip.",
+        "Clip the oximeter on and keep the hand still at heart level.",
+        "Wait 30 seconds for a stable reading."
+      ],
+      "why": "Oxygen saturation shows whether your lungs, blood and the cabin air are doing their job.",
+      "space": "A sealed cabin can build up CO2. Lunar and Martian dust can irritate the airways, and a chest infection spreads easily in a small crew.",
+      "guide": {
+        "ok": "Normal.",
+        "watch": "A bit low. Measure on another finger and check the cabin CO2 / O2 display. Take slow, deep breaths and re-check in 10 minutes.",
+        "act": "Low oxygen. Measure again now. If confirmed, call the Crew Medical Officer and check the cabin atmosphere. With breathlessness or confusion, open EMERGENCY."
+      },
+      "escalate": "Call the Crew Medical Officer if SpO2 stays below 92%, and immediately if below 90% or with breathlessness.",
+      "prevent": [
+        "Monitor cabin CO2",
+        "Keep dust out after EVAs",
+        "Report coughs early"
+      ],
+      "sources": [
+        "std3001v2",
+        "hrp_hypoxia"
+      ]
+    },
+    {
+      "id": "resp",
+      "label": "Breathing rate",
+      "short": "RR",
+      "unit": "/min",
+      "decimals": 0,
+      "category": "Lungs & breathing",
+      "organ": "lungs",
+      "hazards": [
+        "E"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 4,
+        "max": 60,
+        "step": 1,
+        "placeholder": "15"
+      },
+      "ok": [
+        12,
+        20
+      ],
+      "watch": [
+        10,
+        24
+      ],
+      "axis": [
+        6,
+        32
+      ],
+      "min_sd": 1.0,
+      "red": {
+        "above": 30,
+        "below": 8
+      },
+      "context_sensitive": true,
+      "active": {
+        "ok": [
+          12,
+          28
+        ],
+        "watch": [
+          10,
+          34
+        ],
+        "red": {
+          "above": 40,
+          "below": 8
+        }
+      },
+      "device": "Timer (or wearable)",
+      "duration": "1 min",
+      "how": [
+        "Sit still for 2 minutes.",
+        "Count breaths for 30 seconds: one rise and fall is one breath. A crewmate can count quietly.",
+        "Multiply by 2."
+      ],
+      "why": "Breathing rate rises early with infection, fever, high CO2, anxiety or heart strain, often before anything else changes.",
+      "space": "CO2 pockets can form where air does not circulate, such as around a sleeping bag. Fast breathing can be the body's first response.",
+      "guide": {
+        "ok": "Normal.",
+        "watch": "Re-count after 5 minutes of calm breathing. Check temperature and SpO2 as well.",
+        "act": "Call the Crew Medical Officer and check the cabin CO2. With breathlessness or chest pain, open EMERGENCY."
+      },
+      "escalate": "Call the Crew Medical Officer if breathing stays above 24 per minute at rest.",
+      "prevent": [
+        "Ventilate sleeping areas",
+        "Hand hygiene",
+        "Post-EVA dust control"
+      ],
+      "sources": [
+        "std3001v2",
+        "hrp_hypoxia"
+      ]
+    },
+    {
+      "id": "temp",
+      "label": "Body temperature",
+      "short": "Temp",
+      "unit": "\u00b0C",
+      "decimals": 1,
+      "category": "Immune system",
+      "organ": "immune",
+      "hazards": [
+        "E",
+        "R",
+        "D"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 30,
+        "max": 43,
+        "step": 0.1,
+        "placeholder": "36.9"
+      },
+      "ok": [
+        36.1,
+        37.5
+      ],
+      "watch": [
+        35.5,
+        38.0
+      ],
+      "axis": [
+        35.0,
+        39.6
+      ],
+      "min_sd": 0.15,
+      "red": {
+        "above": 39.5,
+        "below": 35.0
+      },
+      "device": "Oral or forehead thermometer",
+      "duration": "2 min",
+      "how": [
+        "No eating, drinking or exercise for 15 minutes before measuring.",
+        "Place the thermometer under the tongue, or use the forehead sensor.",
+        "Wait for the beep and record \u00b0C."
+      ],
+      "why": "Fever is the body's first infection alarm. In a closed habitat, catching an infection early protects the whole crew.",
+      "space": "Immune function changes in space, and dormant viruses can reactivate. Crew core temperature can also run up to about 1 \u00b0C higher on long missions, so ASTRA also flags a reading that is unusual for you, even inside the normal range.",
+      "guide": {
+        "ok": "Normal.",
+        "watch": "Slightly off. Drink fluids, rest and re-check in 2 hours. Note any chills, cough or sore throat.",
+        "act": "Fever above 38 \u00b0C (or below 35.5 \u00b0C). Notify the Crew Medical Officer, limit close contact with crewmates and log symptoms every 2 hours."
+      },
+      "escalate": "Call the Crew Medical Officer for any fever above 38 \u00b0C, and immediately above 39.5 \u00b0C.",
+      "prevent": [
+        "Hand hygiene",
+        "Separate personal items",
+        "Sleep and nutrition"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_immuno"
+      ]
+    },
+    {
+      "id": "glucose",
+      "label": "Blood glucose",
+      "short": "Glucose",
+      "unit": "mg/dL",
+      "decimals": 0,
+      "category": "Metabolism & nutrition",
+      "organ": "metabolism",
+      "hazards": [
+        "G",
+        "D"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 20,
+        "max": 600,
+        "step": 1,
+        "placeholder": "88"
+      },
+      "ok": [
+        70,
+        99
+      ],
+      "watch": [
+        55,
+        125
+      ],
+      "axis": [
+        40,
+        170
+      ],
+      "min_sd": 4.0,
+      "red": {
+        "below": 54,
+        "above": 250
+      },
+      "device": "Finger-stick glucometer",
+      "duration": "2 min",
+      "how": [
+        "Measure fasting, before breakfast.",
+        "Clean the fingertip and lance its side. In weightlessness the blood forms a dome and won't drip.",
+        "Touch the strip to the drop and read mg/dL."
+      ],
+      "why": "Glucose shows how the body turns food into energy and links nutrition, activity and metabolism.",
+      "space": "Spaceflight can reduce insulin sensitivity, and long missions have a fixed, limited menu. Lower activity makes it worse.",
+      "guide": {
+        "ok": "Normal fasting level.",
+        "watch": "Outside the fasting target. If low (below 70): eat 15 g of fast carbohydrate and re-test in 15 minutes. If high: re-test tomorrow fasting and review meals and activity.",
+        "act": "Out of range. Below 55: take fast carbohydrate now, re-test in 15 minutes and tell a crewmate. 126 or higher fasting: re-test and notify the Crew Medical Officer."
+      },
+      "escalate": "Call the Crew Medical Officer for fasting values of 126 or higher on two days, or any value below 55.",
+      "prevent": [
+        "Eat the full planned menu",
+        "Daily exercise",
+        "Regular meal times"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_food"
+      ]
+    },
+    {
+      "id": "hydration",
+      "label": "Fluid intake",
+      "short": "Fluids",
+      "unit": "L",
+      "decimals": 1,
+      "category": "Kidneys & fluids",
+      "organ": "kidneys",
+      "hazards": [
+        "G",
+        "E"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 0,
+        "max": 8,
+        "step": 0.1,
+        "placeholder": "2.2"
+      },
+      "ok": [
+        2.0,
+        5.0
+      ],
+      "watch": [
+        1.5,
+        6.0
+      ],
+      "axis": [
+        0.5,
+        5.5
+      ],
+      "min_sd": 0.15,
+      "red": {},
+      "device": "Drink bag counter / water dispenser log",
+      "duration": "30 s",
+      "how": [
+        "Add up the drink bags and water you have had today.",
+        "Include water used to rehydrate food.",
+        "Enter the total in litres."
+      ],
+      "why": "Fluids keep blood volume and the kidneys healthy and help you think clearly.",
+      "space": "You feel less thirsty in weightlessness. Calcium released from shrinking bones raises the risk of kidney stones, and plenty of water lowers it.",
+      "guide": {
+        "ok": "Good hydration. Keep it steady.",
+        "watch": "A bit low. Drink 500 ml over the next hour and set a reminder.",
+        "act": "Too low (or too high). Drink steadily to reach at least 2 L, and tell the Crew Medical Officer if you have flank pain or dark urine."
+      },
+      "escalate": "Call the Crew Medical Officer for flank or back pain with low intake. It can be a kidney stone.",
+      "prevent": [
+        "Keep a drink bag in sight",
+        "Drink with every meal",
+        "Extra water on exercise days"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_renal"
+      ]
+    },
+    {
+      "id": "mass",
+      "label": "Body mass",
+      "short": "Mass",
+      "unit": "kg",
+      "decimals": 1,
+      "rule": "relative",
+      "category": "Metabolism & nutrition",
+      "organ": "metabolism",
+      "hazards": [
+        "G"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 30,
+        "max": 150,
+        "step": 0.1,
+        "placeholder": "70.0"
+      },
+      "ok": [
+        -3,
+        3
+      ],
+      "watch": [
+        -5,
+        5
+      ],
+      "axis": null,
+      "min_sd": 0.3,
+      "red": {},
+      "device": "Inertial body-mass measurement device",
+      "duration": "3 min",
+      "how": [
+        "Measure before breakfast, after using the toilet.",
+        "Strap into the mass device and hold still while it oscillates. Scales don't work in weightlessness.",
+        "Read the mass in kg."
+      ],
+      "why": "Weight loss is an early sign that you are not eating enough or are losing muscle.",
+      "space": "Appetite often drops in space, and muscle shrinks without gravity. Many crews lose weight without noticing.",
+      "guide": {
+        "ok": "Within 3% of your mission reference mass.",
+        "watch": "3-5% change from your reference. Eat the full menu, add snacks, and keep resistive exercise.",
+        "act": "More than 5% change. Tell the Crew Medical Officer and review your diet plan with ground nutrition."
+      },
+      "escalate": "Call the Crew Medical Officer for a change of more than 5% from your reference mass.",
+      "prevent": [
+        "Eat all planned meals",
+        "Resistive exercise",
+        "Weekly weigh-ins"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_food"
+      ]
+    },
+    {
+      "id": "nutrition",
+      "label": "Food intake",
+      "short": "Food",
+      "unit": "%",
+      "decimals": 0,
+      "category": "Metabolism & nutrition",
+      "organ": "metabolism",
+      "hazards": [
+        "I",
+        "D"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "placeholder": "100"
+      },
+      "ok": [
+        90,
+        130
+      ],
+      "watch": [
+        75,
+        150
+      ],
+      "axis": [
+        40,
+        160
+      ],
+      "min_sd": 6,
+      "red": {},
+      "device": "Meal plan / food log",
+      "duration": "1 min",
+      "how": [
+        "Look at today's meal plan.",
+        "Estimate how much of it you ate, as a percentage: the full plan is 100%.",
+        "Count snacks and drinks that have calories."
+      ],
+      "why": "Eating enough protects muscle, bone, immunity and mood. Under-eating is common on long missions and slowly weakens every other system.",
+      "space": "Appetite drops in weightlessness, food gets monotonous and some vitamins degrade over months, so crews often eat only about 80% of what they need. Calcium and vitamin D matter more while bones are losing mass.",
+      "guide": {
+        "ok": "Good. You're eating to plan.",
+        "watch": "Below plan. Add a snack with protein, try a different menu item or share a crew meal.",
+        "act": "Well below plan (or far above it). Tell the Crew Medical Officer, especially with weight loss, nausea or low mood."
+      },
+      "escalate": "Call the Crew Medical Officer if you eat less than 75% of plan for 3 days, or with weight loss above 3%.",
+      "prevent": [
+        "Eat with the crew",
+        "Rotate menu items",
+        "Protein at every meal",
+        "Calcium and vitamin D as prescribed"
+      ],
+      "sources": [
+        "std3001v1",
+        "hrp_food"
+      ]
+    },
+    {
+      "id": "sleep",
+      "label": "Sleep",
+      "short": "Sleep",
+      "unit": "h",
+      "decimals": 1,
+      "category": "Brain & behavior",
+      "organ": "brain",
+      "hazards": [
+        "I"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 0,
+        "max": 16,
+        "step": 0.1,
+        "placeholder": "7.5"
+      },
+      "ok": [
+        7.0,
+        9.5
+      ],
+      "watch": [
+        6.0,
+        12.0
+      ],
+      "axis": [
+        3.5,
+        10.0
+      ],
+      "min_sd": 0.3,
+      "red": {},
+      "device": "Sleep watch (actigraphy) or sleep log",
+      "duration": "30 s",
+      "how": [
+        "Read last night's hours from your sleep watch, or estimate from lights-out to wake-up.",
+        "Subtract time spent awake during the night.",
+        "Note what disturbed you: noise, light, temperature or worries."
+      ],
+      "why": "Sleep debt quietly erodes mood, reaction time and safety, and you often don't notice it yourself.",
+      "space": "Noise, workload, odd light cycles (16 sunrises a day in orbit) and isolation shorten crew sleep. Many astronauts average under 6.5 hours.",
+      "guide": {
+        "ok": "Good night. Keep the same sleep window.",
+        "watch": "Short night. Protect tonight's 8.5-hour window, dim screens an hour before bed and avoid caffeine after 14:00.",
+        "act": "Serious sleep debt. Tell the Commander before any critical task, schedule recovery sleep and talk to the Crew Medical Officer about sleep support."
+      },
+      "escalate": "Tell the Crew Medical Officer if sleep is under 6 hours on 3 nights in a row.",
+      "prevent": [
+        "Fixed sleep window",
+        "Lighting schedule",
+        "Eye mask and ear plugs"
+      ],
+      "sources": [
+        "hrp_sleep",
+        "hrp_cog",
+        "hrp_archer"
+      ]
+    },
+    {
+      "id": "mood",
+      "label": "Mood",
+      "short": "Mood",
+      "unit": "/5",
+      "decimals": 0,
+      "category": "Brain & behavior",
+      "organ": "brain",
+      "hazards": [
+        "I"
+      ],
+      "input": {
+        "kind": "mood",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "placeholder": "4",
+        "labels": [
+          "Awful",
+          "Low",
+          "Okay",
+          "Good",
+          "Great"
+        ]
+      },
+      "ok": [
+        4,
+        5
+      ],
+      "watch": [
+        3,
+        5
+      ],
+      "axis": [
+        1,
+        5
+      ],
+      "min_sd": 0.45,
+      "red": {},
+      "device": "Self-report",
+      "duration": "30 s",
+      "how": [
+        "Pause for 30 seconds and notice how you feel right now.",
+        "Pick the face that fits best. There is no wrong answer.",
+        "Your answer stays private unless you choose to share it."
+      ],
+      "why": "Low mood is easier to fix early, and it protects the whole crew's cohesion.",
+      "space": "Isolation, confinement, monotony and distance from loved ones are major spaceflight hazards on long missions.",
+      "guide": {
+        "ok": "Good. Keep the routines that help you.",
+        "watch": "A bit low. Plan something you enjoy, call family at the next comm window, and get some exercise and light.",
+        "act": "Low mood. You're not alone. Talk to a trusted crewmate or the Crew Medical Officer today, and book a private session with ground psychological support."
+      },
+      "escalate": "Talk to the Crew Medical Officer if mood stays at 2 or lower, or 3 for a week.",
+      "prevent": [
+        "Leisure time",
+        "Family calls",
+        "Exercise",
+        "Shared crew meals"
+      ],
+      "sources": [
+        "hrp_cog",
+        "hrp_team",
+        "hrp_archer"
+      ]
+    },
+    {
+      "id": "reaction",
+      "label": "Reaction time",
+      "short": "Reaction",
+      "unit": "ms",
+      "decimals": 0,
+      "category": "Brain & behavior",
+      "organ": "brain",
+      "hazards": [
+        "I",
+        "R"
+      ],
+      "input": {
+        "kind": "reaction",
+        "min": 100,
+        "max": 2000,
+        "step": 1,
+        "placeholder": "260"
+      },
+      "ok": [
+        100,
+        320
+      ],
+      "watch": [
+        100,
+        400
+      ],
+      "axis": [
+        180,
+        480
+      ],
+      "min_sd": 12,
+      "red": {},
+      "device": "This tablet: tap test",
+      "duration": "1 min",
+      "how": [
+        "Sit comfortably with your finger ready.",
+        "Tap the pad the moment it turns green. There are 3 trials.",
+        "Your score is the average."
+      ],
+      "why": "A one-minute alertness test. Fatigue, sleep debt, stress and high CO2 slow you down before you notice. It matters before EVAs, docking or driving a rover.",
+      "space": "Sleep loss, workload and radiation exposure can all affect attention and reaction speed.",
+      "guide": {
+        "ok": "Sharp. Good to go for critical tasks.",
+        "watch": "Slower than usual. Avoid critical tasks for now, rest, drink water and re-test in 2 hours.",
+        "act": "Much slower. Do not perform critical operations. Tell the Commander and re-test after sleep."
+      },
+      "escalate": "Tell the Commander before any critical task if reaction time is above 400 ms.",
+      "prevent": [
+        "Sleep",
+        "Breaks between tasks",
+        "Check cabin CO2"
+      ],
+      "sources": [
+        "hrp_cog",
+        "hrp_sleep",
+        "hrp_standard_measures"
+      ]
+    },
+    {
+      "id": "exercise",
+      "label": "Exercise",
+      "short": "Exercise",
+      "unit": "min",
+      "decimals": 0,
+      "category": "Bones & muscles",
+      "organ": "musculo",
+      "hazards": [
+        "G"
+      ],
+      "input": {
+        "kind": "number",
+        "min": 0,
+        "max": 400,
+        "step": 5,
+        "placeholder": "120"
+      },
+      "ok": [
+        120,
+        600
+      ],
+      "watch": [
+        60,
+        600
+      ],
+      "axis": [
+        0,
+        200
+      ],
+      "min_sd": 8,
+      "red": {},
+      "device": "Resistive device, treadmill, cycle",
+      "duration": "2 h",
+      "how": [
+        "Do resistive loading (squats, deadlifts, heel raises) plus aerobic work (treadmill or cycle).",
+        "Count the warm-up but not the breaks.",
+        "Enter today's total minutes."
+      ],
+      "why": "Loading bones and muscles every day is the main defence against bone loss and deconditioning.",
+      "space": "Unloaded bones lose roughly 1-1.5% of their mass per month, most at the hips and spine. Space-station crews exercise about 2 hours a day to slow this.",
+      "guide": {
+        "ok": "Target met. Your bones and muscles thank you.",
+        "watch": "Below the 2-hour target. Add a resistive session today that loads the legs, hips and spine.",
+        "act": "Far below target. Tell the Commander. Rescheduling exercise is a mission priority, not an option."
+      },
+      "escalate": "Tell the Commander if exercise falls below 60 minutes on 2 days in a row.",
+      "prevent": [
+        "Book exercise like any other task",
+        "Train with a crewmate",
+        "Track loads"
+      ],
+      "sources": [
+        "hrp_bone",
+        "hrp_dynload",
+        "hrp_hz_gravity"
+      ]
+    },
+    {
+      "id": "vision",
+      "label": "Vision check",
+      "short": "Vision",
+      "unit": "",
+      "decimals": 0,
+      "category": "Eyes & vision",
+      "organ": "eyes",
+      "hazards": [
+        "G",
+        "R"
+      ],
+      "input": {
+        "kind": "amsler",
+        "min": 0,
+        "max": 2,
+        "step": 1,
+        "placeholder": "0",
+        "labels": [
+          "No distortion",
+          "Slight blur",
+          "Wavy or missing lines"
+        ]
+      },
+      "ok": [
+        0,
+        0
+      ],
+      "watch": [
+        0,
+        1
+      ],
+      "axis": [
+        0,
+        2
+      ],
+      "min_sd": 0.3,
+      "red": {},
+      "device": "Amsler grid on this tablet",
+      "duration": "2 min",
+      "how": [
+        "Hold the tablet at reading distance in good light. Wear your usual glasses.",
+        "Cover one eye and look only at the centre dot.",
+        "Notice whether any lines look wavy, blurred or missing. Then repeat with the other eye."
+      ],
+      "why": "A simple weekly self-check that catches vision changes early.",
+      "space": "Fluid shift toward the head raises pressure behind the eyes. Many long-duration crew members develop Spaceflight-Associated Neuro-ocular Syndrome (SANS): optic-disc swelling, flattening of the eye and blurred near vision.",
+      "guide": {
+        "ok": "No distortion. Check again next week.",
+        "watch": "Slight blur. Re-check tomorrow and mention it to the Crew Medical Officer. The ground team may request an eye ultrasound.",
+        "act": "Lines look wavy or missing. Tell the Crew Medical Officer today. An onboard eye examination is needed."
+      },
+      "escalate": "Tell the Crew Medical Officer about any new blur, wavy or missing lines.",
+      "prevent": [
+        "Weekly check",
+        "Report early",
+        "Fluid-shift countermeasures if prescribed"
+      ],
+      "sources": [
+        "hrp_sans",
+        "std3001v1",
+        "hrp_hz_gravity"
+      ]
+    },
+    {
+      "id": "symptoms",
+      "label": "Symptom check",
+      "short": "Symptoms",
+      "unit": "",
+      "decimals": 0,
+      "category": "General",
+      "organ": "general",
+      "hazards": [
+        "E",
+        "I",
+        "R",
+        "D"
+      ],
+      "input": {
+        "kind": "symptoms",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "placeholder": "0"
+      },
+      "ok": [
+        0,
+        0
+      ],
+      "watch": [
+        0,
+        2
+      ],
+      "axis": [
+        0,
+        5
+      ],
+      "min_sd": 0.5,
+      "red": {},
+      "device": "Self-report",
+      "duration": "1 min",
+      "how": [
+        "Think about the last 24 hours.",
+        "Tick every symptom you noticed, even mild ones.",
+        "Red-flag symptoms (chest pain, breathlessness, confusion, sudden vision change) mean EMERGENCY."
+      ],
+      "why": "Small symptoms often appear before measurements change. Patterns across the crew can reveal an infection or an air-quality problem.",
+      "space": "Headaches (CO2), congestion (fluid shift), back pain (spine lengthening) and nausea are common in spaceflight.",
+      "guide": {
+        "ok": "No symptoms. Great.",
+        "watch": "Some symptoms. Rest, drink water and re-check tomorrow. ASTRA will watch for patterns.",
+        "act": "Several symptoms, or a red-flag symptom. Tell the Crew Medical Officer now. Red-flag symptoms: open EMERGENCY."
+      },
+      "escalate": "Any red-flag symptom means an immediate call to the Crew Medical Officer and EMERGENCY.",
+      "prevent": [
+        "Hand hygiene",
+        "Cabin air checks",
+        "Stretching for back pain"
+      ],
+      "sources": [
+        "hrp_illness",
+        "hrp_microbe",
+        "hrp_cog"
+      ]
+    }
+  ],
+  "organs": [
+    {
+      "id": "brain",
+      "name": "Brain & behavior",
+      "metrics": [
+        "sleep",
+        "mood",
+        "reaction"
+      ],
+      "hazards": [
+        "R",
+        "I",
+        "D"
+      ],
+      "function": "Controls mood, sleep, attention, decisions and, with the inner ear, balance: the crew's most important tool.",
+      "space": "Isolation, confinement, odd light cycles and workload disturb sleep and mood. Deep-space radiation may affect cognition over long missions. The inner ear's balance organs misread weightlessness at first (space motion sickness) and again after landing, when balance takes days to recover.",
+      "actions": [
+        "Protect an 8.5-hour sleep window",
+        "Use scheduled lighting",
+        "Call family or psych support at the next comm window"
+      ],
+      "sources": [
+        "hrp_cog",
+        "hrp_sleep",
+        "hrp_sport",
+        "csa_body"
+      ]
+    },
+    {
+      "id": "eyes",
+      "name": "Eyes & vision",
+      "metrics": [
+        "vision"
+      ],
+      "hazards": [
+        "R",
+        "G",
+        "E"
+      ],
+      "function": "Vision for every task, from reading displays to docking.",
+      "space": "Fluid shift toward the head can swell the optic disc, where the optic nerve enters the eye, and flatten the eye: Spaceflight-Associated Neuro-ocular Syndrome (SANS).",
+      "actions": [
+        "Weekly Amsler grid self-check",
+        "Report any new blur",
+        "Ground may request an eye ultrasound"
+      ],
+      "sources": [
+        "hrp_sans"
+      ]
+    },
+    {
+      "id": "heart",
+      "name": "Heart & circulation",
+      "metrics": [
+        "hr",
+        "bp"
+      ],
+      "hazards": [
+        "R",
+        "I",
+        "D",
+        "G"
+      ],
+      "function": "Pumps blood and oxygen to every organ.",
+      "space": "With less work to do the heart can decondition. Fluid shift changes blood pressure, and returning to gravity can cause dizziness or fainting.",
+      "actions": [
+        "Daily aerobic exercise",
+        "At least 2 L of fluids",
+        "Report chest pain or fainting at once"
+      ],
+      "sources": [
+        "hrp_cardio",
+        "std3001v1",
+        "csa_body"
+      ]
+    },
+    {
+      "id": "lungs",
+      "name": "Lungs & breathing",
+      "metrics": [
+        "spo2",
+        "resp"
+      ],
+      "hazards": [
+        "D",
+        "E"
+      ],
+      "function": "Brings oxygen in and removes CO2.",
+      "space": "CO2 can build up in a sealed cabin. On the Moon and Mars, fine reactive dust can irritate the airways after EVAs.",
+      "actions": [
+        "Check cabin CO2 if you have a headache",
+        "Dust control after EVAs",
+        "Re-measure SpO2 if breathless"
+      ],
+      "sources": [
+        "std3001v2",
+        "ochmo_tb004",
+        "hrp_dust",
+        "hrp_hypoxia"
+      ]
+    },
+    {
+      "id": "metabolism",
+      "name": "Metabolism & nutrition",
+      "metrics": [
+        "glucose",
+        "mass",
+        "nutrition"
+      ],
+      "hazards": [
+        "I",
+        "D",
+        "G",
+        "E"
+      ],
+      "function": "Turns food into energy and keeps blood sugar stable.",
+      "space": "Appetite changes, a limited menu and less activity can lead to weight loss and lower insulin sensitivity.",
+      "actions": [
+        "Eat the full planned menu",
+        "Weekly body-mass check",
+        "Fasting glucose each morning"
+      ],
+      "sources": [
+        "hrp_food",
+        "std3001v1",
+        "csa_body"
+      ]
+    },
+    {
+      "id": "immune",
+      "name": "Immune system",
+      "metrics": [
+        "temp"
+      ],
+      "hazards": [
+        "R",
+        "I",
+        "D",
+        "E"
+      ],
+      "function": "Defends against infection. Fever is its alarm signal.",
+      "space": "Stress, radiation and closed living change immune function. Dormant viruses can reactivate, and microbes spread easily in a sealed habitat.",
+      "actions": [
+        "Hand hygiene",
+        "Report fever or sore throat early",
+        "Keep personal items separate if ill"
+      ],
+      "sources": [
+        "hrp_immuno",
+        "hrp_microbe"
+      ]
+    },
+    {
+      "id": "kidneys",
+      "name": "Kidneys & fluids",
+      "metrics": [
+        "hydration"
+      ],
+      "hazards": [
+        "G",
+        "E"
+      ],
+      "function": "Filter the blood and balance fluids and minerals.",
+      "space": "Calcium released from shrinking bones raises kidney-stone risk, and the sense of thirst is weaker in weightlessness.",
+      "actions": [
+        "Drink at least 2 L a day",
+        "Extra water on exercise days",
+        "Report flank pain"
+      ],
+      "sources": [
+        "hrp_renal"
+      ]
+    },
+    {
+      "id": "musculo",
+      "name": "Bones & muscles",
+      "metrics": [
+        "exercise"
+      ],
+      "hazards": [
+        "G"
+      ],
+      "function": "Bones and muscles give support, movement and calcium storage.",
+      "space": "Unloaded bones lose roughly 1-1.5% of their mass per month, most at the hips and spine. Anti-gravity muscles of the calves, thighs, hips and back waste fastest, and the spine lengthens, causing back pain.",
+      "actions": [
+        "About 2 hours of exercise daily",
+        "Load the hips, legs and spine",
+        "Stretch for back pain"
+      ],
+      "sources": [
+        "hrp_bone",
+        "hrp_dynload",
+        "csa_body"
+      ]
+    }
+  ],
+  "symptoms": [
+    {
+      "id": "headache",
+      "label": "Headache",
+      "organ": "brain",
+      "red_flag": false
+    },
+    {
+      "id": "fatigue",
+      "label": "Unusual fatigue",
+      "organ": "brain",
+      "red_flag": false
+    },
+    {
+      "id": "congestion",
+      "label": "Nasal congestion",
+      "organ": "lungs",
+      "red_flag": false
+    },
+    {
+      "id": "cough",
+      "label": "Cough",
+      "organ": "lungs",
+      "red_flag": false
+    },
+    {
+      "id": "sore_throat",
+      "label": "Sore throat",
+      "organ": "immune",
+      "red_flag": false
+    },
+    {
+      "id": "nausea",
+      "label": "Nausea",
+      "organ": "brain",
+      "red_flag": false
+    },
+    {
+      "id": "back_pain",
+      "label": "Back pain",
+      "organ": "musculo",
+      "red_flag": false
+    },
+    {
+      "id": "eye_irritation",
+      "label": "Eye irritation",
+      "organ": "eyes",
+      "red_flag": false
+    },
+    {
+      "id": "rash",
+      "label": "Skin rash",
+      "organ": "immune",
+      "red_flag": false
+    },
+    {
+      "id": "dizziness",
+      "label": "Dizziness",
+      "organ": "heart",
+      "red_flag": false
+    },
+    {
+      "id": "chest_pain",
+      "label": "Chest pain or pressure",
+      "organ": "heart",
+      "red_flag": true
+    },
+    {
+      "id": "short_breath",
+      "label": "Shortness of breath",
+      "organ": "lungs",
+      "red_flag": true
+    },
+    {
+      "id": "confusion",
+      "label": "Confusion",
+      "organ": "brain",
+      "red_flag": true
+    },
+    {
+      "id": "vision_loss",
+      "label": "Sudden vision change",
+      "organ": "eyes",
+      "red_flag": true
+    }
+  ],
+  "base_tasks": [
+    {
+      "id": "morning",
+      "time": "07:30",
+      "title": "Morning vitals",
+      "metrics": [
+        "hr",
+        "bp",
+        "spo2"
+      ],
+      "xp": 30
+    },
+    {
+      "id": "glucose",
+      "time": "07:45",
+      "title": "Fasting glucose",
+      "metrics": [
+        "glucose"
+      ],
+      "xp": 15
+    },
+    {
+      "id": "sleep",
+      "time": "08:00",
+      "title": "Sleep log",
+      "metrics": [
+        "sleep"
+      ],
+      "xp": 10
+    },
+    {
+      "id": "exercise",
+      "time": "10:00",
+      "title": "Exercise block (2 h)",
+      "metrics": [
+        "exercise"
+      ],
+      "xp": 40
+    },
+    {
+      "id": "reaction",
+      "time": "14:00",
+      "title": "Alertness test",
+      "metrics": [
+        "reaction"
+      ],
+      "xp": 15
+    },
+    {
+      "id": "evening",
+      "time": "18:00",
+      "title": "Evening check",
+      "metrics": [
+        "temp",
+        "resp"
+      ],
+      "xp": 20
+    },
+    {
+      "id": "fluids",
+      "time": "20:30",
+      "title": "Food & fluids log",
+      "metrics": [
+        "hydration",
+        "nutrition"
+      ],
+      "xp": 15
+    },
+    {
+      "id": "wellbeing",
+      "time": "21:00",
+      "title": "Mood & symptoms",
+      "metrics": [
+        "mood",
+        "symptoms"
+      ],
+      "xp": 20
+    }
+  ],
+  "weekly_tasks": [
+    {
+      "id": "mass",
+      "time": "07:50",
+      "title": "Weekly body mass",
+      "metrics": [
+        "mass"
+      ],
+      "xp": 10
+    },
+    {
+      "id": "vision",
+      "time": "09:30",
+      "title": "Weekly vision self-check",
+      "metrics": [
+        "vision"
+      ],
+      "xp": 20
+    }
+  ],
+  "exercises": {
+    "squat": {
+      "name": "Squat",
+      "kind": "resistance",
+      "anim": "squat",
+      "targets": [
+        "Hips",
+        "Thighs",
+        "Spine"
+      ],
+      "why": "Loads the hips and spine, where astronauts lose the most bone: about 1-1.5 % a month without it.",
+      "cues": [
+        "Feet shoulder-width, bar across the upper back",
+        "Sit back until thighs are level",
+        "Drive up through the heels; breathe out on the way up"
+      ]
+    },
+    "deadlift": {
+      "name": "Deadlift",
+      "kind": "resistance",
+      "anim": "deadlift",
+      "targets": [
+        "Back",
+        "Glutes",
+        "Hamstrings"
+      ],
+      "why": "Keeps the back and hip muscles strong; back pain is common after the spine lengthens in microgravity.",
+      "cues": [
+        "Hinge at the hips, back flat",
+        "Bar close to the shins",
+        "Stand tall, squeeze the glutes at the top"
+      ]
+    },
+    "heel_raise": {
+      "name": "Heel raise",
+      "kind": "resistance",
+      "anim": "heel_raise",
+      "targets": [
+        "Calves",
+        "Ankles"
+      ],
+      "why": "Calf muscles shrink fastest in microgravity because feet no longer carry weight.",
+      "cues": [
+        "Bar on the shoulders, knees soft",
+        "Rise onto the balls of the feet",
+        "Lower slowly, 2 seconds down"
+      ]
+    },
+    "press": {
+      "name": "Bench press",
+      "kind": "resistance",
+      "anim": "press",
+      "targets": [
+        "Chest",
+        "Shoulders",
+        "Arms"
+      ],
+      "why": "Upper-body strength for EVA suit work, hatch operations and emergency egress.",
+      "cues": [
+        "Shoulder blades pulled back",
+        "Lower the bar to mid-chest",
+        "Press up and slightly back"
+      ]
+    },
+    "row": {
+      "name": "Seated row",
+      "kind": "resistance",
+      "anim": "row",
+      "targets": [
+        "Back",
+        "Arms",
+        "Grip"
+      ],
+      "why": "Upper-body pulling strength for suit work and hatch operations; the flywheel loads both directions.",
+      "cues": [
+        "Feet braced, back tall",
+        "Pull the handle to the lower ribs",
+        "Let the flywheel pull you back slowly"
+      ]
+    },
+    "run": {
+      "name": "Treadmill run",
+      "kind": "aerobic",
+      "anim": "run",
+      "targets": [
+        "Heart",
+        "Lungs",
+        "Legs",
+        "Bones"
+      ],
+      "why": "Running is the only aerobic exercise that also gives bones the impact they need.",
+      "cues": [
+        "Harness snug at hips and shoulders",
+        "Short, quick steps",
+        "Land mid-foot under the hips"
+      ]
+    },
+    "cycle_intervals": {
+      "name": "Cycle intervals",
+      "kind": "aerobic",
+      "anim": "cycle",
+      "targets": [
+        "Heart",
+        "Lungs"
+      ],
+      "why": "Short hard intervals keep aerobic fitness (VO2max) high in a fraction of the time.",
+      "cues": [
+        "Clip in, hands light on the bars",
+        "Hard: above 90 % of max heart rate",
+        "Easy pedalling between efforts"
+      ]
+    },
+    "cycle_steady": {
+      "name": "Steady ride",
+      "kind": "aerobic",
+      "anim": "cycle",
+      "targets": [
+        "Heart",
+        "Lungs"
+      ],
+      "why": "Steady endurance work builds the base for EVAs and long work days.",
+      "cues": [
+        "Hold a pace you could talk at",
+        "About 70-75 % of max heart rate",
+        "Keep cadence smooth, 70-90 rpm"
+      ]
+    }
+  },
+  "devices": {
+    "ared": {
+      "name": "ARED",
+      "full": "Advanced Resistive Exercise Device",
+      "note": "Vacuum cylinders give up to about 270 kg (600 lb) of load, like a barbell on Earth."
+    },
+    "t2": {
+      "name": "T2 treadmill",
+      "full": "COLBERT / T2 treadmill",
+      "note": "A harness and bungees pull you onto the belt so your feet take your weight."
+    },
+    "cevis": {
+      "name": "CEVIS",
+      "full": "Cycle Ergometer with Vibration Isolation and Stabilization",
+      "note": "A seatless bike: you clip your shoes in and pedal, held in place by your feet."
+    },
+    "flywheel": {
+      "name": "Flywheel",
+      "full": "Compact flywheel exercise device",
+      "note": "A shoebox-sized flywheel, as on Orion: a cable resists both the pull and the return."
+    },
+    "cycle": {
+      "name": "Cycle ergometer",
+      "full": "Compact cycle ergometer",
+      "note": "A small seatless bike that bolts to the floor of the habitat."
+    },
+    "weights": {
+      "name": "Free weights",
+      "full": "Barbell and plates",
+      "note": "In partial gravity you need extra load: your body weighs only a fraction of Earth weight."
+    },
+    "treadmill": {
+      "name": "Treadmill",
+      "full": "Habitat treadmill",
+      "note": "Partial gravity lets you run without a harness, but impact is lower than on Earth."
+    }
+  }
+}

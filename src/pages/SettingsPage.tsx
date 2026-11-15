@@ -37,7 +37,7 @@ export const SettingsPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
-              ASTRA System Settings & Neural Core Configuration
+              SOLARIS System Settings & Neural Core Configuration
             </h1>
             <p className="text-xs text-[#64748B] mt-0.5">
               Offline Inference Server • Speech Activity Tuning • Local Data Storage
@@ -90,7 +90,7 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             <p className="text-xs text-[#64748B] leading-relaxed">
-              ASTRA executes 100% locally on spacecraft hardware without external cloud APIs. When llama.cpp is not connected locally, the built-in deterministic browser neural engine handles all telemetry intents.
+              SOLARIS executes 100% locally on spacecraft hardware without external cloud APIs. When llama.cpp is not connected locally, the built-in deterministic browser neural engine handles all telemetry intents.
             </p>
           </div>
         </div>

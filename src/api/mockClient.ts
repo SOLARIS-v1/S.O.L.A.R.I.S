@@ -10,19 +10,29 @@ import {
   SimulationScenario,
   VoiceChatMessage,
   MissionEnvironmentMetrics,
+  DailyAssessmentRecord,
+  HealthTimelineEvent,
+  GuidanceRecommendation,
 } from './types';
 import { generateSeedRecords, CREW_MEMBERS, SEEDED_TASKS } from '../mock/seed';
 import { evaluateSubjectRecords } from '../mock/engine';
 import { INDICATOR_THRESHOLDS } from '../data/thresholds';
+import { INITIAL_GUIDANCE, INITIAL_TIMELINE_EVENTS } from '../data/initialGuidanceAndTimeline';
 
 const STORAGE_KEY_RECORDS = 'astra_records_v1';
 const STORAGE_KEY_FINDINGS_STATUS = 'astra_findings_status_v1';
+const STORAGE_KEY_ASSESSMENTS = 'astra_assessments_v1';
+const STORAGE_KEY_TIMELINE = 'astra_timeline_v1';
+const STORAGE_KEY_GUIDANCE = 'astra_guidance_v1';
 
 interface StoreState {
   records: HealthRecord[];
   crew: CrewMember[];
   tasks: MissionTask[];
   findings: Finding[];
+  dailyAssessments: DailyAssessmentRecord[];
+  timelineEvents: HealthTimelineEvent[];
+  guidanceList: GuidanceRecommendation[];
   activeSubjectId: string;
   linkState: LinkState;
   environment: MissionEnvironment;
@@ -41,6 +51,9 @@ interface StoreState {
   setLinkState: (state: LinkState) => void;
   setEnvironment: (env: MissionEnvironment) => void;
   postRecord: (record: Omit<HealthRecord, 'id' | 'synced' | 'synced_at'>) => HealthRecord;
+  submitDailyAssessment: (assessment: Omit<DailyAssessmentRecord, 'id'>) => DailyAssessmentRecord;
+  addTimelineEvent: (event: Omit<HealthTimelineEvent, 'id'>) => HealthTimelineEvent;
+  updateGuidanceStatus: (id: string, status: GuidanceRecommendation['status']) => void;
   updateFindingStatus: (id: string, status: Finding['status'], notes?: string) => void;
   resolveFinding: (id: string, notes?: string) => void;
   requestAssessment: (subjectId: string, category: string) => void;
@@ -118,13 +131,13 @@ const INITIAL_VOICE_MESSAGES: VoiceChatMessage[] = [
   {
     id: 'vm-init-1',
     sender: 'astra',
-    text: 'ASTRA Neural Core initialized (Qwen 2.5 local offline). Standing by for wake word or telemetry query.',
+    text: 'SOLARIS Neural Core initialized (Qwen 2.5 local offline). Standing by for wake word or telemetry query.',
     timestamp: new Date(Date.now() - 3600000).toISOString(),
   },
   {
     id: 'vm-init-2',
     sender: 'astronaut',
-    text: 'Wake up, ASTRA. Read my health.',
+    text: 'Wake up, SOLARIS. Read my health.',
     timestamp: new Date(Date.now() - 1800000).toISOString(),
   },
   {
@@ -144,6 +157,9 @@ export const useAstraStore = create<StoreState>((set, get) => {
     crew: CREW_MEMBERS,
     tasks: SEEDED_TASKS,
     findings: initialFindings,
+    dailyAssessments: [],
+    timelineEvents: INITIAL_TIMELINE_EVENTS,
+    guidanceList: INITIAL_GUIDANCE,
     activeSubjectId: 'ASTRA-02', // Maya Chen default
     linkState: 'connected',
     environment: 'mars',
@@ -167,6 +183,222 @@ export const useAstraStore = create<StoreState>((set, get) => {
     },
 
     setEnvironment: (environment) => set({ environment }),
+
+    addTimelineEvent: (eventData) => {
+      const newEvent: HealthTimelineEvent = {
+        ...eventData,
+        id: `tl-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      };
+      set({ timelineEvents: [newEvent, ...get().timelineEvents] });
+      return newEvent;
+    },
+
+    updateGuidanceStatus: (id, status) => {
+      set({
+        guidanceList: get().guidanceList.map((g) => (g.id === id ? { ...g, status } : g)),
+      });
+    },
+
+    submitDailyAssessment: (assessmentData) => {
+      const { records, timelineEvents, dailyAssessments, linkState } = get();
+      const now = new Date().toISOString();
+      const isSynced = linkState === 'connected';
+      const assessmentId = `assess-${assessmentData.subject_id}-${Date.now()}`;
+      const newAssessment: DailyAssessmentRecord = {
+        ...assessmentData,
+        id: assessmentId,
+      };
+
+      const hrVal = assessmentData.vitals?.heart_rate ?? (assessmentData.vitals as any)?.heart_rate_bpm ?? 75;
+      const bpSysVal = assessmentData.vitals?.bp_sys ?? (assessmentData.vitals as any)?.systolic_bp ?? 118;
+      const bpDiaVal = assessmentData.vitals?.bp_dia ?? (assessmentData.vitals as any)?.diastolic_bp ?? 76;
+      const tempVal = assessmentData.vitals?.temperature ?? (assessmentData.vitals as any)?.body_temp_c ?? 37.0;
+      const spo2Val = assessmentData.vitals?.spo2 ?? (assessmentData.vitals as any)?.spo2_pct ?? 98.4;
+      const respVal = assessmentData.vitals?.resp_rate ?? (assessmentData.vitals as any)?.respiration_rate ?? 14.0;
+      const sleepHrVal = assessmentData.sleep?.hours ?? (assessmentData.sleep as any)?.total_sleep_hours ?? 6.5;
+      const fatigueVal = assessmentData.physical?.fatigue ?? (assessmentData.physical as any)?.fatigue_level ?? 2;
+      const moodVal = assessmentData.psychological?.mood ?? (assessmentData.psychological as any)?.mood_level ?? 4;
+      const symptomsList = assessmentData.symptoms || [];
+
+      const newRecordsToPost: Omit<HealthRecord, 'id' | 'synced' | 'synced_at'>[] = [
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'heart_rate',
+          value: hrVal,
+          unit: 'bpm',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'blood_pressure_sys',
+          value: bpSysVal,
+          unit: 'mmHg',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'blood_pressure_dia',
+          value: bpDiaVal,
+          unit: 'mmHg',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'temperature',
+          value: tempVal,
+          unit: '°C',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'spo2',
+          value: spo2Val,
+          unit: '%',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'respiratory_rate',
+          value: respVal,
+          unit: 'br/m',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'sleep',
+          value: sleepHrVal,
+          unit: 'h',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'fatigue',
+          value: fatigueVal,
+          unit: '/5',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+        {
+          subject_id: assessmentData.subject_id,
+          type: 'mood',
+          value: moodVal,
+          unit: '/5',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        },
+      ];
+
+      if (assessmentData.vitals?.glucose !== undefined) {
+        newRecordsToPost.push({
+          subject_id: assessmentData.subject_id,
+          type: 'glucose',
+          value: assessmentData.vitals.glucose,
+          unit: 'mg/dL',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        });
+      }
+
+      if (assessmentData.vitals?.hrv !== undefined) {
+        newRecordsToPost.push({
+          subject_id: assessmentData.subject_id,
+          type: 'hrv',
+          value: assessmentData.vitals.hrv,
+          unit: 'ms',
+          timestamp: assessmentData.timestamp,
+          source: 'manual',
+          is_simulated: assessmentData.is_simulated ?? true,
+          quality: 'ok',
+          mission_phase: 'transit',
+        });
+      }
+
+      const generatedRecords: HealthRecord[] = newRecordsToPost.map((r, i) => ({
+        ...r,
+        id: `rec-${r.subject_id}-${r.type}-${Date.now()}-${i}`,
+        synced: isSynced,
+        synced_at: isSynced ? now : null,
+      }));
+
+      const nextRecords = [...records, ...generatedRecords];
+
+      const newTimelineEvent: HealthTimelineEvent = {
+        id: `tl-${Date.now()}`,
+        subject_id: assessmentData.subject_id,
+        timestamp: assessmentData.timestamp,
+        category: 'assessment',
+        title: 'Daily Health Assessment Completed',
+        summary: `HR ${hrVal} bpm · BP ${bpSysVal}/${bpDiaVal} · Sleep ${sleepHrVal}h · Fatigue ${fatigueVal}/5`,
+        detail: `Sleep quality: ${assessmentData.sleep?.quality ?? 4}/5 · Mood: ${moodVal}/5 · Symptoms reported: ${symptomsList.length}`,
+        severity: fatigueVal >= 4 || sleepHrVal < 5.0 ? 'watch' : 'normal',
+        source: 'Daily Check-in',
+        is_simulated: assessmentData.is_simulated ?? true,
+      };
+
+      const symptomEvents: HealthTimelineEvent[] = symptomsList.map((s, idx) => ({
+        id: `tl-symp-${Date.now()}-${idx}`,
+        subject_id: assessmentData.subject_id,
+        timestamp: assessmentData.timestamp,
+        category: 'symptom',
+        title: `Reported Symptom: ${s.location}`,
+        summary: `Severity: ${s.severity}/10 · Onset: ${s.onset} · Duration: ${s.duration}`,
+        detail: s.notes || s.triggers ? `Context: ${s.triggers || ''} ${s.notes || ''}` : undefined,
+        severity: s.severity >= 6 ? 'review' : 'watch',
+        source: 'Crew Self-Report',
+        is_simulated: assessmentData.is_simulated ?? true,
+      }));
+
+      const nextAssessments = [newAssessment, ...dailyAssessments];
+      const nextTimeline = [newTimelineEvent, ...symptomEvents, ...timelineEvents];
+      const nextFindings = computeAllFindings(nextRecords);
+
+      set({
+        records: nextRecords,
+        dailyAssessments: nextAssessments,
+        timelineEvents: nextTimeline,
+        findings: nextFindings,
+        lastSyncTime: isSynced ? now : get().lastSyncTime,
+      });
+
+      return newAssessment;
+    },
 
     postRecord: (recData) => {
       const { linkState, records } = get();

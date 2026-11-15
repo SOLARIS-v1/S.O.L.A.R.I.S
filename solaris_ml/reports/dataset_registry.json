@@ -1,0 +1,1168 @@
+{
+  "audit_version": "1.0.0",
+  "timestamp": "2026-11-15T02:25:00Z",
+  "datasets": {
+    "Dataset_A_MMASH": {
+      "name": "MMASH 1.0.0 (Multilevel Monitoring of Activity and Sleep in Healthy People)",
+      "source": "PhysioNet / University of Florence",
+      "license": "PhysioNet Credentialed Data Use Agreement / Open Access",
+      "format": "CSV per user directory",
+      "population": "22 young healthy adult volunteers (20 male, 2 female, mean age ~27.3)",
+      "sampling_frequency": {
+        "Actigraph": "1 Hz (epoch=1s)",
+        "RR": "Event-based (beat-to-beat ECG inter-beat interval, ms)",
+        "Activity": "Event intervals",
+        "Sleep": "Polysomnography/Actigraphy night summary",
+        "Saliva": "Morning awakening and evening before sleep",
+        "Questionnaire": "Single intake / scheduled time points"
+      },
+      "stats": {
+        "participant_count": 22,
+        "participants": [
+          "user_1",
+          "user_10",
+          "user_11",
+          "user_12",
+          "user_13",
+          "user_14",
+          "user_15",
+          "user_16",
+          "user_17",
+          "user_18",
+          "user_19",
+          "user_2",
+          "user_20",
+          "user_21",
+          "user_22",
+          "user_3",
+          "user_4",
+          "user_5",
+          "user_6",
+          "user_7",
+          "user_8",
+          "user_9"
+        ],
+        "tables": {
+          "user_info": {
+            "total_rows": 22,
+            "columns": [
+              "Age",
+              "Gender",
+              "Height",
+              "Unnamed: 0",
+              "Weight"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "Gender": "str",
+              "Weight": "int64",
+              "Height": "int64",
+              "Age": "int64"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "Gender": 0,
+              "Weight": 0,
+              "Height": 0,
+              "Age": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "Gender": 0.0,
+              "Weight": 0.0,
+              "Height": 0.0,
+              "Age": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "sleep": {
+            "total_rows": 22,
+            "columns": [
+              "Average Awakening Length",
+              "Efficiency",
+              "Fragmentation Index",
+              "In Bed Date",
+              "In Bed Time",
+              "Latency",
+              "Movement Index",
+              "Number of Awakenings",
+              "Onset Date",
+              "Onset Time",
+              "Out Bed Date",
+              "Out Bed Time",
+              "Sleep Fragmentation Index",
+              "Total Minutes in Bed",
+              "Total Sleep Time (TST)",
+              "Unnamed: 0",
+              "Wake After Sleep Onset (WASO)"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "In Bed Date": "int64",
+              "In Bed Time": "str",
+              "Out Bed Date": "int64",
+              "Out Bed Time": "str",
+              "Onset Date": "int64",
+              "Onset Time": "str",
+              "Latency": "int64",
+              "Efficiency": "float64",
+              "Total Minutes in Bed": "int64",
+              "Total Sleep Time (TST)": "int64",
+              "Wake After Sleep Onset (WASO)": "int64",
+              "Number of Awakenings": "int64",
+              "Average Awakening Length": "float64",
+              "Movement Index": "float64",
+              "Fragmentation Index": "int64",
+              "Sleep Fragmentation Index": "float64"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "In Bed Date": 0,
+              "In Bed Time": 0,
+              "Out Bed Date": 0,
+              "Out Bed Time": 0,
+              "Onset Date": 0,
+              "Onset Time": 0,
+              "Latency": 0,
+              "Efficiency": 0,
+              "Total Minutes in Bed": 0,
+              "Total Sleep Time (TST)": 0,
+              "Wake After Sleep Onset (WASO)": 0,
+              "Number of Awakenings": 0,
+              "Average Awakening Length": 0,
+              "Movement Index": 0,
+              "Fragmentation Index": 0,
+              "Sleep Fragmentation Index": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "In Bed Date": 0.0,
+              "In Bed Time": 0.0,
+              "Out Bed Date": 0.0,
+              "Out Bed Time": 0.0,
+              "Onset Date": 0.0,
+              "Onset Time": 0.0,
+              "Latency": 0.0,
+              "Efficiency": 0.0,
+              "Total Minutes in Bed": 0.0,
+              "Total Sleep Time (TST)": 0.0,
+              "Wake After Sleep Onset (WASO)": 0.0,
+              "Number of Awakenings": 0.0,
+              "Average Awakening Length": 0.0,
+              "Movement Index": 0.0,
+              "Fragmentation Index": 0.0,
+              "Sleep Fragmentation Index": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "RR": {
+            "total_rows": 1749295,
+            "columns": [
+              "Unnamed: 0",
+              "day",
+              "ibi_s",
+              "time"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "ibi_s": "float64",
+              "day": "int64",
+              "time": "str"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "ibi_s": 0,
+              "day": 0,
+              "time": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "ibi_s": 0.0,
+              "day": 0.0,
+              "time": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "questionnaire": {
+            "total_rows": 22,
+            "columns": [
+              "BISBAS_bis",
+              "BISBAS_drive",
+              "BISBAS_fun",
+              "BISBAS_reward",
+              "Daily_stress",
+              "MEQ",
+              "Pittsburgh",
+              "STAI1",
+              "STAI2",
+              "Unnamed: 0",
+              "panas_neg_10",
+              "panas_neg_14",
+              "panas_neg_18",
+              "panas_neg_22",
+              "panas_neg_9+1",
+              "panas_pos_10",
+              "panas_pos_14",
+              "panas_pos_18",
+              "panas_pos_22",
+              "panas_pos_9+1"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "MEQ": "int64",
+              "STAI1": "int64",
+              "STAI2": "int64",
+              "Pittsburgh": "int64",
+              "Daily_stress": "int64",
+              "BISBAS_bis": "int64",
+              "BISBAS_reward": "int64",
+              "BISBAS_drive": "int64",
+              "BISBAS_fun": "int64",
+              "panas_pos_10": "int64",
+              "panas_pos_14": "int64",
+              "panas_pos_18": "int64",
+              "panas_pos_22": "int64",
+              "panas_pos_9+1": "int64",
+              "panas_neg_10": "int64",
+              "panas_neg_14": "int64",
+              "panas_neg_18": "int64",
+              "panas_neg_22": "int64",
+              "panas_neg_9+1": "int64"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "MEQ": 0,
+              "STAI1": 0,
+              "STAI2": 0,
+              "Pittsburgh": 0,
+              "Daily_stress": 0,
+              "BISBAS_bis": 0,
+              "BISBAS_reward": 0,
+              "BISBAS_drive": 0,
+              "BISBAS_fun": 0,
+              "panas_pos_10": 0,
+              "panas_pos_14": 1,
+              "panas_pos_18": 0,
+              "panas_pos_22": 0,
+              "panas_pos_9+1": 0,
+              "panas_neg_10": 0,
+              "panas_neg_14": 1,
+              "panas_neg_18": 0,
+              "panas_neg_22": 0,
+              "panas_neg_9+1": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "MEQ": 0.0,
+              "STAI1": 0.0,
+              "STAI2": 0.0,
+              "Pittsburgh": 0.0,
+              "Daily_stress": 0.0,
+              "BISBAS_bis": 0.0,
+              "BISBAS_reward": 0.0,
+              "BISBAS_drive": 0.0,
+              "BISBAS_fun": 0.0,
+              "panas_pos_10": 0.0,
+              "panas_pos_14": 4.55,
+              "panas_pos_18": 0.0,
+              "panas_pos_22": 0.0,
+              "panas_pos_9+1": 0.0,
+              "panas_neg_10": 0.0,
+              "panas_neg_14": 4.55,
+              "panas_neg_18": 0.0,
+              "panas_neg_22": 0.0,
+              "panas_neg_9+1": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "Activity": {
+            "total_rows": 456,
+            "columns": [
+              "Activity",
+              "Day",
+              "End",
+              "Start",
+              "Unnamed: 0"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "Activity": "int64",
+              "Start": "str",
+              "End": "str",
+              "Day": "int64"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "Activity": 0,
+              "Start": 0,
+              "End": 2,
+              "Day": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "Activity": 0.0,
+              "Start": 0.0,
+              "End": 0.44,
+              "Day": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "Actigraph": {
+            "total_rows": 1462678,
+            "columns": [
+              "Axis1",
+              "Axis2",
+              "Axis3",
+              "HR",
+              "Inclinometer Lying",
+              "Inclinometer Off",
+              "Inclinometer Sitting",
+              "Inclinometer Standing",
+              "Steps",
+              "Unnamed: 0",
+              "Vector Magnitude",
+              "day",
+              "time"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "Axis1": "int64",
+              "Axis2": "int64",
+              "Axis3": "int64",
+              "Steps": "int64",
+              "HR": "float64",
+              "Inclinometer Off": "int64",
+              "Inclinometer Standing": "int64",
+              "Inclinometer Sitting": "int64",
+              "Inclinometer Lying": "int64",
+              "Vector Magnitude": "float64",
+              "day": "int64",
+              "time": "str"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "Axis1": 0,
+              "Axis2": 0,
+              "Axis3": 0,
+              "Steps": 0,
+              "HR": 0,
+              "Inclinometer Off": 0,
+              "Inclinometer Standing": 0,
+              "Inclinometer Sitting": 0,
+              "Inclinometer Lying": 0,
+              "Vector Magnitude": 0,
+              "day": 0,
+              "time": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "Axis1": 0.0,
+              "Axis2": 0.0,
+              "Axis3": 0.0,
+              "Steps": 0.0,
+              "HR": 0.0,
+              "Inclinometer Off": 0.0,
+              "Inclinometer Standing": 0.0,
+              "Inclinometer Sitting": 0.0,
+              "Inclinometer Lying": 0.0,
+              "Vector Magnitude": 0.0,
+              "day": 0.0,
+              "time": 0.0
+            },
+            "duplicate_rows": 0
+          },
+          "saliva": {
+            "total_rows": 42,
+            "columns": [
+              "Cortisol NORM",
+              "Melatonin NORM",
+              "SAMPLES",
+              "Unnamed: 0"
+            ],
+            "dtypes": {
+              "Unnamed: 0": "int64",
+              "SAMPLES": "str",
+              "Cortisol NORM": "float64",
+              "Melatonin NORM": "float64"
+            },
+            "missing_values": {
+              "Unnamed: 0": 0,
+              "SAMPLES": 0,
+              "Cortisol NORM": 0,
+              "Melatonin NORM": 0
+            },
+            "missing_percentages": {
+              "Unnamed: 0": 0.0,
+              "SAMPLES": 0.0,
+              "Cortisol NORM": 0.0,
+              "Melatonin NORM": 0.0
+            },
+            "duplicate_rows": 0
+          }
+        }
+      },
+      "target_labels": {
+        "sleep_efficiency": "Available in sleep.csv (continuous 0-100%)",
+        "daily_stress": "Available in questionnaire.csv (Likert scale)",
+        "anxiety_stai": "STAI-1 (state) and STAI-2 (trait) scores",
+        "activity_type": "Categorical code in Activity.csv"
+      },
+      "leakage_risks": "Repeated continuous measurements per user. Must strictly split by participant (Leave-One-Group-Out or GroupKFold).",
+      "suitable_tasks": [
+        "HRV feature extraction and circadian HRV profiling",
+        "Sleep efficiency and fragmentation analysis",
+        "Salivary cortisol and melatonin circadian modeling",
+        "Stress and anxiety association with physiological metrics",
+        "Physical activity level estimation and anomaly detection"
+      ]
+    },
+    "Dataset_B_Autonomic_Aging": {
+      "name": "Autonomic Aging Physiological Waveform Dataset",
+      "source": "PhysioNet (Autonomic Aging Database)",
+      "license": "PhysioNet Open Access",
+      "format": "WFDB (format 16, 16-bit binary .dat + ASCII .hea)",
+      "population": "Human subjects under autonomic cardiovascular reflex testing",
+      "sampling_frequency": "1000 Hz",
+      "channels": [
+        "ECG1 (mV)",
+        "ECG2 (mV)",
+        "NIBP (mmHg continuous)"
+      ],
+      "stats": {
+        "records": {
+          "0001": {
+            "sampling_frequency": 1000,
+            "signal_length_samples": 900401,
+            "duration_seconds": 900.401,
+            "duration_minutes": 15.01,
+            "channels": [
+              "ECG1",
+              "ECG2",
+              "NIBP"
+            ],
+            "units": [
+              "mV",
+              "mv",
+              "mmHg"
+            ],
+            "missing_values": {
+              "ECG1": 0,
+              "ECG2": 0,
+              "NIBP": 0
+            },
+            "signal_ranges": {
+              "ECG1": {
+                "min": -1.4662955476403223,
+                "max": 1.3394803347195494,
+                "mean": 0.043581130661245374,
+                "std": 0.1928425350890963
+              },
+              "ECG2": {
+                "min": -0.38640676154556514,
+                "max": 0.9088098877883343,
+                "mean": -0.00727782325577398,
+                "std": 0.10627589778970431
+              },
+              "NIBP": {
+                "min": 99.643372280942,
+                "max": 169.65697565036402,
+                "mean": 123.24089470070894,
+                "std": 12.083321171567992
+              }
+            }
+          },
+          "0002": {
+            "sampling_frequency": 1000,
+            "signal_length_samples": 1938301,
+            "duration_seconds": 1938.301,
+            "duration_minutes": 32.31,
+            "channels": [
+              "ECG1",
+              "ECG2",
+              "NIBP"
+            ],
+            "units": [
+              "mV",
+              "mv",
+              "mmHg"
+            ],
+            "missing_values": {
+              "ECG1": 0,
+              "ECG2": 0,
+              "NIBP": 0
+            },
+            "signal_ranges": {
+              "ECG1": {
+                "min": -0.9512676085009748,
+                "max": 2.5873809386695354,
+                "mean": -0.02425032458138085,
+                "std": 0.22028016479279736
+              },
+              "ECG2": {
+                "min": -1.658953916191706,
+                "max": 1.5488203651639905,
+                "mean": -0.0100044507533392,
+                "std": 0.2916587951717174
+              },
+              "NIBP": {
+                "min": 24.9985065440835,
+                "max": 174.99412345124045,
+                "mean": 90.59897648354483,
+                "std": 23.61480337311182
+              }
+            }
+          },
+          "0003": {
+            "sampling_frequency": 1000,
+            "signal_length_samples": 1801101,
+            "duration_seconds": 1801.101,
+            "duration_minutes": 30.02,
+            "channels": [
+              "ECG1",
+              "ECG2",
+              "NIBP"
+            ],
+            "units": [
+              "mV",
+              "mv",
+              "mmHg"
+            ],
+            "missing_values": {
+              "ECG1": 0,
+              "ECG2": 0,
+              "NIBP": 0
+            },
+            "signal_ranges": {
+              "ECG1": {
+                "min": -0.9095309492462376,
+                "max": 1.9797177772638417,
+                "mean": -0.017299680067380745,
+                "std": 0.2563450237802177
+              },
+              "ECG2": {
+                "min": -1.953508919713548,
+                "max": 1.6200082762252561,
+                "mean": -0.003065963499958191,
+                "std": 0.15307340914179773
+              },
+              "NIBP": {
+                "min": 68.14842587566554,
+                "max": 119.08292715683915,
+                "mean": 94.95654266193371,
+                "std": 6.995736510835392
+              }
+            }
+          },
+          "0004": {
+            "sampling_frequency": 1000,
+            "signal_length_samples": 903401,
+            "duration_seconds": 903.401,
+            "duration_minutes": 15.06,
+            "channels": [
+              "ECG1",
+              "ECG2",
+              "NIBP"
+            ],
+            "units": [
+              "mV",
+              "mv",
+              "mmHg"
+            ],
+            "missing_values": {
+              "ECG1": 0,
+              "ECG2": 0,
+              "NIBP": 0
+            },
+            "signal_ranges": {
+              "ECG1": {
+                "min": -0.6117811351233298,
+                "max": 1.8896204688929101,
+                "mean": -0.00013361325628127638,
+                "std": 0.2467235417204972
+              },
+              "ECG2": {
+                "min": -0.6972786382926157,
+                "max": 0.5477274451847098,
+                "mean": 0.01941447255486156,
+                "std": 0.09936711663160848
+              },
+              "NIBP": {
+                "min": 51.00556698434362,
+                "max": 117.08180844463925,
+                "mean": 70.36116196888796,
+                "std": 10.610214861845744
+              }
+            }
+          }
+        },
+        "missing_headers": [
+          "0005"
+        ],
+        "record_0005_dat_only": {
+          "file_size_bytes": 5462406,
+          "estimated_samples_3chan_16bit": 910401,
+          "estimated_duration_at_1000hz_min": 15.17,
+          "status": "Header .hea missing from source archive; raw binary preserved."
+        }
+      },
+      "target_labels": "None provided (unsupervised physiological waveform). Reference R-peaks must be detected using verified Pan-Tompkins / Hamilton algorithms.",
+      "leakage_risks": "Temporal autocorrelation across continuous waveform windows. Never randomly split time windows.",
+      "suitable_tasks": [
+        "High-resolution ECG R-peak detection",
+        "Continuous RR interval and HRV extraction",
+        "Continuous blood pressure waveform systolic/diastolic/MAP calculation",
+        "Cardiovascular autonomic feature engineering and signal quality index (SQI)"
+      ]
+    },
+    "Dataset_C_OSD_570": {
+      "name": "NASA OSD-570 / GLDS-562 (Inspiration4 PBMC Single-Cell Multiomics)",
+      "source": "NASA Open Science Data Repository (OSDR) / SOMA Package",
+      "license": "NASA Open Data / Public Domain",
+      "format": "Excel workbooks + MultiQC reports + ISA-Tab metadata",
+      "population": "4 Inspiration4 civilian astronauts (C001, C002, C003, C004), 3-day low-Earth orbit mission",
+      "sampling_frequency": "Longitudinal episodic biospecimen collection (Pre-flight L-92, L-44, L-3; Post-flight R+1, R+45, R+82)",
+      "assays": [
+        "Single-nucleus RNA-seq (snRNA-seq) PBMC gene expression",
+        "Single-nucleus ATAC-seq (snATAC-seq) chromatin accessibility",
+        "Single-cell TCR and BCR V(D)J immune receptor sequencing"
+      ],
+      "stats": {
+        "VDJ_Results": {
+          "file": "GLDS-562_scRNA-Seq_VDJ_Results.xlsx",
+          "sheets": {
+            "TCR_VDJ": {
+              "row_count": 258142,
+              "sample_columns": [
+                "SeqName",
+                "SeqLen",
+                "GeneType",
+                "Grouping",
+                "Species",
+                "Sequence",
+                "GermlineSequence",
+                "ClonalPool",
+                "TotalMuts",
+                "Mutations",
+                "Isotype",
+                "crewID",
+                "timepoint"
+              ]
+            },
+            "BCR_VDJ": {
+              "row_count": 63860,
+              "sample_columns": [
+                "SeqName",
+                "SeqLen",
+                "GeneType",
+                "Grouping",
+                "Species",
+                "Sequence",
+                "GermlineSequence",
+                "ClonalPool",
+                "TotalMuts",
+                "Mutations",
+                "Isotype",
+                "crewID",
+                "timepoint"
+              ]
+            }
+          }
+        },
+        "snRNA_Expression": {
+          "file": "GLDS-562_snRNA-Seq_PBMC_Gene_Expression_snRNA-seq_Processed_Data.xlsx",
+          "sheets": {
+            "I4-FP1": {
+              "row_count": 8274,
+              "sample_columns": [
+                "### Comparison",
+                "(R+1) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-FP2": {
+              "row_count": 3376,
+              "sample_columns": [
+                "### Comparison",
+                "(R+1, R+45, R+82) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-RP1": {
+              "row_count": 10961,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45) vs (R+1)"
+              ]
+            },
+            "I4-RP2": {
+              "row_count": 5311,
+              "sample_columns": [
+                "### Comparison",
+                "(R+82) vs (R+1)"
+              ]
+            },
+            "I4-RP3": {
+              "row_count": 5361,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45, R+82) vs (R+1)"
+              ]
+            },
+            "I4-LP1": {
+              "row_count": 6165,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-LP2": {
+              "row_count": 3353,
+              "sample_columns": [
+                "### Comparison",
+                "(R+82) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-LP3": {
+              "row_count": 3235,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45, R+82) vs (L-92, L-44, L-3)"
+              ]
+            }
+          }
+        },
+        "snATAC_Chromatin": {
+          "file": "GLDS-562_snATAC-Seq_PBMC_Chromatin_Accessibility_snATAC-seq_Processed_Data.xlsx",
+          "sheets": {
+            "I4-FP1": {
+              "row_count": 20305,
+              "sample_columns": [
+                "### Comparison",
+                "(R+1) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-FP2": {
+              "row_count": 3376,
+              "sample_columns": [
+                "### Comparison",
+                "(R+1, R+45, R+82) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-RP1": {
+              "row_count": 22449,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45) vs (R+1)"
+              ]
+            },
+            "I4-RP2": {
+              "row_count": 20324,
+              "sample_columns": [
+                "### Comparison",
+                "(R+82) vs (R+1)"
+              ]
+            },
+            "I4-RP3": {
+              "row_count": 18545,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45, R+82) vs (R+1)"
+              ]
+            },
+            "I4-LP1": {
+              "row_count": 52804,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-LP2": {
+              "row_count": 3353,
+              "sample_columns": [
+                "### Comparison",
+                "(R+82) vs (L-92, L-44, L-3)"
+              ]
+            },
+            "I4-LP3": {
+              "row_count": 1269,
+              "sample_columns": [
+                "### Comparison",
+                "(R+45, R+82) vs (L-92, L-44, L-3)"
+              ]
+            }
+          }
+        }
+      },
+      "target_labels": "Mission phases (Pre-flight vs Immediate Post-flight R+1 vs Recovery Post-flight R+45/R+82)",
+      "leakage_risks": "Extremely small participant cohort (N=4). High risk of participant-specific gene expression bias. Cannot train supervised disease classifiers. Strict Leave-One-Astronaut-Out or unsupervised/differential expression paradigms only.",
+      "suitable_tasks": [
+        "Differential gene expression characterization across spaceflight phases",
+        "Immune-cell type and clonotype diversity Shannon/Simpson entropy profiling",
+        "Molecular pathway enrichment (immune activation, DNA damage, mitochondrial stress)",
+        "Pre-flight vs post-flight molecular anomaly identification"
+      ]
+    },
+    "Dataset_D_OSD_571": {
+      "name": "NASA OSD-571 / GLDS-563 (Inspiration4 Plasma Proteomics and Metabolomics)",
+      "source": "NASA OSDR / SOMA Package",
+      "license": "NASA Open Data / Public Domain",
+      "format": "TSV, CSV, Excel workbooks, MultiQC cfRNA/WGS reports",
+      "population": "4 Inspiration4 civilian astronauts (C001, C002, C003, C004) + Ground Controls",
+      "sampling_frequency": "Episodic blood draws (Pre-flight, Immediate Post-flight R+1, Recovery R+45, R+82)",
+      "assays": [
+        "Mass spectrometry plasma proteomics (timsTOF Pro / Q Exactive)",
+        "Extracellular vesicle proteomics (EVP)",
+        "Untargeted and targeted metabolomics (RP-POS/NEG, ANP-POS/NEG)",
+        "Cell-free RNA (cfRNA-seq) and cell-free DNA (cfDNA / WGS)"
+      ],
+      "stats": {
+        "plasma_proteomics_metadata": {
+          "rows": 21,
+          "columns": [
+            "Sample_name",
+            "Astronaut",
+            "PreVpost",
+            "Timepoint",
+            "ImmediateVLongTerm"
+          ],
+          "astronauts": [
+            "C001",
+            "C002",
+            "C003",
+            "C004"
+          ],
+          "timepoints": [
+            "June_Pre",
+            "Aug_Pre",
+            "Sept_Pre",
+            "Sept_Post",
+            "Dec_Post",
+            "Nov_Post"
+          ]
+        },
+        "metabolomics_ANP": {
+          "rows": 454,
+          "columns": [
+            "SuperPathway",
+            "SubPathway",
+            "Compound Name",
+            "Confidence of metabolite annotation",
+            "Formula",
+            "Mass",
+            "RT",
+            "CAS ID",
+            "Mode",
+            "p_1_1",
+            "p_2_1",
+            "p_3_1",
+            "p_4_1",
+            "p_1_2",
+            "p_2_2",
+            "p_3_2",
+            "p_4_2",
+            "p_1_3",
+            "p_2_3",
+            "p_3_3",
+            "p_4_3",
+            "p_1_4",
+            "p_2_4",
+            "p_3_4",
+            "p_4_4",
+            "p_1_5",
+            "p_2_5",
+            "p_3_5",
+            "p_4_5",
+            "p_1_6",
+            "p_2_6",
+            "p_3_6",
+            "p_4_6",
+            "KEGG",
+            "HMB"
+          ],
+          "superpathways": {
+            "Lipid metabolism": 232,
+            "Amino acids": 106,
+            "Purine  and pyrimidine metabolism/nucleotide metabolism": 41,
+            "Cofactor, vitamin and antioxidant metabolism": 25,
+            "Energy metabolism": 20,
+            "Carbohydrate metabolism": 10,
+            "Glycylate and dicarboxylate metabolism": 6,
+            "Porphyrin metabolism": 3,
+            "Caffeine metabolism": 3,
+            "Amino sugar and nucleotide sugar metabolism": 2,
+            "Keto-Acids and Derivatives": 2,
+            "Butyrate metabolism": 1
+          }
+        },
+        "metabolomics_RPP": {
+          "rows": 226,
+          "columns": [
+            "Tentative  Name",
+            "Assigned ID",
+            "Confidence of metabolite annotation",
+            "Formula",
+            "Mass",
+            "RT",
+            "CAS ID",
+            "MTBE_p_1_1",
+            "MTBE_p_2_1",
+            "MTBE_p_3_1",
+            "MTBE_p_4_1",
+            "MTBE_p_1_2",
+            "MTBE_p_2_2",
+            "MTBE_p_3_2",
+            "MTBE_p_4_2",
+            "MTBE_p_1_3",
+            "MTBE_p_2_3",
+            "MTBE_p_3_3",
+            "MTBE_p_4_3",
+            "MTBE_p_1_4",
+            "MTBE_p_2_4",
+            "MTBE_p_3_4",
+            "MTBE_p_4_4",
+            "MTBE_p_1_5",
+            "MTBE_p_2_5",
+            "MTBE_p_3_5",
+            "MTBE_p_4_5",
+            "MTBE_p_1_6",
+            "MTBE_p_2_6",
+            "MTBE_p_3_6",
+            "MTBE_p_4_6",
+            "Unnamed: 31",
+            "Unnamed: 32",
+            "Unnamed: 33",
+            "Unnamed: 34",
+            "Unnamed: 35",
+            "Unnamed: 36",
+            "Unnamed: 37",
+            "Unnamed: 38",
+            "Unnamed: 39",
+            "Unnamed: 40",
+            "Unnamed: 41",
+            "Unnamed: 42"
+          ]
+        }
+      },
+      "target_labels": "Pre-flight vs Immediate Post-flight (Sept_Post / R+1) vs Long-term Post-flight",
+      "leakage_risks": "High dimensional p >> n (thousands of proteins/metabolites, 21-29 total biospecimens). High risk of false discoveries. Must use False Discovery Rate (FDR / Benjamini-Hochberg) correction, cross-validation strictly grouped by Astronaut.",
+      "suitable_tasks": [
+        "Differential protein and metabolite abundance across mission phases",
+        "Amino acid and lipidomic dysregulation analysis",
+        "Biochemical pathway mapping (platelet activation, acute phase response, lipid remodeling)",
+        "Multi-analyte biomarker profile extraction"
+      ]
+    },
+    "Dataset_E_SOMA_Material": {
+      "name": "SOMA Research Material & Study Documentation",
+      "source": "Space Omics and Medical Atlas (SOMA) Consortium / Nature Portfolio SOMA Package",
+      "license": "Open Access / Academic Reference",
+      "format": "Excel workbook (.xlsx)",
+      "population": "Inspiration4 and SOMA reference cohorts",
+      "stats": {
+        "Study_Overview": {
+          "rows": 11,
+          "columns": [
+            "Field",
+            "Value",
+            "Notes"
+          ],
+          "data_preview": [
+            [
+              "Study title",
+              "The Space Omics and Medical Atlas (SOMA) and international astronaut biobank",
+              "Nature, Volume 632, 29 August 2024"
+            ],
+            [
+              "DOI",
+              "10.1038/s41586-024-07639-y",
+              "Source paper"
+            ],
+            [
+              "Mission cohort highlighted",
+              "SpaceX Inspiration4",
+              "Four crew members"
+            ]
+          ]
+        },
+        "Mission_Timeline": {
+          "rows": 11,
+          "columns": [
+            "Phase",
+            "Timepoint_Code",
+            "Timing",
+            "Purpose"
+          ],
+          "data_preview": [
+            [
+              "Pre-flight",
+              "L\u221292",
+              "92 days before launch",
+              "Baseline characterization"
+            ],
+            [
+              "Pre-flight",
+              "L\u221244",
+              "44 days before launch",
+              "Baseline characterization"
+            ],
+            [
+              "Pre-flight",
+              "L\u22123",
+              "3 days before launch",
+              "Baseline characterization"
+            ]
+          ]
+        },
+        "Biospecimens": {
+          "rows": 14,
+          "columns": [
+            "Sample_Type",
+            "Sample_Category",
+            "Assays_or_Analyses"
+          ],
+          "data_preview": [
+            [
+              "Whole blood",
+              "Blood",
+              "Whole-genome sequencing; clonal haematopoiesis panel; complete blood count; direct RNA-seq; short-read RNA-seq"
+            ],
+            [
+              "Serum",
+              "Blood",
+              "Cytokine/chemokine biomarker panels; cardiovascular biomarker panel; comprehensive metabolic panel"
+            ],
+            [
+              "Peripheral blood mononuclear cells (PBMCs)",
+              "Blood",
+              "Single-nucleus RNA-seq; single-nucleus ATAC-seq; single-cell T-cell and B-cell V(D)J sequencing"
+            ]
+          ]
+        },
+        "Key_Findings": {
+          "rows": 8,
+          "columns": [
+            "Finding_Area",
+            "Paper_Reported_Result",
+            "Metric_Type",
+            "Reported_Statistics",
+            "Interpretation_Caution"
+          ],
+          "data_preview": [
+            [
+              "Telomere length",
+              "Average telomere length increased by 17\u201322% during spaceflight in all four Inspiration4 crew members.",
+              "Reported percentage change",
+              "P = 0.0048",
+              "Do not interpret elongation as automatically beneficial."
+            ],
+            [
+              "Cytokines",
+              "Significant increases were reported for IL-6, IL-10 and CCL2.",
+              "Direction of change",
+              "IL-6 P=0.014; IL-10 P=0.021; CCL2 P=0.040",
+              "Paper reports group-level statistical findings."
+            ],
+            [
+              "T-cell gene expression",
+              "Cross-mission comparison identified 552 CD4+ and 608 CD8+ T-cell differentially expressed gene markers.",
+              "Number of DEGs",
+              "Both reported P < 2.2 \u00d7 10\u221216",
+              "Not a diagnostic score."
+            ]
+          ]
+        },
+        "Assay_Catalog": {
+          "rows": 21,
+          "columns": [
+            "Assay",
+            "Data_Domain",
+            "Sample_Source"
+          ],
+          "data_preview": [
+            [
+              "Whole-genome sequencing",
+              "Genomics",
+              "Whole blood"
+            ],
+            [
+              "Clonal haematopoiesis panel",
+              "Haematology / genomics",
+              "Whole blood"
+            ],
+            [
+              "Complete blood count",
+              "Clinical laboratory",
+              "Whole blood"
+            ]
+          ]
+        },
+        "Study_Limitations": {
+          "rows": 6,
+          "columns": [
+            "Limitation",
+            "Paper_Statement_Summary"
+          ],
+          "data_preview": [
+            [
+              "Small cohort",
+              "Inspiration4 featured four crew members; the paper notes cross-study astronaut comparisons span at most 64 astronauts."
+            ],
+            [
+              "Technical variation",
+              "Cross-mission comparisons may be affected by different collection intervals, sample processing, library preparation, extraction kits and profiling technologies."
+            ],
+            [
+              "Not sufficient for medical intervention",
+              "The authors state the available data are not sufficient to guide medical interventions or infer mechanisms."
+            ]
+          ]
+        },
+        "Project_Mapping": {
+          "rows": 8,
+          "columns": [
+            "Proposed_Module",
+            "Suggested_Function",
+            "Research_Basis",
+            "Evidence_Status"
+          ],
+          "data_preview": [
+            [
+              "Astronaut profile",
+              "Individual astronaut record and baseline measurements",
+              "Software design recommendation inspired by individual response variation",
+              "Not a measured paper variable"
+            ],
+            [
+              "Mission phase timeline",
+              "Pre-flight / in-flight / post-flight / recovery filters",
+              "Directly follows the paper's timepoint structure",
+              "Paper-derived structure"
+            ],
+            [
+              "Immune research view",
+              "Display cytokine and immune-related measurements over time",
+              "Based on cytokine and T-cell findings",
+              "Requires actual source measurements"
+            ]
+          ]
+        }
+      },
+      "target_labels": "None (metadata and study design reference catalog)",
+      "suitable_tasks": [
+        "Reference mapping for biological domain indicators",
+        "Validation benchmarks against published spaceflight findings",
+        "Contextual annotation of omics features"
+      ]
+    },
+    "Dataset_F_Structured_Astronaut_Health": {
+      "name": "Structured Astronaut Health Dataset",
+      "expected_size": "~5,400 rows",
+      "status": "NOT_PROVIDED_IN_WORKSPACE",
+      "audit_note": "A standalone tabular file of 5,400 rows with synthetic or real clinical records (ONSD, BMD, radiation, etc.) was not included in the supplied directory archives. Per Section 13 strict guidelines, missing data is explicitly recorded rather than fabricated. A deterministic reference architecture and feature validation engine for clinical metrics (HR, BP, SpO2, Radiation dose, ONSD, BMD T-score) is developed and calibrated using established spaceflight medical standards."
+    },
+    "Dataset_G_Structured_SOMA_Multiomics": {
+      "name": "Structured SOMA Multiomics Dataset",
+      "expected_size": "~2,400 rows",
+      "status": "NOT_PROVIDED_IN_WORKSPACE",
+      "audit_note": "A standalone pre-merged multiomics matrix of 2,400 rows was not supplied separately. However, high-resolution multiomics data was directly audited and processed from the primary NASA OSDR OSD-570 and OSD-571 archives (snRNA-seq, snATAC-seq, TCR/BCR VDJ, plasma proteomics, EVP proteomics, and metabolomics)."
+    }
+  }
+}
