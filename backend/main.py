@@ -117,9 +117,9 @@ def get_crew_data(name: str):
         "dosimeter": {
             "device": "HERA / CPD DOSIMETER",
             "metric": "Active Environmental Dosimetry",
-            "radiation_msv_day": telemetry["radiation_msv_day"],
-            "cumulative_msv": 54.8 if telemetry["id"] == "vance" else 48.2 if telemetry["id"] == "patel" else 56.4,
-            "status": "NOMINAL" if telemetry["radiation_msv_day"] < 0.6 else "CAUTION",
+            "radiation_msv_day": telemetry.get("radiation_msv_day"),
+            "cumulative_msv": round(telemetry["radiation_msv_day"] * 142, 2) if telemetry.get("radiation_msv_day") else None,
+            "status": "NOMINAL" if (telemetry.get("radiation_msv_day") or 0) < 0.6 else "CAUTION",
         },
         "archer": {
             "device": "NASA ARCHER WRISTBAND",
@@ -167,6 +167,8 @@ def get_crew_data(name: str):
         "hotspots": hotspots,
         "ml_analysis": ml_result,
         "astra_briefing_script": briefing,
+        "solaris_briefing_script": briefing,
+        "briefing_script": briefing,
     }
 
 
@@ -192,6 +194,8 @@ def assess_symptoms(req: SymptomAssessmentRequest):
         "detected_symptoms": result.detected_symptoms,
         "ml_analysis": result.ml_analysis.model_dump(),
         "astra_spoken_response": result.spoken_briefing,
+        "solaris_spoken_response": result.spoken_briefing,
+        "spoken_response": result.spoken_briefing,
         "countermeasures": result.countermeasures,
         "clinical_disclaimer": result.clinical_disclaimer,
     }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 
 export interface HardwareSensorNode {
   id: string;
@@ -98,7 +98,7 @@ export const HARDWARE_SENSORS: HardwareSensorNode[] = [
 ];
 
 export const HardwareSensorsOverlay: React.FC = () => {
-  const { activeCrew, activeHotspotId, verbalSymptoms, sendInput } = useAstra();
+  const { activeCrew, activeHotspotId, verbalSymptoms, sendInput } = useSolaris();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   return (

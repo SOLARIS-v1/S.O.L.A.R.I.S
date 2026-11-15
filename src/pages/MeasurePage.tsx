@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SOLARIS_METRICS, type MetricDef } from '../data/solarisCatalog';
 import { MeasureWizard } from '../components/measure/MeasureWizard';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import { useAstraStore } from '../api/mockClient';
 import {
   Activity,
@@ -28,7 +28,7 @@ import {
 export const MeasurePage: React.FC = () => {
   const { metricId } = useParams<{ metricId?: string }>();
   const navigate = useNavigate();
-  const { activeCrew } = useAstra();
+  const { activeCrew } = useSolaris();
   const { environment } = useAstraStore();
 
   const [activeMetric, setActiveMetric] = useState<MetricDef | null>(() => {

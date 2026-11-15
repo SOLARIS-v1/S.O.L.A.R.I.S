@@ -1,7 +1,7 @@
 import React, { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { HolographicHumanFigure } from '../body/HolographicHumanFigure';
 import { MovingStarfield } from '../body/MovingStarfield';
 import { HardwareSensorsOverlay } from '../body/HardwareSensorsOverlay';
@@ -23,7 +23,7 @@ export const HolographicBodyCenter: React.FC<HolographicBodyCenterProps> = ({ on
     isMicActive,
     toggleMic,
     sendInput,
-  } = useAstra();
+  } = useSolaris();
 
   const [viewMode, setViewMode] = useState<'3d' | 'anatomy' | '2d'>('3d');
   const [selectedSystem, setSelectedSystem] = useState<string | null>(null);

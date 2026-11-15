@@ -1,5 +1,12 @@
 import { IndicatorType, BodyRegion } from '../api/types';
-import { AnatomicalSystemId } from '../components/body/ScientificAnatomicalModel';
+
+export type AnatomicalSystemId =
+  | 'cardiovascular'
+  | 'respiratory'
+  | 'musculoskeletal'
+  | 'nervous'
+  | 'immune'
+  | 'external_sensors';
 
 export interface AnatomicalSystemMeta {
   id: AnatomicalSystemId;

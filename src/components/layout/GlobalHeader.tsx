@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useAstraStore } from '../../api/mockClient';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import {
   Bell,
   ChevronDown,
@@ -38,7 +39,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
     isMicActive,
     toggleMic,
     astraMode,
-  } = useAstra();
+  } = useSolaris();
 
   const storeCrew = crew.find((c) => c.id === activeSubjectId) || crew[0];
   const activeAstronaut = {
@@ -135,7 +136,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
           </button>
 
           {/* Mission Sol & Live UTC Clock */}
-          <div className="hidden xl:flex items-center gap-3 pl-3 border-l border-slate-200 text-xs font-mono">
+          <div className="hidden 2xl:flex items-center gap-3 pl-3 border-l border-slate-200 text-xs font-mono">
             <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold text-[10.5px]">
               SOL 142 / 500
             </span>
@@ -145,6 +146,83 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
             </span>
           </div>
         </div>
+
+        {/* Central Top Navigation: Exactly Stage, Check-in, Measure, Analytics, Medical, Settings */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200/70" aria-label="Top Navigation">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Stage
+          </NavLink>
+          <NavLink
+            to="/check-in"
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Check-in
+          </NavLink>
+          <NavLink
+            to="/measure"
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Measure
+          </NavLink>
+          <NavLink
+            to="/analytics"
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Analytics
+          </NavLink>
+          <NavLink
+            to="/medical"
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Medical
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-white text-indigo-600 shadow-[2px_2px_6px_rgba(163,177,198,0.25)] font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+              }`
+            }
+          >
+            Settings
+          </NavLink>
+        </nav>
 
         {/* Right Section matching screenshot: Search Box + Add Record Button + Voice Pill + Bell */}
         <div className="flex items-center gap-3 text-xs shrink-0">

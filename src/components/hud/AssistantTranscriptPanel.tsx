@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { Send, Volume2, VolumeX, ShieldAlert } from 'lucide-react';
 
 export const AssistantTranscriptPanel: React.FC = () => {
@@ -10,7 +10,7 @@ export const AssistantTranscriptPanel: React.FC = () => {
     sendInput,
     verbalSymptoms,
     setAstraMode,
-  } = useAstra();
+  } = useSolaris();
 
   const [inputText, setInputText] = useState('');
   const transcriptEndRef = useRef<HTMLDivElement>(null);

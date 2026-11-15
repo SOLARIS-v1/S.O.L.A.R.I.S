@@ -1,10 +1,10 @@
 import React from 'react';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { Heart, Activity, Wind, Thermometer, Radio } from 'lucide-react';
-import { OverallHealthScoreGauge } from './OverallHealthScoreGauge';
+import { SystemStatusDials } from './SystemStatusDials';
 
 export const BiometricTelemetryPanel: React.FC = () => {
-  const { activeCrew, activeHotspotId } = useAstra();
+  const { activeCrew, activeHotspotId } = useSolaris();
 
   const vitals = activeCrew?.vitals || {
     heartRate: 78,
@@ -104,7 +104,7 @@ export const BiometricTelemetryPanel: React.FC = () => {
       </div>
 
       {/* Holistic Overall Health Score Radial Graph */}
-      <OverallHealthScoreGauge compact className="mb-2 shrink-0" />
+      <SystemStatusDials compact className="mb-2 shrink-0" />
 
       {/* 5 Hardware Cards Stacked */}
       <div className="space-y-1.5 flex-1 flex flex-col justify-between overflow-y-auto py-1 scrollbar-thin">

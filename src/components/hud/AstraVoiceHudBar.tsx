@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { useSolarisVoice } from '../../context/SolarisVoiceContext';
 import { Mic, MicOff, Send, ChevronDown, ChevronUp, Sparkles, Volume2 } from 'lucide-react';
 
@@ -7,7 +7,7 @@ export const AstraVoiceHudBar: React.FC = () => {
   const {
     activeCrew,
     lockDashboard,
-  } = useAstra();
+  } = useSolaris();
 
   const {
     voiceState,

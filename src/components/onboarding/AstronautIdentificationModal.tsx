@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAstraStore } from '../../api/mockClient';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { CrewMember } from '../../api/types';
 import { StatusBadge } from '../common/StatusBadge';
 import { ShieldCheck, ArrowRight, User, X } from 'lucide-react';
@@ -12,7 +12,7 @@ interface ModalProps {
 
 export const AstronautIdentificationModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { crew, activeSubjectId, setActiveSubject } = useAstraStore();
-  const { selectCrew } = useAstra();
+  const { selectCrew } = useSolaris();
   const [selectedId, setSelectedId] = useState<string>(activeSubjectId);
 
   // Custom Astronaut input

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SOLARIS_EXERCISES } from '../data/solarisCatalog';
 import { AstroFigure } from '../components/exercise/AstroFigure';
 import { VideoButton, type ExerciseVideo } from '../components/exercise/VideoButton';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import { useAstraStore } from '../api/mockClient';
 import {
   Flame,
@@ -129,7 +129,7 @@ const EXERCISE_VIDEOS: Record<string, ExerciseVideo> = {
 };
 
 export const ExercisePage: React.FC = () => {
-  const { activeCrew, speakText } = useAstra();
+  const { activeCrew, speakText } = useSolaris();
   const { addTimelineEvent } = useAstraStore();
 
   const [selectedExerciseId, setSelectedExerciseId] = useState<string>('deadlift');

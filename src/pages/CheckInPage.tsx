@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import { useAstraStore } from '../api/mockClient';
 import {
   Heart,
@@ -24,7 +24,7 @@ import confetti from 'canvas-confetti';
 const BACKEND_URL = 'http://localhost:8000';
 
 export const CheckInPage: React.FC = () => {
-  const { activeCrew, verbalSymptoms } = useAstra();
+  const { activeCrew, verbalSymptoms } = useSolaris();
   const { submitDailyAssessment, addTimelineEvent } = useAstraStore();
 
   const [step, setStep] = useState<number>(1);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAstraStore } from '../../api/mockClient';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import {
   Compass,
   Activity,
@@ -38,7 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const { activeSubjectId, crew, findings } = useAstraStore();
-  const { activeCrew, backendOnline, isMicActive } = useAstra();
+  const { activeCrew, backendOnline, isMicActive } = useSolaris();
 
   // Find active crew member from store or context
   const storeCrew = crew.find((c) => c.id === activeSubjectId) || crew[0];

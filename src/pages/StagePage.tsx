@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import { useAstraStore } from '../api/mockClient';
 import { BodyRegion } from '../api/types';
-import { OverallHealthScoreGauge } from '../components/hud/OverallHealthScoreGauge';
+import { SystemStatusDials } from '../components/hud/SystemStatusDials';
 import { HolographicBodyCenter } from '../components/hud/HolographicBodyCenter';
 import { SystemDetailDrawer } from '../components/stage/SystemDetailDrawer';
 import { HazardSideDrawer } from '../components/hazards/HazardSideDrawer';
@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export const StagePage: React.FC = () => {
-  const { activeCrew, sendInput } = useAstra();
+  const { activeCrew, sendInput } = useSolaris();
   const { records, activeSubjectId, findings } = useAstraStore();
 
   const [activeTab, setActiveTab] = useState<'ecg' | '3d'>('ecg');
@@ -588,7 +588,7 @@ export const StagePage: React.FC = () => {
           </div>
 
           {/* Full Overall Health Score Circular Gauge */}
-          <OverallHealthScoreGauge />
+          <SystemStatusDials />
         </div>
       </div>
 

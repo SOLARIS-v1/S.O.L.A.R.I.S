@@ -18,7 +18,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useAstraStore } from '../api/mockClient';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import { SOLARIS_ORGANS } from '../data/solarisCatalog';
 import { type Status } from '../data/solarisFormat';
 import { Body3D, type BodyView, type SkinMode, type Layers as BodyLayers } from '../components/body/anatomy3d/Body3D';
@@ -289,7 +289,7 @@ const SYSTEM_CATALOG: SystemMeta[] = [
 export const BodyExplorerPage: React.FC = () => {
   const navigate = useNavigate();
   const { activeSubjectId, crew, findings } = useAstraStore();
-  const { activeCrew, sendInput } = useAstra();
+  const { activeCrew, sendInput } = useSolaris();
   const activeAstronaut = crew.find((c) => c.id === activeSubjectId) || crew[0];
 
   const [selectedOrganId, setSelectedOrganId] = useState<string | null>('heart');

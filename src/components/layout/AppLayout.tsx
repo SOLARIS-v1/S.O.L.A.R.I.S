@@ -9,7 +9,7 @@ import { SimulatorDrawer } from '../simulator/SimulatorDrawer';
 import { SettingsModal } from '../stage/SettingsModal';
 import { AstronautIdentificationModal } from '../onboarding/AstronautIdentificationModal';
 import { useAstraStore } from '../../api/mockClient';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { AuthGateModal } from '../hud/AuthGateModal';
 import { AstraVoiceHudBar } from '../hud/AstraVoiceHudBar';
 
@@ -20,7 +20,7 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { records, activeSubjectId } = useAstraStore();
-  const { isMicActive } = useAstra();
+  const { isMicActive } = useSolaris();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [identifyModalOpen, setIdentifyModalOpen] = useState(false);

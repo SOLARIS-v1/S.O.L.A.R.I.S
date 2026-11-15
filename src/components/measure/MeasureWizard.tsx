@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { MetricDef } from '../../data/solarisCatalog';
 import { SOLARIS_SYMPTOMS } from '../../data/solarisCatalog';
 import { STATUS_LABEL, type Status, fmtMetric } from '../../data/solarisFormat';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { useAstraStore } from '../../api/mockClient';
 import { RangeBar } from '../charts/RangeBar';
 import { NumberInput, MoodPicker, ReactionTest, AmslerTest, SymptomPicker } from './inputs';
@@ -32,7 +32,7 @@ interface MeasureWizardProps {
 const STEPS = ['Prepare', 'Why it matters', 'Measure', 'Result'] as const;
 
 export const MeasureWizard: React.FC<MeasureWizardProps> = ({ metric, onClose, onSaved }) => {
-  const { activeCrew, speakText } = useAstra();
+  const { activeCrew, speakText } = useSolaris();
   const { addTimelineEvent } = useAstraStore();
 
   const [step, setStep] = useState<number>(0);

@@ -13,51 +13,30 @@ import { BackendConnectionStatus } from '../api/types';
 import { solarisVoiceService } from '../services/solarisVoiceService';
 import confetti from 'canvas-confetti';
 
+import { BRAND } from '../data/brand';
+import {
+  CrewVitals,
+  HotspotNarration,
+  MLAnalysis,
+  CrewProfile,
+  CREW_PROFILES,
+} from '../data/crewProfiles';
+
+export type {
+  CrewVitals,
+  HotspotNarration,
+  MLAnalysis,
+  CrewProfile,
+};
+export { CREW_PROFILES };
+
 export type AstraMode = 'AUTH_GATE' | 'NARRATING' | 'LISTENING' | 'MANUAL_MODE' | 'SLEEPING';
 export type SolarisMode = AstraMode;
 
 export type FlowStage = 'STAGE_AUTH' | 'STAGE_BRIEFING' | 'STAGE_ASSESSMENT' | 'STAGE_COMMAND';
 export type VoiceState = 'sleeping' | 'awake' | 'listening' | 'speaking';
 
-export interface CrewVitals {
-  heartRate: number;
-  hrv: number;
-  spo2: number;
-  respRate: number;
-  coreTemp: number;
-  radiation_mSv: number;
-  sleepHours: number;
-  bloodPressure?: string;
-  sleepDuration?: number;
-}
 
-export interface HotspotNarration {
-  hotspot: string;
-  text: string;
-}
-
-export interface MLAnalysis {
-  status: 'NOMINAL' | 'CAUTION' | 'CRITICAL';
-  confidence_pct: number;
-  is_anomaly: boolean;
-  anomaly_score: number;
-  top_contributing_factors?: Array<{ feature: string; value: number; impact_score: number }>;
-  causal_explanation?: string;
-  countermeasures?: string[];
-}
-
-export interface CrewProfile {
-  id: 'vance' | 'patel' | 'chen' | string;
-  name: string;
-  callsign: string;
-  role: string;
-  status: 'Nominal' | 'Caution' | 'Warning' | 'normal' | 'watch' | 'review';
-  badgeColor: string;
-  vitals: CrewVitals;
-  summaryVerdict: string;
-  narrationScript: HotspotNarration[];
-  mlAnalysis?: MLAnalysis;
-}
 
 export interface VerbalSymptoms {
   sleepIssue: boolean;
@@ -65,6 +44,7 @@ export interface VerbalSymptoms {
   spineIssue: boolean;
   lastTranscript: string;
   astraAdvice: string;
+  solarisAdvice?: string;
   mlAnalysis?: MLAnalysis;
 }
 
@@ -109,137 +89,7 @@ export interface SolarisContextType {
   restartFlow: () => void;
 }
 
-export const CREW_PROFILES: Record<string, CrewProfile> = {
-  vance: {
-    id: 'vance',
-    name: 'Commander Vance',
-    callsign: 'CMDR. A. VANCE',
-    role: 'Mission Commander',
-    status: 'Caution',
-    badgeColor: '#E0BE6A',
-    vitals: {
-      spo2: 98.4,
-      respRate: 14.2,
-      heartRate: 96,
-      hrv: 38,
-      coreTemp: 37.1,
-      radiation_mSv: 54.8,
-      sleepHours: 5.4,
-      bloodPressure: '128/84',
-      sleepDuration: 5.4,
-    },
-    summaryVerdict:
-      'All pulmonary and oxygen readings are looking fine, Commander Vance, but your heart rate has a little jump here and there at 96 BPM with a dip in HRV.',
-    narrationScript: [
-      {
-        hotspot: 'headband',
-        text: 'Forehead PPG on Astroskin headband shows oxygen saturation nominal at 98.4 percent, with stable cranial pulse transit time.',
-      },
-      {
-        hotspot: 'heart',
-        text: 'Cardiac 3-lead thoracic ECG indicates your heart rate has intermittent ectopic jumps up to 96 BPM, and HRV is dipping at 38 milliseconds.',
-      },
-      {
-        hotspot: 'lungs',
-        text: 'Dual-band thoracic respiration is steady at 14.2 breaths per minute, and core thermal regulation is nominal at 37.1 degrees.',
-      },
-      {
-        hotspot: 'archer',
-        text: 'NASA Archer wristband records sleep duration at 5.4 hours with moderate circadian phase stability.',
-      },
-      {
-        hotspot: 'dosimeter',
-        text: 'HERA active dosimeter reports daily radiation rate at 0.12 millisieverts, well within mission safety limits.',
-      },
-    ],
-  },
-  patel: {
-    id: 'patel',
-    name: 'Specialist Patel',
-    callsign: 'SPEC. R. PATEL',
-    role: 'EVA Specialist',
-    status: 'Nominal',
-    badgeColor: '#6FBF9B',
-    vitals: {
-      spo2: 99.1,
-      respRate: 12.8,
-      heartRate: 64,
-      hrv: 62,
-      coreTemp: 36.8,
-      radiation_mSv: 48.2,
-      sleepHours: 7.8,
-      bloodPressure: '118/76',
-      sleepDuration: 7.8,
-    },
-    summaryVerdict:
-      'All biometric parameters are in optimal range, Specialist Patel. Physical readiness index is ninety-eight percent.',
-    narrationScript: [
-      {
-        hotspot: 'headband',
-        text: 'Astroskin headband confirms optimal cephalic hemodynamics and oxygen saturation at 99.1 percent.',
-      },
-      {
-        hotspot: 'heart',
-        text: 'Thoracic ECG detects a calm resting sinus rhythm of 64 BPM and robust HRV at 62 milliseconds.',
-      },
-      {
-        hotspot: 'lungs',
-        text: 'Dual-band respiration is smooth at 12.8 breaths per minute, core temperature optimal at 36.8 degrees.',
-      },
-      {
-        hotspot: 'archer',
-        text: 'Archer actigraphy confirms 7.8 hours of deep restful sleep and excellent circadian readiness.',
-      },
-      {
-        hotspot: 'dosimeter',
-        text: 'HERA dosimeter confirms nominal environmental shielding with cumulative dose nominal.',
-      },
-    ],
-  },
-  chen: {
-    id: 'chen',
-    name: 'Flight Engineer Chen',
-    callsign: 'FLT. ENG. M. CHEN',
-    role: 'Flight Engineer / Science Officer',
-    status: 'Warning',
-    badgeColor: '#E58F55',
-    vitals: {
-      spo2: 97.6,
-      respRate: 15.6,
-      heartRate: 88,
-      hrv: 35,
-      coreTemp: 37.3,
-      radiation_mSv: 56.4,
-      sleepHours: 4.5,
-      bloodPressure: '132/88',
-      sleepDuration: 4.5,
-    },
-    summaryVerdict:
-      'Flight Engineer Chen, your telemetry shows significant microgravity spinal unloading strain and an acute sleep deficit of 4.5 hours, with elevated heart rate.',
-    narrationScript: [
-      {
-        hotspot: 'headband',
-        text: 'Astroskin headband notes slight cranial fluid shifting, with SpO2 maintaining at 97.6 percent.',
-      },
-      {
-        hotspot: 'heart',
-        text: 'Thoracic ECG shows an elevated resting heart rate of 88 BPM reflecting microgravity autonomic strain.',
-      },
-      {
-        hotspot: 'lungs',
-        text: 'Thoracic respiration rate is slightly elevated at 15.6 breaths per minute.',
-      },
-      {
-        hotspot: 'archer',
-        text: 'NASA Archer actigraphy flags a sleep deficit at only 4.5 hours, indicating acute circadian desynchrony.',
-      },
-      {
-        hotspot: 'dosimeter',
-        text: 'HERA active dosimeter telemetry confirms cumulative radiation within solar quiet thresholds.',
-      },
-    ],
-  },
-};
+
 
 export const SolarisContext = createContext<SolarisContextType | undefined>(undefined);
 
@@ -268,12 +118,12 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
     astraAdvice: '',
   });
 
-  const [transcript, setTranscript] = useState<TranscriptMessage[]>([
+  const [transcript, setTranscript] = useState<TranscriptMessage[]>(() => [
     {
       id: 'init-1',
       sender: 'solaris',
       text: 'SOLARIS Medical Intelligence online. Please state or select your crew profile to access telemetry.',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      timestamp: '00:00:00',
     },
   ]);
 

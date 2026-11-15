@@ -10,7 +10,7 @@ import { SleepRecoveryCard } from '../components/charts/SleepRecoveryCard';
 import { RadiationIntelligenceCard } from '../components/charts/RadiationIntelligenceCard';
 import { MetabolicTelemetryCard } from '../components/charts/MetabolicTelemetryCard';
 import { ModelStatusBadge } from '../components/common/ModelStatusBadge';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import {
   Activity,
   Heart,
@@ -32,7 +32,7 @@ import {
 
 export const HealthMonitoringPage: React.FC = () => {
   // Astra / Solaris context connection
-  const { activeCrew, selectCrew } = useAstra();
+  const { activeCrew, selectCrew } = useSolaris();
 
   // Active astronaut state
   const [selectedCrewId, setSelectedCrewId] = useState<'vance' | 'patel' | 'chen'>(

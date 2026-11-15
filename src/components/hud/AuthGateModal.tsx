@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAstra } from '../../context/AstraContext';
+import { useSolaris } from '../../context/SolarisContext';
 import { Lock, Mic, ArrowRight, UserCheck } from 'lucide-react';
 
 export const AuthGateModal: React.FC = () => {
-  const { activeCrew, selectCrew, sendInput, isMicActive } = useAstra();
+  const { activeCrew, selectCrew, sendInput, isMicActive } = useSolaris();
   const [typedName, setTypedName] = useState('');
 
   // Only display if no astronaut is authenticated

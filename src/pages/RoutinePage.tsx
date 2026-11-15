@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SOLARIS_ROUTINE_TASKS, SOLARIS_METRICS, type RoutineTaskDef } from '../data/solarisCatalog';
 import { MeasureWizard } from '../components/measure/MeasureWizard';
-import { useAstra } from '../context/AstraContext';
+import { useSolaris } from '../context/SolarisContext';
 import {
   Clock,
   CheckCircle2,
@@ -19,7 +19,7 @@ import {
 
 export const RoutinePage: React.FC = () => {
   const navigate = useNavigate();
-  const { activeCrew } = useAstra();
+  const { activeCrew } = useSolaris();
 
   const [activeTaskMetric, setActiveTaskMetric] = useState<string | null>(null);
 

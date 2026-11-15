@@ -53,13 +53,7 @@ export interface SolarisVoiceContextType {
 const SolarisVoiceContext = createContext<SolarisVoiceContextType | null>(null);
 
 export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  let navigate: ReturnType<typeof useNavigate> | null = null;
-  try {
-    navigate = useNavigate();
-  } catch {
-    // If rendered outside router in tests, navigate can be null
-    navigate = null;
-  }
+  const navigate = useNavigate();
 
   const {
     activeSubjectId,
@@ -72,12 +66,12 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [speechLoudness, setSpeechLoudness] = useState<number>(0);
   const [currentUtterance, setCurrentUtterance] = useState<string>('');
   const [interimTranscript, setInterimTranscript] = useState<string>('');
-  const [transcript, setTranscript] = useState<VoiceTranscriptItem[]>([
+  const [transcript, setTranscript] = useState<VoiceTranscriptItem[]>(() => [
     {
       id: 'init-1',
       sender: 'solaris',
       text: 'Hello. SOLARIS is online. How can I assist you?',
-      timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      timestamp: '00:00:00',
     },
   ]);
 
