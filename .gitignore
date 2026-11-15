@@ -29,6 +29,10 @@ venv/
 *.db
 *.sqlite3
 
+# Research datasets raw downloads
+solaris_ml/datasets/raw/
+solaris_ml/datasets/raw
+
 # Large archives (e.g. 170MB zip)
 *.zip
 *.tar.gz

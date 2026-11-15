@@ -268,19 +268,14 @@ function ClipPlayer({ video }: { video: ExerciseVideo }) {
 }
 
 /**
- * Pure Light-Neumorphic VideoButton & Modal with resilient fallback
+ * Pure Light-Neumorphic VideoButton & Modal with resilient fully local fallback
  */
 export function VideoButton({ video }: { video: ExerciseVideo }) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'video' | 'simulation'>('video');
-  const [iframeError, setIframeError] = useState(false);
+  const [activeTab, setActiveTab] = useState<'video' | 'simulation'>('simulation');
 
   const length = Math.max(1, video.end - video.start);
   const whoShort = (video.who || 'Astronaut').split(' ')[0];
-
-  const youtubeSrc = video.youtube
-    ? `https://www.youtube-nocookie.com/embed/${video.youtube}?start=${video.start}&end=${video.end}&autoplay=1&rel=0&modestbranding=1`
-    : null;
 
   return (
     <>
@@ -288,7 +283,7 @@ export function VideoButton({ video }: { video: ExerciseVideo }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:border-indigo-300 text-slate-800 hover:text-indigo-600 font-semibold text-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] group"
+        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 hover:border-indigo-300 text-slate-800 hover:text-indigo-600 font-semibold text-xs shadow-sm hover:shadow-md transition-all active:scale-[0.98] group cursor-pointer"
       >
         <PlayCircle className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform" />
         <span>Watch {whoShort}</span>
@@ -320,18 +315,8 @@ export function VideoButton({ video }: { video: ExerciseVideo }) {
               {/* Mode switch pills */}
               <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
                 <button
-                  onClick={() => setActiveTab('video')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    activeTab === 'video'
-                      ? 'bg-white text-indigo-600 shadow-sm font-bold'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  HD Clip
-                </button>
-                <button
                   onClick={() => setActiveTab('simulation')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
+                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                     activeTab === 'simulation'
                       ? 'bg-white text-indigo-600 shadow-sm font-bold'
                       : 'text-slate-600 hover:text-slate-900'
@@ -339,13 +324,25 @@ export function VideoButton({ video }: { video: ExerciseVideo }) {
                 >
                   Kinematics
                 </button>
+                {video.mp4 && (
+                  <button
+                    onClick={() => setActiveTab('video')}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                      activeTab === 'video'
+                        ? 'bg-white text-indigo-600 shadow-sm font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Local Clip
+                  </button>
+                )}
               </div>
 
               {/* Close Button */}
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                 aria-label="Close demonstration"
               >
                 <X size={18} />
@@ -355,21 +352,7 @@ export function VideoButton({ video }: { video: ExerciseVideo }) {
             {/* Video / Demonstration Body */}
             <div className="p-6 space-y-4 overflow-y-auto">
               <div className="w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner flex items-center justify-center relative">
-                {activeTab === 'simulation' || iframeError ? (
-                  <KinematicCanvasDemonstration
-                    exerciseName={video.shows || video.title}
-                    isPlaying={true}
-                    time={0.5}
-                  />
-                ) : youtubeSrc ? (
-                  <iframe
-                    src={youtubeSrc}
-                    title={`${video.shows || video.title}: ${video.who}`}
-                    className="w-full h-full border-0"
-                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                    onError={() => setIframeError(true)}
-                  />
-                ) : video.mp4 ? (
+                {activeTab === 'video' && video.mp4 ? (
                   <ClipPlayer video={video} />
                 ) : (
                   <KinematicCanvasDemonstration
