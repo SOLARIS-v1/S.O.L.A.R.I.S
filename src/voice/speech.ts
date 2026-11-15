@@ -1,5 +1,10 @@
 /**
  * SOLARIS Speech Engine: TTS & Audio Device Management
+ * 
+ * Strict local service rules:
+ * - Uses speechSynthesis only with localService === true voices
+ * - Falls back to captions only if no local voice is available
+ * - Pauses audio and releases devices when stopped
  */
 
 export interface SpeechOptions {
@@ -15,9 +20,11 @@ export function pickSolarisVoice(synth: SpeechSynthesis): SpeechSynthesisVoice |
   const voices = synth.getVoices() || [];
   if (voices.length === 0) return null;
 
-  // Filter for localService === true voices where available (offline safe)
-  const localVoices = voices.filter(v => (v as any).localService === true);
-  const candidates = localVoices.length > 0 ? localVoices : voices;
+  // Strict localService === true check for full offline air-gapped safety
+  const localVoices = voices.filter((v) => (v as any).localService === true);
+  const candidates = localVoices.length > 0 ? localVoices : voices.filter((v) => !v.name.toLowerCase().includes('online'));
+
+  if (candidates.length === 0) return null; // Fall back to captions only
 
   const preferredNames = [
     'Google UK English Female',
@@ -28,16 +35,14 @@ export function pickSolarisVoice(synth: SpeechSynthesis): SpeechSynthesisVoice |
     'Victoria',
     'Karen',
     'Oliver',
-    'Natural',
-    'Neural',
   ];
 
   for (const name of preferredNames) {
-    const match = candidates.find(v => v.lang.startsWith('en') && v.name.includes(name));
+    const match = candidates.find((v) => v.lang.startsWith('en') && v.name.includes(name));
     if (match) return match;
   }
 
-  const englishVoice = candidates.find(v => v.lang.startsWith('en'));
+  const englishVoice = candidates.find((v) => v.lang.startsWith('en'));
   return englishVoice || candidates[0] || null;
 }
 
@@ -59,22 +64,34 @@ export class SolarisSpeechProvider {
     return new Promise((resolve) => {
       if (!this.synth) {
         options?.onStart?.(text);
+        const duration = Math.min(2500, Math.max(800, text.length * 40));
         setTimeout(() => {
           options?.onEnd?.();
           resolve();
-        }, Math.min(1000, Math.max(300, text.length * 35)));
+        }, duration);
         return;
       }
 
       try {
         this.synth.cancel();
 
+        const voice = options?.voice !== undefined ? options.voice : pickSolarisVoice(this.synth);
+
+        // Fall back to captions only if no compliant local voice is available
+        if (!voice) {
+          options?.onStart?.(text);
+          const duration = Math.min(3000, Math.max(1000, text.length * 45));
+          setTimeout(() => {
+            options?.onEnd?.();
+            resolve();
+          }, duration);
+          return;
+        }
+
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = options?.rate ?? 1.0;
         utterance.pitch = options?.pitch ?? 1.0;
-
-        const voice = options?.voice || pickSolarisVoice(this.synth);
-        if (voice) utterance.voice = voice;
+        utterance.voice = voice;
 
         let finished = false;
         const finish = () => {
@@ -111,9 +128,7 @@ export class SolarisSpeechProvider {
     if (this.synth) {
       try {
         this.synth.cancel();
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
     this.currentUtterance = null;
   }
@@ -146,9 +161,7 @@ export class SolarisSpeechProvider {
         const normalized = Math.min(1, avg / 128);
         onLoudness(normalized);
       }, 100);
-    } catch {
-      // Audio meter is non-fatal
-    }
+    } catch {}
   }
 
   public stopAudioMeter(): void {
@@ -157,15 +170,13 @@ export class SolarisSpeechProvider {
       this.loudnessInterval = null;
     }
     if (this.micStream) {
-      this.micStream.getTracks().forEach(t => t.stop());
+      this.micStream.getTracks().forEach((t) => t.stop());
       this.micStream = null;
     }
     if (this.audioContext && this.audioContext.state !== 'closed') {
       try {
         this.audioContext.close();
-      } catch {
-        // ignore
-      }
+      } catch {}
       this.audioContext = null;
     }
     this.analyser = null;

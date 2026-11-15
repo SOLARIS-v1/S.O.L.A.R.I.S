@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   solarisVoiceService,
   SolarisVoiceState,
+  VoiceProviderMode,
   VoiceTranscriptItem,
   AssessmentFlowState,
   HealthTelemetryAccessor,
@@ -17,11 +18,15 @@ import {
   ActiveAstronautInfo,
 } from '../services/solarisVoiceService';
 import { useAstraStore } from '../api/mockClient';
+import { useSolaris } from './SolarisContext';
 import { httpClient } from '../api/httpClient';
 import { IndicatorType, HealthRecord, Finding } from '../api/types';
 
 export interface SolarisVoiceContextType {
   voiceState: SolarisVoiceState;
+  providerMode: VoiceProviderMode;
+  isBrowserRecognitionAllowed: boolean;
+  showProfileChips: boolean;
   isListening: boolean;
   isSpeaking: boolean;
   isManualMode: boolean;
@@ -38,6 +43,9 @@ export interface SolarisVoiceContextType {
   wakeSolaris: () => void;
   sleepSolaris: () => void;
   toggleManualMode: (override?: boolean) => void;
+  setBrowserRecognitionAllowed: (allowed: boolean) => void;
+  setShowProfileChips: (show: boolean) => void;
+  selectAstronautById: (id: string) => void;
   sendInput: (text: string) => Promise<void>;
   speak: (text: string) => Promise<void>;
   stopSpeaking: () => void;
@@ -54,15 +62,20 @@ const SolarisVoiceContext = createContext<SolarisVoiceContextType | null>(null);
 
 export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
+  const { selectCrew } = useSolaris();
 
   const {
     activeSubjectId,
+    setActiveSubject,
     crew,
     records,
     findings,
   } = useAstraStore();
 
   const [voiceState, setVoiceState] = useState<SolarisVoiceState>('awake');
+  const [providerMode, setProviderModeState] = useState<VoiceProviderMode>(() => solarisVoiceService.getProviderMode());
+  const [isBrowserRecognitionAllowed, setIsBrowserRecognitionAllowedState] = useState<boolean>(() => solarisVoiceService.getBrowserRecognitionAllowed());
+  const [showProfileChips, setShowProfileChips] = useState<boolean>(false);
   const [speechLoudness, setSpeechLoudness] = useState<number>(0);
   const [currentUtterance, setCurrentUtterance] = useState<string>('');
   const [interimTranscript, setInterimTranscript] = useState<string>('');
@@ -117,6 +130,19 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
           role: activeAstronaut.role,
           missionDay: activeAstronaut.mission_day,
         };
+      },
+
+      selectAstronautById: async (id: string) => {
+        const rawId = id.toLowerCase();
+        const storeSubId = rawId.includes('vance')
+          ? 'ASTRA-01'
+          : rawId.includes('chen')
+          ? 'ASTRA-02'
+          : rawId.includes('patel')
+          ? 'ASTRA-04'
+          : 'ASTRA-03';
+        setActiveSubject(storeSubId);
+        await selectCrew(rawId);
       },
 
       getMeasurement: (metricKey: string) => {
@@ -258,6 +284,8 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
   useEffect(() => {
     solarisVoiceService.setCallbacks({
       onStateChange: (st) => setVoiceState(st),
+      onProviderModeChange: (m) => setProviderModeState(m),
+      onShowProfileChips: (show) => setShowProfileChips(show),
       onTranscript: (text, isFinal) => {
         if (isFinal) {
           setInterimTranscript('');
@@ -303,26 +331,7 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, []);
 
   const toggleManualMode = useCallback((override?: boolean) => {
-    if (override !== undefined) {
-      if (override) {
-        solarisVoiceService.setState('manual_mode');
-        solarisVoiceService.stopSpeaking();
-        solarisVoiceService.stopListening();
-      } else {
-        solarisVoiceService.setState('awake');
-        solarisVoiceService.startListening();
-      }
-    } else {
-      const cur = solarisVoiceService.getState();
-      if (cur === 'manual_mode') {
-        solarisVoiceService.setState('awake');
-        solarisVoiceService.startListening();
-      } else {
-        solarisVoiceService.setState('manual_mode');
-        solarisVoiceService.stopSpeaking();
-        solarisVoiceService.stopListening();
-      }
-    }
+    solarisVoiceService.toggleTypedOnlyMode(override);
   }, []);
 
   const sendInput = useCallback(async (text: string) => {
@@ -362,13 +371,39 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
     setTranscript([]);
   }, []);
 
+  const selectAstronautById = useCallback(
+    (id: string) => {
+      const rawId = id.toLowerCase();
+      const storeSubId = rawId.includes('vance')
+        ? 'ASTRA-01'
+        : rawId.includes('chen')
+        ? 'ASTRA-02'
+        : rawId.includes('patel')
+        ? 'ASTRA-04'
+        : 'ASTRA-03';
+      setActiveSubject(storeSubId);
+      selectCrew(rawId);
+      setShowProfileChips(false);
+      solarisVoiceService.setShowProfileChips(false);
+    },
+    [setActiveSubject, selectCrew]
+  );
+
+  const setBrowserRecognitionAllowed = useCallback((allowed: boolean) => {
+    setIsBrowserRecognitionAllowedState(allowed);
+    solarisVoiceService.setBrowserRecognitionAllowed(allowed);
+  }, []);
+
   return (
     <SolarisVoiceContext.Provider
       value={{
         voiceState,
+        providerMode,
+        isBrowserRecognitionAllowed,
+        showProfileChips,
         isListening: voiceState === 'listening',
         isSpeaking: voiceState === 'speaking',
-        isManualMode: voiceState === 'manual_mode',
+        isManualMode: voiceState === 'typed_only',
         speechLoudness,
         currentUtterance,
         interimTranscript,
@@ -389,6 +424,9 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
         wakeSolaris,
         sleepSolaris,
         toggleManualMode,
+        setBrowserRecognitionAllowed,
+        setShowProfileChips,
+        selectAstronautById,
         sendInput,
         speak,
         stopSpeaking,

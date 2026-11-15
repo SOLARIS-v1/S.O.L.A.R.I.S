@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAstraStore } from '../api/mockClient';
+import { useSolarisVoice } from '../context/SolarisVoiceContext';
 import {
   Settings,
   BrainCircuit,
@@ -12,10 +13,12 @@ import {
   ShieldCheck,
   Server,
   Sliders,
+  Globe,
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
   const { resetAll } = useAstraStore();
+  const { isBrowserRecognitionAllowed, setBrowserRecognitionAllowed } = useSolarisVoice();
   const [llamaEndpoint, setLlamaEndpoint] = useState('http://127.0.0.1:8080/v1');
   const [modelName, setModelName] = useState('Qwen/Qwen2.5-7B-Instruct-GGUF');
   const [ttsVoice, setTtsVoice] = useState('en_US-lessac-medium');
@@ -137,6 +140,28 @@ export const SettingsPage: React.FC = () => {
                 onChange={e => setVadSensitivity(parseFloat(e.target.value))}
                 className="w-full accent-[#0284C7]"
               />
+            </div>
+
+            {/* Online Speech Recognition Fallback Toggle */}
+            <div className="pt-2 border-t border-[#E2E8F0] space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] text-[#64748B] uppercase font-bold flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Browser Online Speech Recognition</span>
+                </label>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isBrowserRecognitionAllowed}
+                    onChange={(e) => setBrowserRecognitionAllowed(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+                </label>
+              </div>
+              <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 leading-relaxed">
+                <span className="font-bold">Uses an online service:</span> Off by default. When enabled, falls back to the browser Web Speech API only if local Whisper is unavailable.
+              </p>
             </div>
 
             <p className="text-xs text-[#64748B] leading-relaxed">

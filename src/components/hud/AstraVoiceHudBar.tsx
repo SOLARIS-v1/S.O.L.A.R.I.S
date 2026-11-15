@@ -11,6 +11,7 @@ export const AstraVoiceHudBar: React.FC = () => {
 
   const {
     voiceState,
+    providerMode,
     isListening,
     isSpeaking,
     isManualMode,
@@ -88,7 +89,7 @@ export const AstraVoiceHudBar: React.FC = () => {
   return (
     <div
       className="fixed bottom-3 right-4 z-40 max-w-[calc(100vw-2rem)] select-none font-mono text-[#0F172A] transition-all duration-300"
-      style={{ width: isExpanded ? '26rem' : 'auto' }}
+      style={{ width: isExpanded ? '26rem' : '22rem' }}
     >
       <div className="rounded-2xl border border-slate-200/90 bg-white/95 backdrop-blur-xl shadow-[0_10px_35px_rgba(15,23,42,0.12)] overflow-hidden transition-all duration-300">
         {/* Floating Strip Bar */}
@@ -103,6 +104,12 @@ export const AstraVoiceHudBar: React.FC = () => {
               <div className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
               <span className="font-semibold tracking-instrument">SOLARIS: {badge.label}</span>
             </div>
+
+            {/* Provider Badge */}
+            <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[8.5px] font-mono border bg-white border-slate-200 text-slate-600 shadow-2xs">
+              <span className={`w-1 h-1 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : providerMode === 'browser' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+              <span>{providerMode === 'local' ? 'Voice: local' : providerMode === 'browser' ? 'Voice: browser (online)' : 'Voice: typed'}</span>
+            </span>
 
             {/* Astronaut Callout if authenticated */}
             {activeCrew ? (
@@ -261,27 +268,27 @@ export const AstraVoiceHudBar: React.FC = () => {
                 </button>
               </div>
             </div>
-
-            {/* Text Input Fallback Bar */}
-            <form onSubmit={handleSubmit} className="flex items-center gap-1.5 pt-0.5">
-              <input
-                type="text"
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                placeholder="State or type command..."
-                className="flex-1 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-colors"
-              />
-              <button
-                type="submit"
-                disabled={!inputVal.trim()}
-                className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-30 transition-colors shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                title="Send command"
-              >
-                <Send className="w-3.5 h-3.5" strokeWidth={1.75} />
-              </button>
-            </form>
           </div>
         )}
+
+        {/* Text Input Fallback Bar — Always Visible so noisy rooms never block demo */}
+        <form onSubmit={handleSubmit} className="px-2.5 py-2 bg-white flex items-center gap-1.5 border-t border-slate-100">
+          <input
+            type="text"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            placeholder="State or type command..."
+            className="flex-1 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={!inputVal.trim()}
+            className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-30 transition-colors shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
+            title="Send command"
+          >
+            <Send className="w-3.5 h-3.5" strokeWidth={1.75} />
+          </button>
+        </form>
       </div>
     </div>
   );

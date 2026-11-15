@@ -7,6 +7,7 @@ interface AstraOrbProps {
   state?: OrbState;
   caption?: string;
   subcaption?: string;
+  providerMode?: 'local' | 'browser' | 'typed';
   onActivate?: () => void;
 }
 
@@ -14,6 +15,7 @@ export const AstraOrb: React.FC<AstraOrbProps> = ({
   state = 'idle',
   caption = 'SOLARIS READY // CREW TWIN SYNCHRONIZED',
   subcaption = 'Tap orb or press Space to converse',
+  providerMode = 'local',
   onActivate,
 }) => {
   const [internalState, setInternalState] = useState<OrbState>(state);
@@ -127,6 +129,20 @@ export const AstraOrb: React.FC<AstraOrbProps> = ({
           </div>
         )}
       </button>
+
+      {/* Provider Badge */}
+      <div className="mt-2 text-center">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-medium border bg-white/70 backdrop-blur-sm border-slate-200 text-slate-600 shadow-xs">
+          <span className={`w-1.5 h-1.5 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : providerMode === 'browser' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+          <span>
+            {providerMode === 'local'
+              ? 'Voice: local'
+              : providerMode === 'browser'
+              ? 'Voice: browser (online)'
+              : 'Voice: typed'}
+          </span>
+        </span>
+      </div>
     </div>
   );
 };

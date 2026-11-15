@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useSolaris } from '../context/SolarisContext';
+import { useSolarisVoice } from '../context/SolarisVoiceContext';
 import { useAstraStore } from '../api/mockClient';
 import { BodyRegion } from '../api/types';
 import { SystemStatusDials } from '../components/hud/SystemStatusDials';
 import { HolographicBodyCenter } from '../components/hud/HolographicBodyCenter';
 import { SystemDetailDrawer } from '../components/stage/SystemDetailDrawer';
 import { HazardSideDrawer } from '../components/hazards/HazardSideDrawer';
+import { AstraOrb } from '../components/stage/AstraOrb';
 import {
   Heart,
   Activity,
@@ -24,10 +26,24 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle2,
+  Wind,
+  Moon,
 } from 'lucide-react';
 
 export const StagePage: React.FC = () => {
-  const { activeCrew, sendInput } = useSolaris();
+  const { activeCrew, sendInput, backendOnline } = useSolaris();
+  const {
+    voiceState,
+    providerMode,
+    currentUtterance,
+    transcript,
+    showProfileChips,
+    selectAstronautById,
+    wakeSolaris,
+    sleepSolaris,
+    isListening,
+    isSpeaking,
+  } = useSolarisVoice();
   const { records, activeSubjectId, findings } = useAstraStore();
 
   const [activeTab, setActiveTab] = useState<'ecg' | '3d'>('ecg');
@@ -37,30 +53,53 @@ export const StagePage: React.FC = () => {
   const subjectRecords = records.filter((r) => r.subject_id === activeSubjectId);
 
   const vitals = activeCrew?.vitals || {
-    heartRate: 78,
-    hrv: 42,
+    heartRate: 72,
+    hrv: 48,
     spo2: 98.4,
-    respRate: 14.2,
-    coreTemp: 37.1,
-    radiation_mSv: 54.8,
-    sleepHours: 6.8,
+    respRate: 14.0,
+    coreTemp: 37.0,
+    radiation_mSv: 52.0,
+    sleepHours: 7.0,
   };
 
-  const isVance = activeCrew?.id === 'vance';
-  const isChen = activeCrew?.id === 'chen';
+  const orbState =
+    voiceState === 'sleeping'
+      ? 'asleep'
+      : isListening
+      ? 'listening'
+      : voiceState === 'processing'
+      ? 'thinking'
+      : isSpeaking
+      ? 'speaking'
+      : 'idle';
 
-  // Overall health index
-  const healthScore = isVance ? 78 : isChen ? 69 : 94;
+  const lastMsg = transcript.length > 0 ? transcript[transcript.length - 1] : null;
+  const orbCaption = currentUtterance || lastMsg?.text || 'SOLARIS READY // CREW TWIN SYNCHRONIZED';
+  const orbSubcaption =
+    voiceState === 'sleeping'
+      ? 'Tap orb or press Space to wake'
+      : isListening
+      ? 'Listening... ends after ~1.2s silence'
+      : isSpeaking
+      ? 'Solaris speaking'
+      : 'Tap orb or press Space to converse';
 
   return (
     <div className="w-full min-h-screen bg-[#F4F7FC] p-3 lg:p-6 select-none font-sans text-slate-800 space-y-5">
-      {/* Top Banner Row: Patient Details + Add Record CTA */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Top Banner Row: Patient Details + Astra Voice Orb + View Controls */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/80 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-sm">
         <div>
-          <h2 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
-            {activeCrew ? activeCrew.name : 'Commander A. Vance'}
-          </h2>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500 font-mono">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
+              {activeCrew ? activeCrew.name : 'Commander Marcus Vance'}
+            </h2>
+            {!backendOnline && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-mono font-bold border border-amber-200">
+                Offline demo data
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 font-mono">
             <span>EXPEDITION-64</span>
             <span>&middot;</span>
             <span className="font-semibold text-indigo-600">
@@ -71,14 +110,57 @@ export const StagePage: React.FC = () => {
           </div>
         </div>
 
+        {/* Center Orb Interactive Console */}
+        <div className="flex flex-col items-center justify-center">
+          <AstraOrb
+            state={orbState}
+            caption={orbCaption}
+            subcaption={orbSubcaption}
+            providerMode={providerMode}
+            onActivate={() => {
+              if (voiceState === 'sleeping') {
+                wakeSolaris();
+              } else if (isListening) {
+                sleepSolaris();
+              } else {
+                wakeSolaris();
+              }
+            }}
+          />
+
+          {/* Astronaut Profile Chips Fallback when identification fails 2 times */}
+          {showProfileChips && (
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-[10px] font-mono text-slate-500">Tap your profile:</span>
+              {[
+                { id: 'chen', name: 'Sarah Chen', role: 'Science Officer', initials: 'SC', bg: 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100' },
+                { id: 'vance', name: 'Marcus Vance', role: 'Commander', initials: 'MV', bg: 'bg-indigo-50 text-indigo-700 border-indigo-300 hover:bg-indigo-100' },
+                { id: 'patel', name: 'Elena Patel', role: 'EVA Specialist', initials: 'EP', bg: 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' },
+                { id: 'brooks', name: 'Alexei Brooks', role: 'Medical Specialist', initials: 'AB', bg: 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100' },
+              ].map((chip) => (
+                <button
+                  key={chip.id}
+                  onClick={() => selectAstronautById(chip.id)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-[11px] font-mono font-semibold transition-all hover:scale-105 active:scale-95 shadow-xs cursor-pointer ${chip.bg}`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-white flex items-center justify-center text-[9px] font-bold">
+                    {chip.initials}
+                  </span>
+                  <span>{chip.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* View Toggle (ECG Waveform vs 3D Anatomical Twin) */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center bg-white p-1 rounded-xl border border-slate-200/80 shadow-sm text-xs font-mono">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center bg-slate-50 p-1 rounded-xl border border-slate-200 shadow-2xs text-xs font-mono">
             <button
               onClick={() => setActiveTab('ecg')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 activeTab === 'ecg'
-                  ? 'bg-indigo-600 text-white font-semibold shadow-sm'
+                  ? 'bg-indigo-600 text-white font-semibold shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -87,9 +169,9 @@ export const StagePage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('3d')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                 activeTab === '3d'
-                  ? 'bg-indigo-600 text-white font-semibold shadow-sm'
+                  ? 'bg-indigo-600 text-white font-semibold shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -228,56 +310,35 @@ export const StagePage: React.FC = () => {
               </div>
             </div>
 
-            {/* 4. Overall Health Score Card (Circular graph matching prompt + screenshot) */}
+            {/* 4. Respiration & Recovery Status Card (Per-system status, no 0-100 score) */}
             <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-                <span>Health Score</span>
+                <span>Respiration & Recovery</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[9px] flex items-center gap-0.5">
-                  <TrendingUp className="w-2.5 h-2.5" />
-                  +12%
+                  <Wind className="w-2.5 h-2.5" />
+                  Nominal
                 </span>
               </div>
 
-              <div className="my-1.5 flex items-center justify-around gap-2">
-                {/* Circular Radial Score Graph */}
-                <div className="relative flex items-center justify-center">
-                  <svg width="68" height="68" className="-rotate-90 transform">
-                    <circle cx="34" cy="34" r="28" stroke="#EEF2FF" strokeWidth="6" fill="transparent" />
-                    <circle
-                      cx="34"
-                      cy="34"
-                      r="28"
-                      stroke="#5046E5"
-                      strokeWidth="6"
-                      strokeDasharray={2 * Math.PI * 28}
-                      strokeDashoffset={2 * Math.PI * 28 * (1 - healthScore / 100)}
-                      strokeLinecap="round"
-                      fill="transparent"
-                      className="transition-all duration-1000 ease-out"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-lg font-black text-slate-900 font-mono leading-none">
-                      {healthScore}
-                    </span>
-                    <span className="text-[8px] text-slate-400 font-mono">/100</span>
-                  </div>
+              <div className="my-2 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-slate-800 font-mono">
+                    {vitals.respRate.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono uppercase">br/min</span>
                 </div>
-
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-800">Overall Index</span>
-                  <span className="text-[10px] text-emerald-600 font-mono font-semibold">+12% Yesterday</span>
-                  <span className="text-[9px] text-indigo-600 font-mono font-medium mt-0.5">AI Readings Evaluated</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-slate-700 font-mono flex items-center gap-1">
+                    <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>{vitals.sleepHours.toFixed(1)} hrs</span>
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono uppercase">Rest</span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10.5px]">
-                <span className="text-slate-400 font-mono">AI Status</span>
-                <span className={`font-bold font-mono text-[10px] ${
-                  healthScore >= 85 ? 'text-emerald-600' : healthScore >= 70 ? 'text-amber-600' : 'text-rose-600'
-                }`}>
-                  {healthScore >= 85 ? 'NOMINAL // CLEAR' : healthScore >= 70 ? 'CAUTION // MONITOR' : 'DEFICIT'}
-                </span>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400 text-[10px]">SpO2 Saturation</span>
+                <span className="font-bold text-emerald-600">{vitals.spo2.toFixed(1)}%</span>
               </div>
             </div>
           </div>

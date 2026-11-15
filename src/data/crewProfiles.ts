@@ -131,8 +131,8 @@ export const CREW_PROFILES: Record<string, CrewProfile> = {
   },
   chen: {
     id: 'chen',
-    name: 'Flight Engineer Chen',
-    callsign: 'FLT. ENG. M. CHEN',
+    name: 'Commander Sarah Chen',
+    callsign: 'CDR. S. CHEN',
     role: 'Flight Engineer / Science Officer',
     status: 'Warning',
     badgeColor: '#E58F55',
@@ -148,7 +148,7 @@ export const CREW_PROFILES: Record<string, CrewProfile> = {
       sleepDuration: 4.5,
     },
     summaryVerdict:
-      'Flight Engineer Chen, telemetry indicates microgravity spinal unloading discomfort and a sleep deficit of 4.5 hours with elevated heart rate.',
+      'Commander Chen, telemetry indicates microgravity spinal unloading discomfort and a sleep deficit of 4.5 hours with elevated heart rate.',
     narrationScript: [
       {
         hotspot: 'headband',
@@ -169,6 +169,49 @@ export const CREW_PROFILES: Record<string, CrewProfile> = {
       {
         hotspot: 'dosimeter',
         text: 'HERA dosimeter telemetry confirms cumulative radiation within solar quiet thresholds.',
+      },
+    ],
+  },
+  brooks: {
+    id: 'brooks',
+    name: 'Dr. Alexei Brooks',
+    callsign: 'DR. A. BROOKS',
+    role: 'Medical Specialist',
+    status: 'Nominal',
+    badgeColor: '#3B82F6',
+    vitals: {
+      spo2: 98.8,
+      respRate: 13.5,
+      heartRate: 72,
+      hrv: 55,
+      coreTemp: 36.9,
+      radiation_mSv: 50.1,
+      sleepHours: 7.2,
+      bloodPressure: '120/80',
+      sleepDuration: 7.2,
+    },
+    summaryVerdict:
+      'All biometric readings are within mission parameters, Dr. Brooks. Autonomic indicators and recovery status nominal.',
+    narrationScript: [
+      {
+        hotspot: 'headband',
+        text: 'Astroskin headband indicates nominal cerebral blood flow and oxygen saturation at 98.8 percent.',
+      },
+      {
+        hotspot: 'heart',
+        text: 'Thoracic ECG indicates resting sinus rhythm of 72 BPM and healthy autonomic balance.',
+      },
+      {
+        hotspot: 'lungs',
+        text: 'Respiratory mechanics are nominal at 13.5 breaths per minute.',
+      },
+      {
+        hotspot: 'archer',
+        text: 'Actigraphy registers 7.2 hours of consolidated rest.',
+      },
+      {
+        hotspot: 'dosimeter',
+        text: 'Radiation dosimeter confirms cumulative dose within mission constraints.',
       },
     ],
   },

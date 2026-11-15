@@ -20,6 +20,7 @@ from .ml import (
 from . import database
 
 from .ml.research.router import router as research_ml_router
+from .voice_service import router as voice_router
 
 app = FastAPI(title="SOLARIS Medical Intelligence Local Backend", version="1.0.0")
 
@@ -31,8 +32,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount the authoritative SOLARIS research ML router
+# Mount the authoritative SOLARIS research ML router and local voice router
 app.include_router(research_ml_router, prefix="/api/ml")
+app.include_router(voice_router)
 
 
 class SymptomAssessmentRequest(BaseModel):
