@@ -19,9 +19,11 @@ export class SolarisAudioRecorder {
   private sampleBuffers: Float32Array[] = [];
   private isRecording = false;
 
-  private silenceThresholdMs = 1200;
-  private energyThreshold = 0.015;
+  private silenceThresholdMs = 1100;
+  private energyThreshold = 0.005;
+  private ambientFloor = 0.002;
   private lastSpeechTime = 0;
+  private speechStartTime = 0;
   private hasSpoken = false;
   private silenceTimer: any = null;
 
@@ -54,6 +56,10 @@ export class SolarisAudioRecorder {
 
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       this.audioContext = new AudioCtx();
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+
       this.source = this.audioContext.createMediaStreamSource(this.mediaStream);
 
       // ScriptProcessor with 4096 buffer size
@@ -62,11 +68,18 @@ export class SolarisAudioRecorder {
       this.isRecording = true;
       this.hasSpoken = false;
       this.lastSpeechTime = Date.now();
+      this.speechStartTime = Date.now();
 
       this.processor.onaudioprocess = (e) => {
         if (!this.isRecording) return;
         const inputData = e.inputBuffer.getChannelData(0);
         this.sampleBuffers.push(new Float32Array(inputData));
+
+        // Always zero output buffer to eliminate any acoustic feedback / speaker echo
+        const outputData = e.outputBuffer?.getChannelData(0);
+        if (outputData) {
+          outputData.fill(0);
+        }
 
         // Compute RMS energy
         let sum = 0;
@@ -74,14 +87,28 @@ export class SolarisAudioRecorder {
           sum += inputData[i] * inputData[i];
         }
         const rms = Math.sqrt(sum / inputData.length);
-        this.onLoudness?.(Math.min(1, rms * 5));
+        this.onLoudness?.(Math.min(1, rms * 8));
 
+        // Adaptive noise floor tracking
+        if (rms < this.ambientFloor) {
+          this.ambientFloor = this.ambientFloor * 0.95 + rms * 0.05;
+        }
+
+        const effectiveThreshold = Math.max(this.energyThreshold, this.ambientFloor * 2.0);
         const now = Date.now();
-        if (rms > this.energyThreshold) {
+
+        if (rms > effectiveThreshold) {
           this.lastSpeechTime = now;
-          this.hasSpoken = true;
+          if (!this.hasSpoken) {
+            this.hasSpoken = true;
+            this.speechStartTime = now;
+          }
         } else if (this.hasSpoken && now - this.lastSpeechTime > this.silenceThresholdMs) {
           // Silence detected after speech
+          this.hasSpoken = false;
+          this.commitUtterance();
+        } else if (this.hasSpoken && now - this.speechStartTime > 7500) {
+          // Max utterance length reached (7.5s), commit current batch
           this.hasSpoken = false;
           this.commitUtterance();
         }
@@ -113,8 +140,13 @@ export class SolarisAudioRecorder {
     return wavBlob;
   }
 
-  public stop(): void {
+  public stop(commitPending = false): Blob | null {
     this.isRecording = false;
+    let pendingWav: Blob | null = null;
+    if (commitPending && this.sampleBuffers.length > 0) {
+      const currentInputSampleRate = this.audioContext?.sampleRate || 44100;
+      pendingWav = this.encodeWAV(this.sampleBuffers, currentInputSampleRate, 16000);
+    }
     if (this.silenceTimer) {
       clearTimeout(this.silenceTimer);
       this.silenceTimer = null;
@@ -142,6 +174,7 @@ export class SolarisAudioRecorder {
       this.audioContext = null;
     }
     this.sampleBuffers = [];
+    return pendingWav;
   }
 
   /**

@@ -271,7 +271,7 @@ export class SolarisVoiceService {
     });
   }
 
-  private async handleCapturedAudio(wavBlob: Blob): Promise<void> {
+  public async handleCapturedAudio(wavBlob: Blob): Promise<void> {
     if (this.state === 'typed_only' || this.state === 'sleeping') return;
 
     this.setState('processing');
@@ -310,10 +310,9 @@ export class SolarisVoiceService {
         }
       }
     } catch (err) {
-      console.warn('[SOLARIS Voice] STT transcription failed, switching to typed only mode:', err);
-      this.setProviderMode('typed');
+      console.warn('[SOLARIS Voice] STT transcription error:', err);
       this.setState('awake');
-      this.onTranscript?.('Local voice backend unreachable. Please type your command.', true);
+      this.onTranscript?.('Voice transcription encountered an error. You may speak again or type below.', true);
     }
   }
 
@@ -377,7 +376,7 @@ export class SolarisVoiceService {
 
   // --- Audio Lifecycle: Wake & Sleep ---
 
-  public async wakeSolaris(): Promise<void> {
+  public async wakeSolaris(speakGreeting = true): Promise<void> {
     if (this.state === 'typed_only') {
       this.setState('awake');
       const intro = 'Solaris is online in typed mode. Enter your command below.';
@@ -388,17 +387,19 @@ export class SolarisVoiceService {
     this.isContinuousListening = true;
     this.setState('awake');
 
-    const astronaut = this.telemetryAccessor?.getActiveAstronaut();
-    if (!astronaut) {
-      // Unauthenticated: ask "Who is speaking?"
-      this.identificationState = {
-        isActive: true,
-        pendingMatch: null,
-        failedAttempts: 0,
-      };
-      await this.speak('Who is speaking?');
-    } else {
-      await this.speak(`Hello ${astronaut.callsign}. Solaris is listening. How can I assist you?`);
+    if (speakGreeting) {
+      const astronaut = this.telemetryAccessor?.getActiveAstronaut();
+      if (!astronaut) {
+        // Unauthenticated: ask "Who is speaking?"
+        this.identificationState = {
+          isActive: true,
+          pendingMatch: null,
+          failedAttempts: 0,
+        };
+        await this.speak('Who is speaking?');
+      } else {
+        await this.speak(`Hello ${astronaut.callsign}. Solaris is listening. How can I assist you?`);
+      }
     }
 
     await this.startListening();
@@ -421,12 +422,41 @@ export class SolarisVoiceService {
       this.setState('typed_only');
     } else {
       this.setState('awake');
-      this.wakeSolaris();
+      this.wakeSolaris(true);
+    }
+  }
+
+  public async toggleListening(): Promise<void> {
+    if (this.state === 'listening') {
+      // User tapped mic button to finish speaking (Push-to-talk / end utterance)
+      const wav = this.stopListening(true);
+      if (wav && wav.size > 2000) {
+        await this.handleCapturedAudio(wav);
+      } else {
+        this.setState('awake');
+      }
+    } else {
+      // User tapped mic to begin speaking
+      this.stopSpeaking();
+      if (this.state === 'sleeping' || this.state === 'typed_only') {
+        this.setState('awake');
+      }
+      if (this.providerMode === 'typed') {
+        const available = await this.checkLocalSTTStatus();
+        if (available) {
+          this.setProviderMode('local');
+        }
+      }
+      this.isContinuousListening = true;
+      await this.startListening();
     }
   }
 
   public async startListening(): Promise<void> {
-    if (this.state === 'typed_only' || this.state === 'sleeping') return;
+    if (this.state === 'typed_only') return;
+    if (this.state === 'sleeping') {
+      this.setState('awake');
+    }
 
     if (this.providerMode === 'local') {
       const ok = await this.audioRecorder?.start();
@@ -440,14 +470,16 @@ export class SolarisVoiceService {
     }
   }
 
-  public stopListening(): void {
+  public stopListening(commitPending = false): Blob | null {
+    let wav: Blob | null = null;
     if (this.audioRecorder) {
-      this.audioRecorder.stop();
+      wav = this.audioRecorder.stop(commitPending);
     }
     this.onLoudness?.(0);
     if (this.state === 'listening') {
       this.setState('awake');
     }
+    return wav;
   }
 
   public async speak(text: string): Promise<void> {

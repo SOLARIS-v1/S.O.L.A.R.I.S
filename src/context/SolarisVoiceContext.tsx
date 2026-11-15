@@ -42,6 +42,9 @@ export interface SolarisVoiceContextType {
   // Actions
   wakeSolaris: () => void;
   sleepSolaris: () => void;
+  toggleListening: () => Promise<void>;
+  startListening: () => Promise<void>;
+  stopListening: () => void;
   toggleManualMode: (override?: boolean) => void;
   setShowProfileChips: (show: boolean) => void;
   selectAstronautById: (id: string) => void;
@@ -321,11 +324,23 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   // Public Actions
   const wakeSolaris = useCallback(() => {
-    solarisVoiceService.handleVoiceInput('Wake up, SOLARIS');
+    solarisVoiceService.wakeSolaris(true);
   }, []);
 
   const sleepSolaris = useCallback(() => {
-    solarisVoiceService.handleVoiceInput('Sleep SOLARIS');
+    solarisVoiceService.sleepSolaris();
+  }, []);
+
+  const toggleListening = useCallback(async () => {
+    await solarisVoiceService.toggleListening();
+  }, []);
+
+  const startListening = useCallback(async () => {
+    await solarisVoiceService.startListening();
+  }, []);
+
+  const stopListening = useCallback(() => {
+    solarisVoiceService.stopListening();
   }, []);
 
   const toggleManualMode = useCallback((override?: boolean) => {
@@ -415,6 +430,9 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
 
         wakeSolaris,
         sleepSolaris,
+        toggleListening,
+        startListening,
+        stopListening,
         toggleManualMode,
         setShowProfileChips,
         selectAstronautById,

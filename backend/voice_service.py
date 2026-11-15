@@ -98,6 +98,15 @@ async def transcribe_audio(file: UploadFile = File(...)):
             initial_prompt=INITIAL_PROMPT,
         )
         text = " ".join([segment.text for segment in segments]).strip()
+        if not text:
+            # Fallback for short or quiet commands where VAD might be over-aggressive
+            segments, _ = model.transcribe(
+                audio_input,
+                beam_size=1,
+                vad_filter=False,
+                initial_prompt=INITIAL_PROMPT,
+            )
+            text = " ".join([segment.text for segment in segments]).strip()
         return {"text": text}
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
@@ -112,6 +121,14 @@ async def transcribe_audio(file: UploadFile = File(...)):
             initial_prompt=INITIAL_PROMPT,
         )
         text = " ".join([segment.text for segment in segments]).strip()
+        if not text:
+            segments, _ = model.transcribe(
+                tmp_path,
+                beam_size=1,
+                vad_filter=False,
+                initial_prompt=INITIAL_PROMPT,
+            )
+            text = " ".join([segment.text for segment in segments]).strip()
         return {"text": text}
     finally:
         if os.path.exists(tmp_path):

@@ -103,11 +103,13 @@ export const SolarisVoiceHudBar: React.FC = () => {
     isListening,
     isSpeaking,
     isManualMode,
+    speechLoudness,
     currentUtterance,
     transcript,
     sendInput,
     wakeSolaris,
     sleepSolaris,
+    toggleListening,
     speak,
   } = useSolarisVoice();
 
@@ -198,16 +200,13 @@ export const SolarisVoiceHudBar: React.FC = () => {
           </div>
 
           <button
-            onClick={() => {
-              if (isListening) sleepSolaris();
-              else wakeSolaris();
-            }}
-            className={`p-1.5 rounded-lg transition-colors ${
+            onClick={() => toggleListening()}
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               isListening
-                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20 animate-pulse'
                 : 'hover:bg-slate-100 text-slate-600'
             }`}
-            title={isListening ? 'Sleep Solaris' : 'Wake Solaris'}
+            title={isListening ? 'Stop Speaking / Transcribe' : 'Start Speaking'}
           >
             {isListening ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
           </button>
@@ -478,26 +477,45 @@ export const SolarisVoiceHudBar: React.FC = () => {
           {/* Main Action Microphone */}
           <button
             type="button"
-            onClick={() => {
-              if (isListening) sleepSolaris();
-              else wakeSolaris();
-            }}
-            title={isListening ? 'Stop Listening' : 'Wake Solaris Microphone'}
-            className={`p-2.5 rounded-2xl transition-all cursor-pointer ${
+            onClick={() => toggleListening()}
+            title={isListening ? 'Stop Speaking & Transcribe' : 'Start Speaking (Microphone)'}
+            className={`p-2.5 rounded-2xl transition-all cursor-pointer relative ${
               isListening
-                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 animate-pulse'
+                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 ring-2 ring-emerald-300 animate-pulse'
                 : 'bg-slate-100 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600'
             }`}
           >
             {isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
           </button>
 
+          {/* Live Soundwave Loudness Meter (Visible when Listening) */}
+          {isListening && (
+            <div className="flex items-center gap-0.5 px-1 py-1" title="Microphone Level">
+              {[0.6, 1.2, 0.9, 1.4].map((multiplier, idx) => {
+                const height = Math.max(4, Math.min(20, Math.round(speechLoudness * 24 * multiplier)));
+                return (
+                  <div
+                    key={idx}
+                    style={{ height: `${height}px` }}
+                    className="w-1 bg-emerald-500 rounded-full transition-all duration-75"
+                  />
+                );
+              })}
+            </div>
+          )}
+
           {/* Text Input */}
           <input
             type="text"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            placeholder='Ask Solaris anything (e.g. "What is my heart rate?", "Show heart in 3D")...'
+            placeholder={
+              isListening
+                ? 'Listening to your voice... Speak now or click mic to submit'
+                : voiceState === 'processing'
+                ? 'Solaris is processing...'
+                : 'Ask Solaris anything (or speak with microphone)...'
+            }
             className="flex-1 px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all shadow-inner"
           />
 

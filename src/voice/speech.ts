@@ -57,6 +57,12 @@ export class SolarisSpeechProvider {
   constructor() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       this.synth = window.speechSynthesis;
+      try {
+        this.synth.getVoices();
+        this.synth.onvoiceschanged = () => {
+          this.synth?.getVoices();
+        };
+      } catch {}
     }
   }
 
@@ -76,22 +82,12 @@ export class SolarisSpeechProvider {
         this.synth.cancel();
 
         const voice = options?.voice !== undefined ? options.voice : pickSolarisVoice(this.synth);
-
-        // Fall back to captions only if no compliant local voice is available
-        if (!voice) {
-          options?.onStart?.(text);
-          const duration = Math.min(3000, Math.max(1000, text.length * 45));
-          setTimeout(() => {
-            options?.onEnd?.();
-            resolve();
-          }, duration);
-          return;
-        }
-
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = options?.rate ?? 1.0;
         utterance.pitch = options?.pitch ?? 1.0;
-        utterance.voice = voice;
+        if (voice) {
+          utterance.voice = voice;
+        }
 
         let finished = false;
         const finish = () => {
