@@ -28,6 +28,8 @@ venv/
 # Local SQLite databases
 *.db
 *.sqlite3
+solaris_local.db
+astra_local.db
 
 # Research datasets raw downloads
 solaris_ml/datasets/raw/

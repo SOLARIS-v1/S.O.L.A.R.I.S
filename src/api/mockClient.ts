@@ -148,7 +148,7 @@ const INITIAL_VOICE_MESSAGES: VoiceChatMessage[] = [
   },
 ];
 
-export const useAstraStore = create<StoreState>((set, get) => {
+export const useSolarisStore = create<StoreState>((set, get) => {
   const initialRecords = loadInitialRecords();
   const initialFindings = computeAllFindings(initialRecords);
 
@@ -762,3 +762,6 @@ export const useAstraStore = create<StoreState>((set, get) => {
     },
   };
 });
+
+// Backward-compatibility alias
+export const useAstraStore = useSolarisStore;

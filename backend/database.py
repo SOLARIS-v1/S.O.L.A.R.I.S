@@ -3,7 +3,14 @@ import sqlite3
 import json
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "astra_local.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "solaris_local.db")
+_legacy_db = os.path.join(os.path.dirname(__file__), "astra_local.db")
+if os.path.exists(_legacy_db) and not os.path.exists(DB_PATH):
+    import shutil
+    try:
+        shutil.copyfile(_legacy_db, DB_PATH)
+    except Exception:
+        pass
 
 
 def get_db():

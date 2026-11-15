@@ -3,7 +3,7 @@ import { useSolaris } from '../../context/SolarisContext';
 import { useSolarisVoice } from '../../context/SolarisVoiceContext';
 import { Mic, MicOff, Send, ChevronDown, ChevronUp, Sparkles, Volume2, Minus } from 'lucide-react';
 
-export const AstraVoiceHudBar: React.FC = () => {
+export const SolarisVoiceHudBar: React.FC = () => {
   const {
     activeCrew,
     lockDashboard,
@@ -333,4 +333,5 @@ export const AstraVoiceHudBar: React.FC = () => {
   );
 };
 
-export default AstraVoiceHudBar;
+export const AstraVoiceHudBar = SolarisVoiceHudBar;
+export default SolarisVoiceHudBar;

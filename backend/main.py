@@ -56,7 +56,7 @@ def health_check():
         "models_loaded": is_ready,
         "ml_status": status_resp.overall_status,
         "engine": "Scikit-Learn Random Forest + Isolation Forest",
-        "database": "Local SQLite (astra_local.db)",
+        "database": "Local SQLite (solaris_local.db)",
         "clinical_disclaimer": status_resp.clinical_disclaimer,
     }
 
