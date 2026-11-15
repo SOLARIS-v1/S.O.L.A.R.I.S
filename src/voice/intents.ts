@@ -20,7 +20,7 @@ export type SolarisVoiceState =
   | 'error'
   | 'unavailable';
 
-export type VoiceProviderMode = 'local' | 'browser' | 'typed';
+export type VoiceProviderMode = 'local' | 'typed';
 
 export interface AssessmentStepConfig {
   id: string;

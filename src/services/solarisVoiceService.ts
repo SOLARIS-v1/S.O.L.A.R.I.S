@@ -155,12 +155,10 @@ const STEP_BY_STEP_METRICS = [
 export class SolarisVoiceService {
   private state: SolarisVoiceState = 'awake';
   private providerMode: VoiceProviderMode = 'local';
-  private isBrowserRecognitionAllowed = false; // OFF by default
   private isLocalSTTAvailable = false;
 
   private speechProvider: SolarisSpeechProvider;
   private audioRecorder: SolarisAudioRecorder | null = null;
-  private browserRecognition: any = null;
 
   private isPausedForSpeech = false;
   private isContinuousListening = false;
@@ -320,26 +318,12 @@ export class SolarisVoiceService {
   // --- Provider Controls ---
 
   public setProviderMode(mode: VoiceProviderMode): void {
-    if (mode === 'browser' && !this.isBrowserRecognitionAllowed) {
-      mode = 'typed';
-    }
     this.providerMode = mode;
     this.onProviderModeChange?.(mode);
   }
 
   public getProviderMode(): VoiceProviderMode {
     return this.providerMode;
-  }
-
-  public getBrowserRecognitionAllowed(): boolean {
-    return this.isBrowserRecognitionAllowed;
-  }
-
-  public setBrowserRecognitionAllowed(allowed: boolean): void {
-    this.isBrowserRecognitionAllowed = allowed;
-    if (!allowed && this.providerMode === 'browser') {
-      this.setProviderMode('typed');
-    }
   }
 
   public getShowProfileChips(): boolean {

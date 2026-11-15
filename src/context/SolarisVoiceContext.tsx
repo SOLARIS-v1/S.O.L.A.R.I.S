@@ -26,7 +26,6 @@ import { INDICATOR_THRESHOLDS } from '../data/thresholds';
 export interface SolarisVoiceContextType {
   voiceState: SolarisVoiceState;
   providerMode: VoiceProviderMode;
-  isBrowserRecognitionAllowed: boolean;
   showProfileChips: boolean;
   isListening: boolean;
   isSpeaking: boolean;
@@ -44,7 +43,6 @@ export interface SolarisVoiceContextType {
   wakeSolaris: () => void;
   sleepSolaris: () => void;
   toggleManualMode: (override?: boolean) => void;
-  setBrowserRecognitionAllowed: (allowed: boolean) => void;
   setShowProfileChips: (show: boolean) => void;
   selectAstronautById: (id: string) => void;
   sendInput: (text: string) => Promise<void>;
@@ -75,7 +73,6 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const [voiceState, setVoiceState] = useState<SolarisVoiceState>('awake');
   const [providerMode, setProviderModeState] = useState<VoiceProviderMode>(() => solarisVoiceService.getProviderMode());
-  const [isBrowserRecognitionAllowed, setIsBrowserRecognitionAllowedState] = useState<boolean>(() => solarisVoiceService.getBrowserRecognitionAllowed());
   const [showProfileChips, setShowProfileChips] = useState<boolean>(false);
   const [speechLoudness, setSpeechLoudness] = useState<number>(0);
   const [currentUtterance, setCurrentUtterance] = useState<string>('');
@@ -390,17 +387,11 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
     [setActiveSubject, selectCrew]
   );
 
-  const setBrowserRecognitionAllowed = useCallback((allowed: boolean) => {
-    setIsBrowserRecognitionAllowedState(allowed);
-    solarisVoiceService.setBrowserRecognitionAllowed(allowed);
-  }, []);
-
   return (
     <SolarisVoiceContext.Provider
       value={{
         voiceState,
         providerMode,
-        isBrowserRecognitionAllowed,
         showProfileChips,
         isListening: voiceState === 'listening',
         isSpeaking: voiceState === 'speaking',
@@ -425,7 +416,6 @@ export const SolarisVoiceProvider: React.FC<{ children: ReactNode }> = ({ childr
         wakeSolaris,
         sleepSolaris,
         toggleManualMode,
-        setBrowserRecognitionAllowed,
         setShowProfileChips,
         selectAstronautById,
         sendInput,

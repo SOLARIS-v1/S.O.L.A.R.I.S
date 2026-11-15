@@ -7,7 +7,7 @@ interface AstraOrbProps {
   state?: OrbState;
   caption?: string;
   subcaption?: string;
-  providerMode?: 'local' | 'browser' | 'typed';
+  providerMode?: 'local' | 'typed';
   onActivate?: () => void;
 }
 
@@ -133,12 +133,10 @@ export const AstraOrb: React.FC<AstraOrbProps> = ({
       {/* Provider Badge */}
       <div className="mt-2 text-center">
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-medium border bg-white/70 backdrop-blur-sm border-slate-200 text-slate-600 shadow-xs">
-          <span className={`w-1.5 h-1.5 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : providerMode === 'browser' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+          <span className={`w-1.5 h-1.5 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : 'bg-slate-400'}`} />
           <span>
             {providerMode === 'local'
-              ? 'Voice: local'
-              : providerMode === 'browser'
-              ? 'Voice: browser (online)'
+              ? 'Voice: local (whisper)'
               : 'Voice: typed'}
           </span>
         </span>

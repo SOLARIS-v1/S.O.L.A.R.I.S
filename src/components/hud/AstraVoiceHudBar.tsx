@@ -136,8 +136,8 @@ export const SolarisVoiceHudBar: React.FC = () => {
 
             {/* Provider Badge */}
             <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[8.5px] font-mono border bg-white border-slate-200 text-slate-600 shadow-2xs">
-              <span className={`w-1 h-1 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : providerMode === 'browser' ? 'bg-amber-500' : 'bg-slate-400'}`} />
-              <span>{providerMode === 'local' ? 'Voice: local' : providerMode === 'browser' ? 'Voice: browser (online)' : 'Voice: typed'}</span>
+              <span className={`w-1 h-1 rounded-full ${providerMode === 'local' ? 'bg-indigo-500' : 'bg-slate-400'}`} />
+              <span>{providerMode === 'local' ? 'Voice: local (whisper)' : 'Voice: typed'}</span>
             </span>
 
             {/* Astronaut Callout if authenticated */}
