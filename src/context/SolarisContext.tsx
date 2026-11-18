@@ -95,9 +95,17 @@ export interface SolarisContextType {
 export const SolarisContext = createContext<SolarisContextType | undefined>(undefined);
 
 export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeCrew, setActiveCrew] = useState<CrewProfile | null>(null);
-  const [astraMode, setAstraModeState] = useState<AstraMode>('AUTH_GATE');
-  const [stage, setStage] = useState<FlowStage>('STAGE_AUTH');
+  const [activeCrew, setActiveCrew] = useState<CrewProfile | null>(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('solaris_active_crew') : null;
+      if (saved && CREW_PROFILES[saved]) return CREW_PROFILES[saved];
+    } catch {
+      // ignore
+    }
+    return CREW_PROFILES.vance;
+  });
+  const [astraMode, setAstraModeState] = useState<AstraMode>('MANUAL_MODE');
+  const [stage, setStage] = useState<FlowStage>('STAGE_BRIEFING');
   const [voiceState, setVoiceState] = useState<VoiceState>('awake');
   const [activeHotspotId, setActiveHotspotId] = useState<string | null>(null);
   const [backendOnline, setBackendOnline] = useState<boolean>(false);
@@ -107,7 +115,7 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [mockModeActive, setMockModeActive] = useState<boolean>(isMockMode());
 
   const [currentUtterance, setCurrentUtterance] = useState<string>(
-    'SOLARIS Clinical Console ready. Please select or state your astronaut profile to authenticate.'
+    'SOLARIS READY // CREW TWIN SYNCHRONIZED'
   );
   const [isMicActive, setIsMicActive] = useState<boolean>(true);
 
@@ -325,6 +333,13 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
 
       setActiveCrew(profile);
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('solaris_active_crew', crewId);
+        }
+      } catch {
+        // ignore
+      }
       setStage('STAGE_BRIEFING');
       triggerAutoNarration(profile);
     },
@@ -341,6 +356,13 @@ export const SolarisProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const lockDashboard = useCallback(() => {
     clearNarrationQueue();
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('solaris_active_crew');
+      }
+    } catch {
+      // ignore
+    }
     setActiveCrew(null);
     setAstraModeState('AUTH_GATE');
     setStage('STAGE_AUTH');
